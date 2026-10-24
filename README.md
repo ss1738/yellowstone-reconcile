@@ -55,7 +55,14 @@ Use one upstream `BlockStream` per connection. Feed its outputs into `UpstreamBr
 4. Process `Emitted` outputs. Halt the affected downstream processing on `Conflict`.
 5. Advance retention explicitly and handle pending/quarantined slots in the prune report.
 
-The upstream dependency is pinned to `b828807d45522505cfdd6b4710d2287b29e5d99a`.
+The upstream dependency is currently pinned to `0c732a049d6d18008a541f47b09ddb7b949cbb65`,
+the head of upstream [PR #22](https://github.com/rpcpool/yellowstone-block-machine/pull/22),
+which is **open and unmerged**. Upstream `main` is
+`b828807d45522505cfdd6b4710d2287b29e5d99a`; on that baseline the repaired-dead-slot
+lineage described in [docs/DEPENDENCY-REVIEW.md](docs/DEPENDENCY-REVIEW.md) is not handled,
+because the relevant prune happens inside upstream `BlockStream` and cannot be corrected
+downstream. Anyone depending on this crate should decide deliberately between the merged
+baseline and the unmerged PR.
 `upstream` enables the typed bridge; `grpc` additionally enables the opt-in transport example.
 
 ### Two-provider transport demonstration

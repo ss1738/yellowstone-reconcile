@@ -44,3 +44,6 @@ name = "lag_memory"
 
 [[example]]
 name = "stall_budget"
+
+[[example]]
+name = "durable_sink"

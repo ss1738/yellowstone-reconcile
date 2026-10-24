@@ -139,3 +139,30 @@ rather than correct it; the gap was that the restart path was untested, not that
 
 LIMIT: in-memory only. Durability of the checkpoint itself, and exactly-once delivery into the
 sink, remain the integrating application's responsibility and are not exercised here.
+
+## Ordering the sink write against the checkpoint
+
+Refusing replayed slots is not by itself exactly-once. The checkpoint has to be persisted
+**after** the sink commits. Persist it first and a crash in between loses the slot; persist it
+after and a crash in between re-delivers one slot, which the sink must absorb idempotently.
+
+MEASURED (`cargo run --release --example durable_sink`, owner Mini, 2026-10-25). Twenty slots,
+two providers, a crash after slot 12, a checkpoint file on disk, then a restart that replays the
+whole stream from slot 1:
+
+| stage | result |
+|---|---|
+| Lifetime 1, crash after 12 | 12 slots committed, checkpoint on disk 12 |
+| Lifetime 2, resumed at 13 | 24 replayed observations refused (12 slots across 2 providers), checkpoint reached 20 |
+| Sink totals | 20 rows, 20 writes, **no slot written twice, no slot lost** |
+
+So the ordering to implement is:
+
+1. Receive `Outcome::Emitted`.
+2. Commit to the sink, idempotently keyed on slot.
+3. Only then persist the slot as the checkpoint.
+
+LIMIT: the sink is in-process and the checkpoint is a plain file, so this demonstrates the
+ordering contract rather than real durability. A crash between step 2 and step 3 still
+re-delivers that one slot, which is exactly why step 2 must be idempotent. No gRPC,
+reconstruction or real provider is involved.

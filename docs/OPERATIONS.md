@@ -116,7 +116,7 @@ emitted twice, because a second emission is a duplicate downstream write.
 
 The contract is:
 
-1. Persist the highest slot you have **durably** committed, after your sink confirms it.
+1. Persist a checkpoint that is **contiguous**: every slot at or below it is durably committed. Output is unordered across slots, so the highest committed slot is not safe, see the SQLite sink below.
 2. On restart, construct the reconciler with `first_slot = checkpoint + 1`.
 3. Treat `Error::StaleSlot` on replayed slots as expected and not as a fault.
 4. Keep calling `advance` forward only. `Error::CheckpointRegression` means the checkpoint you
@@ -203,3 +203,42 @@ to a gigabyte in an unlucky run. The earlier 256 MiB figure understates it by ro
 LIMIT: ten blocks from one minute of one day is not a size distribution. These are JSON-encoded
 RPC responses rather than the wire payloads a Geyser consumer holds, so treat them as an order of
 magnitude and measure your own provider.
+
+## Correction: the highest committed slot is not a safe checkpoint
+
+The two sections above treat "the highest slot committed" as the checkpoint. That holds only when
+slots are emitted in order, which `Reconciler` does not promise: a slot emits when its second
+provider arrives, so a lagging provider delivering out of order produces out-of-order emission. If
+slot 8 is committed before slot 5 and the process crashes, resuming at 9 loses slots 5 and 6.
+`restart` and `durable_sink` did not show this because they emit in order.
+
+## SQLite sink with an atomic resume point
+
+`sink::SqliteSink` (feature `sqlite`) stores the block and advances a watermark in one transaction.
+The watermark moves only along `parent_slot` and `parent_blockhash` links, so every slot at or
+below it is stored, including across skipped slots. Restart with `Config::first_slot =
+sink.resume_slot()`. Blocks above the watermark may be redelivered and are absorbed as
+`Commit::AlreadyPresent`. A different block for a stored slot returns `SinkError::Mismatch` and is
+not overwritten. A wrong anchor or a broken link stalls the watermark, which costs replay and never
+loses a slot.
+
+MEASURED (`cargo run --release --features sqlite --example sqlite_sink`, owner Mini, 2026-10-25).
+Twenty slots, one provider leading and the other delivering in reversed groups of four, a crash
+after six emissions (slots 4, 3, 2, 1, 8, 7), then a restart that replays the whole stream:
+
+| | result |
+|---|---|
+| Watermark after the crash | 4, so resume at 5 |
+| A highest-committed-slot checkpoint | would resume at 9 and lose slots 5 and 6 |
+| After restart | 14 inserted, 2 redelivered and absorbed (7, 8), 8 replays refused |
+| Sink totals | 20 rows, watermark 20, every slot stored once |
+
+`cargo test --features sqlite --test sink`: 10 tests including a child process that is killed with
+SIGABRT after committing, and a full reconciler run with unordered emission. Two deliberate
+mutations of the link logic (ignore gaps, ignore the parent hash) were each caught by the test
+written for them.
+
+LIMIT: one local SQLite file and synthetic blocks, so no gRPC and no real provider. Process death
+is exercised, power loss is not. A networked database such as Postgres is not implemented, and no
+pilot integrator has agreed this contract. The watermark assumes one canonical child per
+`parent_slot`; with `Confirmed` blocks only the parent hash match separates forks.

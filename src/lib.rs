@@ -18,6 +18,9 @@ pub mod upstream;
 #[cfg(feature = "grpc")]
 pub mod wire;
 
+#[cfg(feature = "sqlite")]
+pub mod sink;
+
 /// A block identity in binary form, serialized as 64 hexadecimal characters for replay files.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]

@@ -9,6 +9,7 @@ publish = false
 
 [features]
 default = []
+sqlite = ["dep:rusqlite"]
 upstream = ["dep:yellowstone-block-machine", "dep:solana-commitment-config"]
 grpc = ["upstream", "yellowstone-block-machine/dragonsmouth", "dep:tokio", "dep:futures-util", "dep:bs58"]
 simulation = ["grpc", "yellowstone-block-machine/test-tools"]
@@ -22,6 +23,7 @@ solana-commitment-config = { version = "3", optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "signal"], optional = true }
 futures-util = { version = "0.3", optional = true }
 bs58 = { version = "0.5", optional = true }
+rusqlite = { version = "0.37", features = ["bundled"], optional = true }
 
 [[bin]]
 name = "yellowstone-replay"
@@ -50,3 +52,7 @@ name = "durable_sink"
 
 [[example]]
 name = "payload_variance"
+
+[[example]]
+name = "sqlite_sink"
+required-features = ["sqlite"]

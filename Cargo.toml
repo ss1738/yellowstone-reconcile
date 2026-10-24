@@ -47,3 +47,6 @@ name = "stall_budget"
 
 [[example]]
 name = "durable_sink"
+
+[[example]]
+name = "payload_variance"

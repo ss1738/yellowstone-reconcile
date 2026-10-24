@@ -66,8 +66,9 @@ MEASURED (`cargo run --release --example lag_memory`, 2026-10-25, owner Mini):
 | slow provider catches up | drains to `pending_blocks=0`, `emitted=64` |
 | one provider only, past the bound | accepted exactly 128 blocks, then rejected with `PendingCapacity` |
 
-So the default configuration implies roughly a **256 MiB** payload ceiling at 2 MiB blocks, and it
-**fails closed** rather than growing without limit. Set `max_pending_blocks` from your own measured
+So at 2 MiB blocks the default configuration implies roughly a **256 MiB** payload ceiling, and it
+**fails closed** rather than growing without limit. **2 MiB is optimistic**: real mainnet blocks
+measured at a median of 4.26 MiB, so see the variance section below for the corrected ceiling. Set `max_pending_blocks` from your own measured
 payload size and the memory you are willing to commit, not from the default.
 
 LIMIT: synthetic payloads of uniform size. Retained bytes are computed as `pending_blocks` times
@@ -166,3 +167,39 @@ LIMIT: the sink is in-process and the checkpoint is a plain file, so this demons
 ordering contract rather than real durability. A crash between step 2 and step 3 still
 re-delivers that one slot, which is exactly why step 2 must be idempotent. No gRPC,
 reconstruction or real provider is involved.
+
+## Correcting the ceiling for real block-size variance
+
+The section above uses a round 2 MiB payload. Real blocks are larger and very uneven.
+
+MEASURED, ten finalized mainnet blocks (slots 460985218 to 460985317) sampled 2026-10-25 via
+`getBlock` with `encoding=base64`, `transactionDetails=full`, `rewards=false` and
+`maxSupportedTransactionVersion=1`:
+
+| | |
+|---|---|
+| smallest | 2,389 bytes (1 transaction) |
+| median | 4.26 MiB |
+| mean | 4.48 MiB |
+| largest | 7.90 MiB (1,135 transactions) |
+| spread | about 3,500x |
+
+Note that `maxSupportedTransactionVersion: 0` rejects every one of these blocks, because mainnet
+now carries version-1 transactions. Tooling pinned to 0 sees nothing at all.
+
+MEASURED (`cargo run --release --example payload_variance`), replaying that distribution with one
+provider silent so everything is retained:
+
+| ceiling at `max_pending_blocks = 128` | bytes held |
+|---|---|
+| uniform 2 MiB, as first documented | 256 MiB |
+| **replaying the measured sizes** | **570.8 MiB** |
+| if every block were the largest sampled | **1,011 MiB** |
+
+So the default configuration can hold on the order of **half a gigabyte** of payloads, and close
+to a gigabyte in an unlucky run. The earlier 256 MiB figure understates it by roughly 2.2x. Size
+`max_pending_blocks` against your own measured payloads.
+
+LIMIT: ten blocks from one minute of one day is not a size distribution. These are JSON-encoded
+RPC responses rather than the wire payloads a Geyser consumer holds, so treat them as an order of
+magnitude and measure your own provider.

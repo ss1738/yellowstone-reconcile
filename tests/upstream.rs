@@ -1,7 +1,7 @@
 #![cfg(feature = "upstream")]
 use solana_commitment_config::CommitmentLevel;
 use yellowstone_block_machine::{
-    state_machine::{BankDiscarded, SlotCommitmentStatusUpdate},
+    state_machine::{BankDiscarded, ForkDetected, SlotCommitmentStatusUpdate},
     stream::{Block, BlockEventStore, BlockMachineOutput},
 };
 use yellowstone_reconcile::{
@@ -92,6 +92,38 @@ fn different_local_bank_ids_reconcile_by_hash() {
     bridge
         .ingest(a, status(7, CommitmentLevel::Finalized))
         .unwrap();
+    assert!(matches!(
+        bridge
+            .ingest(b, status(12, CommitmentLevel::Finalized))
+            .unwrap(),
+        Some(Outcome::Emitted { .. })
+    ));
+}
+
+#[test]
+fn slot_level_fork_report_does_not_discard_a_sealed_candidate() {
+    let mut bridge = UpstreamBridge::new(Config::default(), 8, 100).unwrap();
+    let a = bridge.connect(ProviderId(1)).unwrap();
+    let b = bridge.connect(ProviderId(2)).unwrap();
+    bridge.ingest(a, frozen(7, 1)).unwrap();
+    bridge
+        .ingest(
+            a,
+            BlockMachineOutput::ForkDetected(ForkDetected {
+                slot: 10,
+                bank_ids: vec![7],
+            }),
+        )
+        .unwrap();
+    assert_eq!(
+        bridge.pending_blocks(),
+        1,
+        "a slot report is not an authoritative bank discard"
+    );
+    bridge
+        .ingest(a, status(7, CommitmentLevel::Finalized))
+        .unwrap();
+    bridge.ingest(b, frozen(12, 2)).unwrap();
     assert!(matches!(
         bridge
             .ingest(b, status(12, CommitmentLevel::Finalized))

@@ -18,3 +18,4 @@ if cargo run --release --bin yellowstone-replay -- fixtures/conflict.jsonl; then
 fi
 cargo run --release --example benchmark
 cargo run --features upstream --example upstream_bridge
+cargo run --features simulation --example dependency_probe

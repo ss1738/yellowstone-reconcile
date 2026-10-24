@@ -10,16 +10,18 @@ publish = false
 [features]
 default = []
 upstream = ["dep:yellowstone-block-machine", "dep:solana-commitment-config"]
-grpc = ["upstream", "yellowstone-block-machine/dragonsmouth", "dep:tokio", "dep:futures-util"]
+grpc = ["upstream", "yellowstone-block-machine/dragonsmouth", "dep:tokio", "dep:futures-util", "dep:bs58"]
 simulation = ["grpc", "yellowstone-block-machine/test-tools"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-yellowstone-block-machine = { git = "https://github.com/rpcpool/yellowstone-block-machine", rev = "b828807d45522505cfdd6b4710d2287b29e5d99a", optional = true }
+# Experimental PR #22 pin, independently tested locally; see docs/DEPENDENCY-REVIEW.md.
+yellowstone-block-machine = { git = "https://github.com/rpcpool/yellowstone-block-machine", rev = "0c732a049d6d18008a541f47b09ddb7b949cbb65", optional = true }
 solana-commitment-config = { version = "3", optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "signal"], optional = true }
 futures-util = { version = "0.3", optional = true }
+bs58 = { version = "0.5", optional = true }
 
 [[bin]]
 name = "yellowstone-replay"
@@ -32,3 +34,7 @@ required-features = ["upstream"]
 [[example]]
 name = "two_providers"
 required-features = ["grpc"]
+
+[[example]]
+name = "dependency_probe"
+required-features = ["simulation"]

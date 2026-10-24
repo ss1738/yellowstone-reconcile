@@ -1,0 +1,275 @@
+# mini-test
+# when: 20261025-004639
+# mini: 3 (builduser@build-host)
+# proj: yellowstone-reconcile
+# cmd: bash scripts/verify.sh
+# ---
+Ironman
+rustc 1.95.0 (59807616e 2026-04-14)
+cargo 1.95.0 (f2d3ce0bd 2026-03-21)
+b040ef40c401b8081b274cd89ecadfb805d9a049933bf495ab5ef752ce126e90  Cargo.lock
+5b915c83fcad8ad88e9f67a5797649bd4c0ec1fc9cf32d9a5f39a3b8e7855ab1  Cargo.toml
+51b29a95a5adfc68c7b8cadec82912b732d8455c2f567b625a86e11e9afc76fa  examples/benchmark.rs
+35b62032dfa5ffed7f0941f7fe5abb311770ce740dfc2aa723a41e5b4e614ef1  examples/dependency_probe.rs
+ef9722c9138ab9013c8d9d80c5a2a4b1f1c4c05c362be2584d0ba4af582b7867  examples/two_providers.rs
+acf71ddc365e9f82379f2e2ded5c8fd7184de08bd38dd95e509519a622af1584  examples/upstream_bridge.rs
+aace9c0c0c9d8891eb4167fc2e264bbad468e4847db7d61607af7c0da594b47f  fixtures/agreement.jsonl
+67b3bf15956eebc606cb18337306421afcb2ae37751be2b3160a260834b7d223  fixtures/conflict.jsonl
+2244b4cae56589a03a2f8b9aad41fd44cf74daac8220a335ce9c87280f5b8f34  fixtures/malformed.jsonl
+97aab3493c1fb14fe9a21c760433577f434714f5725bbb176e67048dde581afe  rust-toolchain.toml
+84d9aa54bdebd899699870f4e5a9a3ed065771c2eaa5a84f19e294a3e2f70aed  scripts/source_manifest.py
+1b5b08592b53fc5fdb61164ebf98bda42a0f92bd41f79462a0336662506f443b  scripts/verify.sh
+6a36b54a7483ed917b5883eeea3e83f3ce8b00d4c1f581ce94368a7d930021f8  src/bin/replay.rs
+fa996b301de6089352c590dabf6cd831f2a2e2a8fa2cafc6e5aecd695a9d2587  src/lib.rs
+30a275980bdab4185ee0ebbe4c25c2c84170dba6f2556610fb8515f3a5c14443  src/upstream.rs
+7c2d7719f62a5f96ddfc26e1628a2d549cf2467f30536fa552ac6be1ec13d9c9  src/wire.rs
+a334b3b335c690cea5af1fdf34ea66ad72240bb438a4782406eb50ac7809f071  tests/reconcile.rs
+f46aefc2d0bb3638fbd969fd0915051022914d4982a6fed21db374a6bdb7e8d1  tests/reconstruction.rs
+e79ecd694b4467975ba47db1cf8c2c28f63f0ebcd31676bf0396ed8b83355dd2  tests/replay.rs
+a29c3010383de2d7e7ddcdc1caa19b3788ac9bf28478a883ef53a6da1baf63e0  tests/upstream.rs
+f90f33ec18f8db7709fc182f9e52705c530c0de018e00c6505341579e75b2fb9  tests/wire.rs
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-cb4c56ede2653d3e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/replay.rs (target/debug/deps/yellowstone_replay-58128f16457ec77d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reconcile.rs (target/debug/deps/reconcile-c32e423e41532c45)
+
+running 14 tests
+test invalid_configuration_is_rejected ... ok
+test independent_providers_emit_one_unchanged_payload ... ok
+test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
+test equal_hash_different_metadata_is_a_conflict ... ok
+test conflict_before_quorum_quarantines_and_releases_payload ... ok
+test conflict_after_emission_is_explicit_and_never_reemits ... ok
+test below_commitment_cannot_vote_or_poison_slot ... ok
+test pending_capacity_does_not_lose_existing_quorum_progress ... ok
+test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
+test reconnect_is_not_an_independent_vote_and_invalidates_old_session ... ok
+test slot_and_provider_capacities_are_recoverable ... ok
+test randomized_interleavings_emit_each_slot_once ... ok
+test retention_stays_bounded_under_long_running_replay ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/reconstruction.rs (target/debug/deps/reconstruction-5a7b59a89beca180)
+
+running 2 tests
+test incomplete_provider_bank_cannot_supply_a_quorum_vote ... ok
+test wire_events_reconstruct_independently_before_cross_provider_agreement ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/replay.rs (target/debug/deps/replay-1df2708d6a855989)
+
+running 3 tests
+test conflicting_fixture_halts_without_emitting_a_block ... ok
+test agreement_fixture_emits_once_despite_connection_restart ... ok
+test malformed_replay_and_bad_argument_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s
+
+     Running tests/upstream.rs (target/debug/deps/upstream-d3a99051fa511cd9)
+
+running 7 tests
+test bridge_capacity_is_explicit_and_advance_reports_eviction ... ok
+test conflicting_bank_reuse_and_oversized_event_store_are_rejected ... ok
+test different_local_bank_ids_reconcile_by_hash ... ok
+test discard_is_scoped_to_connection_and_bank ... ok
+test same_local_bank_id_across_connections_never_combines_payloads ... ok
+test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
+test slot_level_fork_report_does_not_discard_a_sealed_candidate ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wire.rs (target/debug/deps/wire-2653662030d10965)
+
+running 7 tests
+test missing_bank_id_and_unknown_status_are_not_silently_accepted ... ok
+test capacity_failure_preserves_old_bank_identity ... ok
+test only_exact_length_entry_hashes_pass ... ok
+test malformed_blockhashes_are_rejected_without_bank_state_mutation ... ok
+test one_connection_cannot_reassign_bank_id_to_another_slot ... ok
+test guarded_stream_reports_source_error_without_leaking_its_display ... ok
+test guarded_stream_reports_invalid_input_then_terminates ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/benchmark.rs (target/debug/examples/benchmark-673e153290daee1e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/dependency_probe.rs (target/debug/examples/dependency_probe-935e344135066c15)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/two_providers.rs (target/debug/examples/two_providers-214dc9aa9ff0551d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/upstream_bridge.rs (target/debug/examples/upstream_bridge-0825aeba78346f2f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `release` profile [optimized] target(s) in 1.64s
+     Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-6827f676974fc042)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/replay.rs (target/release/deps/yellowstone_replay-df72eb30937cc93b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reconcile.rs (target/release/deps/reconcile-54c120d6e6bc792c)
+
+running 14 tests
+test conflict_after_emission_is_explicit_and_never_reemits ... ok
+test conflict_before_quorum_quarantines_and_releases_payload ... ok
+test below_commitment_cannot_vote_or_poison_slot ... ok
+test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
+test equal_hash_different_metadata_is_a_conflict ... ok
+test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test independent_providers_emit_one_unchanged_payload ... ok
+test invalid_configuration_is_rejected ... ok
+test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
+test pending_capacity_does_not_lose_existing_quorum_progress ... ok
+test reconnect_is_not_an_independent_vote_and_invalidates_old_session ... ok
+test slot_and_provider_capacities_are_recoverable ... ok
+test randomized_interleavings_emit_each_slot_once ... ok
+test retention_stays_bounded_under_long_running_replay ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/reconstruction.rs (target/release/deps/reconstruction-dacf3e8eca532f28)
+
+running 2 tests
+test incomplete_provider_bank_cannot_supply_a_quorum_vote ... ok
+test wire_events_reconstruct_independently_before_cross_provider_agreement ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/replay.rs (target/release/deps/replay-0d5923a52fdda02c)
+
+running 3 tests
+test conflicting_fixture_halts_without_emitting_a_block ... ok
+test agreement_fixture_emits_once_despite_connection_restart ... ok
+test malformed_replay_and_bad_argument_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+
+     Running tests/upstream.rs (target/release/deps/upstream-4c808e4ad31618a6)
+
+running 7 tests
+test different_local_bank_ids_reconcile_by_hash ... ok
+test discard_is_scoped_to_connection_and_bank ... ok
+test conflicting_bank_reuse_and_oversized_event_store_are_rejected ... ok
+test bridge_capacity_is_explicit_and_advance_reports_eviction ... ok
+test same_local_bank_id_across_connections_never_combines_payloads ... ok
+test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
+test slot_level_fork_report_does_not_discard_a_sealed_candidate ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wire.rs (target/release/deps/wire-7d5cbbf62fc7f75b)
+
+running 7 tests
+test capacity_failure_preserves_old_bank_identity ... ok
+test malformed_blockhashes_are_rejected_without_bank_state_mutation ... ok
+test one_connection_cannot_reassign_bank_id_to_another_slot ... ok
+test missing_bank_id_and_unknown_status_are_not_silently_accepted ... ok
+test only_exact_length_entry_hashes_pass ... ok
+test guarded_stream_reports_source_error_without_leaking_its_display ... ok
+test guarded_stream_reports_invalid_input_then_terminates ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/benchmark.rs (target/release/examples/benchmark-81d5cb557e015fcd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/dependency_probe.rs (target/release/examples/dependency_probe-ade178b2bc9aaaff)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/two_providers.rs (target/release/examples/two_providers-f9b58d389e02a184)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/upstream_bridge.rs (target/release/examples/upstream_bridge-8558cb5d9c49cd4e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.43s
+    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+ Documenting yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.66s
+   Generated /build/work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `release` profile [optimized] target(s) in 0.59s
+     Running `target/release/yellowstone-replay fixtures/agreement.jsonl`
+{"session":{"generation":1,"provider":1}}
+{"session":{"generation":1,"provider":2}}
+{"local_bank_id":7,"outcome":{"agreeing_providers":1,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","kind":"pending","slot":10}}
+{"local_bank_id":7,"outcome":{"block":{"commitment":"finalized","meta":{"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"payload":"provider-1-payload"},"kind":"emitted","providers":[1,2]}}
+{"session":{"generation":2,"provider":1}}
+{"local_bank_id":7,"outcome":{"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","kind":"duplicate","slot":10}}
+{"stats":{"conflicts":0,"duplicates":1,"emitted":1,"pending_blocks":0,"retained_slots":1}}
+    Finished `release` profile [optimized] target(s) in 0.03s
+     Running `target/release/yellowstone-replay fixtures/conflict.jsonl`
+{"session":{"generation":1,"provider":1}}
+{"session":{"generation":1,"provider":2}}
+{"local_bank_id":7,"outcome":{"agreeing_providers":1,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","kind":"pending","slot":10}}
+{"local_bank_id":7,"outcome":{"expected":{"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"kind":"conflict","previously_emitted":false,"received":{"blockhash":"0404040404040404040404040404040404040404040404040404040404040404","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"slot":10}}
+line 4: provider conflict; replay halted
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `release` profile [optimized] target(s) in 0.26s
+     Running `target/release/examples/benchmark`
+MEASURED synthetic_metadata_blocks=200000 elapsed_seconds=0.069593 blocks_per_second=2873861 stats=Stats { emitted: 200000, duplicates: 0, conflicts: 0, pending_blocks: 0, retained_slots: 101 }
+LIMIT: in-memory metadata with unit payload; excludes gRPC, reconstruction, full payloads, persistence and end-to-end latency
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.38s
+     Running `target/debug/examples/upstream_bridge`
+slot=10 providers=[ProviderId(1), ProviderId(2)] selected_payload=[1]
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.38s
+     Running `target/debug/examples/dependency_probe`
+MEASURED issue19 invalid_blockhash_panicked=true invalid_entry_hash_panicked=true guarded_blockhash_rejected=true guarded_entry_rejected=true
+MEASURED issue21 upstream_fork_reports=68 emitted_slots=2 bridge_fork_diagnostics=68
+
+thread 'main' (8508684) panicked at examples/dependency_probe.rs:104:5:
+assertion `left == right` failed
+  left: [41, 42]
+ right: [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

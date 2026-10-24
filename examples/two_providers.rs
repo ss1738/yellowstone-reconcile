@@ -12,7 +12,11 @@ use yellowstone_block_machine::{
         SubscribeRequestFilterSlots, SubscribeUpdate,
     },
 };
-use yellowstone_reconcile::{upstream::UpstreamBridge, Config, Outcome, ProviderId, Session};
+use yellowstone_reconcile::{
+    upstream::UpstreamBridge,
+    wire::{GuardedError, GuardedSource, WireError},
+    Config, Outcome, ProviderId, Session,
+};
 
 enum Message {
     Connected {
@@ -25,6 +29,10 @@ enum Message {
     },
     Exhausted {
         provider: ProviderId,
+    },
+    InputRejected {
+        provider: ProviderId,
+        reason: WireError,
     },
 }
 
@@ -90,12 +98,25 @@ async fn provider_task(
                 let Ok(session) = receive.await else {
                     return;
                 };
+                let Ok(source) = GuardedSource::new(source, 8192) else {
+                    return;
+                };
                 let mut stream = BlockStream::<_, SubscribeUpdate, _>::new(
                     source,
                     DragonsmouthBlockCumulator::default(),
                     solana_commitment_config::CommitmentLevel::Finalized,
                 );
-                while let Some(Ok(event)) = stream.next().await {
+                while let Some(item) = stream.next().await {
+                    let event = match item {
+                        Ok(event) => event,
+                        Err(GuardedError::InvalidWire(reason)) => {
+                            let _ = sender
+                                .send(Message::InputRejected { provider, reason })
+                                .await;
+                            return;
+                        }
+                        Err(GuardedError::Source(_)) => break,
+                    };
                     if sender
                         .send(Message::Event {
                             session,
@@ -175,6 +196,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
             Some(Message::Exhausted { provider }) => {
                 break Err(format!("provider {} exhausted reconnect attempts", provider.0).into())
+            }
+            Some(Message::InputRejected { provider, reason }) => {
+                break Err(format!("provider {} input rejected: {reason}", provider.0).into())
             }
             None => break Err("both provider tasks stopped".into()),
         }

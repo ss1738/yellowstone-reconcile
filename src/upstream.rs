@@ -34,6 +34,7 @@ pub struct UpstreamBridge<S> {
     pending: BTreeMap<(Session, u64), Block<S>>,
     max_pending: usize,
     max_events_per_block: usize,
+    upstream_fork_reports: u64,
 }
 
 pub fn block_meta<S>(block: &Block<S>) -> BlockMeta {
@@ -69,6 +70,7 @@ impl<S: BlockEventStore> UpstreamBridge<S> {
             pending: BTreeMap::new(),
             max_pending,
             max_events_per_block,
+            upstream_fork_reports: 0,
         })
     }
     pub fn connect(&mut self, provider: ProviderId) -> Result<Session, BridgeError> {
@@ -81,6 +83,9 @@ impl<S: BlockEventStore> UpstreamBridge<S> {
     }
     pub fn pending_blocks(&self) -> usize {
         self.pending.len()
+    }
+    pub fn upstream_fork_reports(&self) -> u64 {
+        self.upstream_fork_reports
     }
 
     /// On reconnect discard the old BlockStream and call connect, creating a new session.
@@ -151,10 +156,10 @@ impl<S: BlockEventStore> UpstreamBridge<S> {
                 self.pending.remove(&(session, event.bank_id));
                 Ok(None)
             }
-            BlockMachineOutput::ForkDetected(event) => {
-                for bank in event.bank_ids {
-                    self.pending.remove(&(session, bank));
-                }
+            BlockMachineOutput::ForkDetected(_) => {
+                // This slot-level diagnostic is not a bank discard. Upstream issue #21 can
+                // report it for a repaired canonical lineage. Specific discards arrive separately.
+                self.upstream_fork_reports = self.upstream_fork_reports.saturating_add(1);
                 Ok(None)
             }
             BlockMachineOutput::DeadBlockDetected(event) => {

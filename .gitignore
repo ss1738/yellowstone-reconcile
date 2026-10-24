@@ -1,7 +1,8 @@
-/target/
+!.env.example
+.DS_Store
 .env
 .env.*
-!.env.example
-*.pem
 *.key
-.DS_Store
+*.pem
+/target/
+grant/*.pdf

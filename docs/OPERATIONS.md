@@ -49,3 +49,28 @@ manual and requires an owner-provisioned Mini runner; no runner is assumed to ex
 4. Obtain an independent code review and run credentialed provider pilots before production.
 5. Populate application identity/contact fields and replace draft adoption hypotheses with evidence.
 6. Request permission to publish the repository and separately to submit the application.
+
+## Sizing memory against a lagging provider
+
+`Config` bounds pending work by **count**, not by bytes: `max_pending_blocks` (default 128) and
+`max_retained_slots` (default 4096). Nothing can be emitted for a slot until the required number
+of providers agree, so while one provider runs ahead its payloads are all retained. The ceiling an
+operator actually cares about is therefore `max_pending_blocks` multiplied by their own payload
+size.
+
+MEASURED (`cargo run --release --example lag_memory`, 2026-10-25, owner Mini):
+
+| scenario | result |
+|---|---|
+| 64-slot lag, 2 MiB payloads | `pending_blocks=64`, 134,217,728 bytes retained (128.0 MiB) |
+| slow provider catches up | drains to `pending_blocks=0`, `emitted=64` |
+| one provider only, past the bound | accepted exactly 128 blocks, then rejected with `PendingCapacity` |
+
+So the default configuration implies roughly a **256 MiB** payload ceiling at 2 MiB blocks, and it
+**fails closed** rather than growing without limit. Set `max_pending_blocks` from your own measured
+payload size and the memory you are willing to commit, not from the default.
+
+LIMIT: synthetic payloads of uniform size. Retained bytes are computed as `pending_blocks` times
+payload size rather than from allocator accounting, and the figures exclude gRPC, reconstruction
+and persistence. Reproduce with your own payload size and lag:
+`cargo run --release --example lag_memory <payload_bytes> <lag_slots>`.

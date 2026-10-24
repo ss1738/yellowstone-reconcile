@@ -38,3 +38,6 @@ required-features = ["grpc"]
 [[example]]
 name = "dependency_probe"
 required-features = ["simulation"]
+
+[[example]]
+name = "lag_memory"

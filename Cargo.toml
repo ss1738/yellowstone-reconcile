@@ -41,3 +41,6 @@ required-features = ["simulation"]
 
 [[example]]
 name = "lag_memory"
+
+[[example]]
+name = "stall_budget"

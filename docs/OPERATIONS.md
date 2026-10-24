@@ -74,3 +74,35 @@ LIMIT: synthetic payloads of uniform size. Retained bytes are computed as `pendi
 payload size rather than from allocator accounting, and the figures exclude gRPC, reconstruction
 and persistence. Reproduce with your own payload size and lag:
 `cargo run --release --example lag_memory <payload_bytes> <lag_slots>`.
+
+## Stall and retention budgets in seconds
+
+The same count bounds, divided by the chain's slot rate, give the budgets an operator actually
+plans against.
+
+MEASURED slot rate: **212 ms/slot** on mainnet-beta, 2026-10-25, sampled over 1,000 and 5,000
+slot windows (212 and 213 ms/slot). Alpenglow activated on 21 October 2026; this is well below
+the pre-Alpenglow figure, so any older sizing guidance understates how fast the bounds are
+reached. Slot time is not a constant, so pass your own measurement.
+
+MEASURED (`cargo run --release --example stall_budget`, owner Mini, default `Config`):
+
+| budget | count | at 212 ms/slot |
+|---|---|---|
+| One provider silent, before `PendingCapacity` | 128 blocks | **27.1 seconds** |
+| Retention window before a slot is refused as stale | 4,096 slots | 868 seconds (~14.5 min) |
+
+So on the defaults a single stalled provider is tolerated for **under half a minute**. Recovery
+was also measured: after the bound rejects, the first agreement from the returning provider emits
+immediately and the accumulated quorum is not lost (`emitted_on_first_agreement=true`,
+pending 128 to 127).
+
+Two consequences for operators:
+
+- Alert on `pending_blocks` rising, not on `PendingCapacity`. By the time the error fires you are
+  roughly 27 seconds into an outage on default settings.
+- Raise `max_pending_blocks` only against measured payload size. The byte ceiling binds first on
+  large blocks: see the lag-memory section above, where 128 blocks at 2 MiB is already 256 MiB.
+
+LIMIT: assumes one block per slot per provider and no payload pressure, excludes gRPC,
+reconstruction and persistence, and the slot rate is an input rather than a guarantee.

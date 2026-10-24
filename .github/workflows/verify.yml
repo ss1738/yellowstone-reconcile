@@ -1,0 +1,13 @@
+name: Verify on owner Mini
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: [self-hosted, macOS, ARM64, mini]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: bash scripts/verify.sh

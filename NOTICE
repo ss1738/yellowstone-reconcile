@@ -1,0 +1,7 @@
+yellowstone-reconcile
+Copyright 2026 Satyawan Singh
+
+This project depends on Yellowstone Block Machine by Triton One, licensed under Apache-2.0.
+The subscription filter recipe in examples/two_providers.rs is adapted from its
+GeyserGrpcExt implementation at commit b828807d45522505cfdd6b4710d2287b29e5d99a.
+See https://github.com/rpcpool/yellowstone-block-machine and LICENSE.

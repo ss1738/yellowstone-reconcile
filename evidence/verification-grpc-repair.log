@@ -1,0 +1,605 @@
+# mini-test
+# when: 20261025-003601
+# mini: 3 (builduser@build-host)
+# proj: yellowstone-reconcile
+# cmd: bash scripts/verify.sh
+# ---
+Ironman
+rustc 1.95.0 (59807616e 2026-04-14)
+cargo 1.95.0 (f2d3ce0bd 2026-03-21)
+    Updating crates.io index
+    Updating git repository `https://github.com/rpcpool/yellowstone-block-machine`
+     Locking 229 packages to latest compatible versions
+      Adding matchit v0.8.4 (available: v0.8.6)
+ Downloading crates ...
+  Downloaded arc-swap v1.9.3
+  Downloaded protoc-bin-vendored v3.3.0
+  Downloaded simd-adler32 v0.3.10
+  Downloaded jobserver v0.1.35
+  Downloaded pin-project-internal v1.1.13
+  Downloaded prost-derive v0.14.4
+  Downloaded rustls-native-certs v0.8.5
+  Downloaded prost v0.14.4
+  Downloaded siphasher v1.0.4
+  Downloaded pin-project v1.1.13
+  Downloaded crc32fast v1.5.3
+  Downloaded pulldown-cmark-to-cmark v22.0.3
+  Downloaded prost-types v0.14.4
+  Downloaded zstd-safe v7.3.0
+  Downloaded tokio-stream v0.1.19
+  Downloaded unicase v2.10.0
+  Downloaded flate2 v1.1.10
+  Downloaded miniz_oxide v0.9.1
+  Downloaded pulldown-cmark v0.13.5
+  Downloaded zlib-rs v0.6.8
+  Downloaded prost-build v0.14.4
+  Downloaded zstd-sys v2.1.2+zstd.1.5.7
+  Downloaded yellowstone-grpc-proto v14.0.1
+  Downloaded yellowstone-grpc-client v15.0.0
+  Downloaded protoc-bin-vendored-macos-aarch_64 v3.3.0
+  Downloaded protoc-bin-vendored-macos-x86_64 v3.3.0
+  Downloaded protoc-bin-vendored-linux-aarch_64 v3.3.0
+  Downloaded protoc-bin-vendored-win32 v3.3.0
+  Downloaded protoc-bin-vendored-linux-x86_64 v3.3.0
+  Downloaded protoc-bin-vendored-linux-ppcle_64 v3.3.0
+  Downloaded protoc-bin-vendored-linux-x86_32 v3.3.0
+  Downloaded protoc-bin-vendored-linux-s390_64 v3.3.0
+   Compiling libc v0.2.191
+   Compiling bytes v1.12.1
+   Compiling futures-core v0.3.34
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling memchr v2.8.3
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling futures-sink v0.3.34
+   Compiling syn v3.0.9
+   Compiling anyhow v1.0.104
+   Compiling slab v0.4.12
+   Compiling either v1.19.0
+   Compiling futures-channel v0.3.34
+   Compiling futures-io v0.3.34
+   Compiling serde_core v1.0.229
+   Compiling itertools v0.14.0
+   Compiling pkg-config v0.3.34
+   Compiling httparse v1.10.1
+   Compiling http v1.5.0
+   Compiling indexmap v2.14.2
+   Compiling bitflags v2.13.2
+   Compiling tower-service v0.3.3
+   Compiling zeroize v1.9.1
+   Compiling atomic-waker v1.1.2
+   Compiling rustls-pki-types v1.15.1
+   Compiling getrandom v0.4.3
+   Compiling fnv v1.0.7
+   Compiling try-lock v0.2.5
+   Compiling http-body v1.1.0
+   Compiling smallvec v1.16.4
+   Compiling untrusted v0.9.0
+   Compiling core-foundation-sys v0.8.7
+   Compiling rustix v1.1.5
+   Compiling prettyplease v0.2.37
+   Compiling pulldown-cmark v0.13.5
+   Compiling want v0.3.2
+   Compiling sync_wrapper v1.0.2
+   Compiling prost-derive v0.14.4
+   Compiling regex-syntax v0.8.11
+   Compiling jobserver v0.1.35
+   Compiling errno v0.3.14
+   Compiling socket2 v0.6.5
+   Compiling mio v1.2.4
+   Compiling getrandom v0.2.17
+   Compiling signal-hook-registry v1.4.8
+   Compiling cc v1.10.0
+   Compiling httpdate v1.0.3
+   Compiling tower-layer v0.3.3
+   Compiling foldhash v0.1.5
+   Compiling unicase v2.10.0
+   Compiling zstd-safe v7.3.0
+   Compiling crc32fast v1.5.3
+   Compiling rustls v0.23.46
+   Compiling regex-automata v0.4.18
+   Compiling hashbrown v0.15.5
+   Compiling prost v0.14.4
+   Compiling security-framework-sys v2.17.0
+   Compiling core-foundation v0.10.1
+   Compiling http-body-util v0.1.5
+   Compiling tokio-macros v2.7.2
+   Compiling futures-macro v0.3.34
+   Compiling mime v0.3.17
+   Compiling subtle v2.6.1
+   Compiling fastrand v2.5.0
+   Compiling adler2 v2.0.1
+   Compiling simd-adler32 v0.3.10
+   Compiling once_cell v1.21.4
+   Compiling ring v0.17.14
+   Compiling zstd-sys v2.1.2+zstd.1.5.7
+   Compiling tokio v1.54.1
+   Compiling fixedbitset v0.5.7
+   Compiling tempfile v3.27.0
+   Compiling miniz_oxide v0.9.1
+   Compiling futures-util v0.3.34
+   Compiling security-framework v3.7.0
+   Compiling petgraph v0.8.3
+   Compiling regex v1.13.1
+   Compiling prost-types v0.14.4
+   Compiling axum-core v0.5.6
+   Compiling pulldown-cmark-to-cmark v22.0.3
+   Compiling pin-project-internal v1.1.13
+   Compiling percent-encoding v2.3.2
+   Compiling log v0.4.34
+   Compiling heck v0.5.0
+   Compiling matchit v0.8.4
+   Compiling multimap v0.10.1
+   Compiling rustls-native-certs v0.8.5
+   Compiling prost-build v0.14.4
+   Compiling flate2 v1.1.10
+   Compiling tonic-build v0.14.6
+   Compiling pin-project v1.1.13
+   Compiling async-trait v0.1.92
+   Compiling protoc-bin-vendored-linux-x86_64 v3.3.0
+   Compiling protoc-bin-vendored-linux-s390_64 v3.3.0
+   Compiling protoc-bin-vendored-linux-aarch_64 v3.3.0
+   Compiling protoc-bin-vendored-macos-x86_64 v3.3.0
+   Compiling protoc-bin-vendored-linux-ppcle_64 v3.3.0
+   Compiling base64 v0.22.1
+   Compiling protoc-bin-vendored-win32 v3.3.0
+   Compiling protoc-bin-vendored-linux-x86_32 v3.3.0
+   Compiling protoc-bin-vendored-macos-aarch_64 v3.3.0
+   Compiling tonic-prost-build v0.14.6
+   Compiling getrandom v0.3.4
+   Compiling protoc-bin-vendored v3.3.0
+   Compiling rustversion v1.0.23
+   Compiling rand_core v0.9.5
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v2.0.21
+   Compiling rand_chacha v0.9.0
+   Compiling yellowstone-grpc-proto v14.0.1
+   Compiling futures-executor v0.3.34
+   Compiling siphasher v1.0.4
+   Compiling futures v0.3.34
+   Compiling rand v0.9.5
+   Compiling tokio-util v0.7.20
+   Compiling thiserror v2.0.21
+   Compiling arc-swap v1.9.3
+   Compiling bytemuck_derive v1.12.1
+   Compiling tracing-subscriber v0.3.23
+   Compiling h2 v0.4.20
+   Compiling rustls-webpki v0.103.16
+   Compiling tower v0.5.3
+   Compiling tokio-stream v0.1.19
+   Compiling serde v1.0.229
+   Compiling solana-signature v3.6.0
+   Compiling axum v0.8.9
+   Compiling serde_json v1.0.154
+   Compiling bytesize-serde v0.2.1
+   Compiling solana-hash v4.7.0
+   Compiling hyper v1.12.0
+   Compiling zstd v0.13.3
+   Compiling hyper-util v0.1.21
+   Compiling tokio-rustls v0.26.6
+   Compiling hyper-timeout v0.5.2
+   Compiling tonic v0.14.6
+   Compiling tonic-prost v0.14.6
+   Compiling tonic-health v0.14.6
+   Compiling yellowstone-grpc-client v15.0.0
+   Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.90s
+     Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-3d21ef026edf62ce)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/replay.rs (target/debug/deps/yellowstone_replay-da7108b1379654e8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reconcile.rs (target/debug/deps/reconcile-72a53394bec10af0)
+
+running 14 tests
+test invalid_configuration_is_rejected ... ok
+test below_commitment_cannot_vote_or_poison_slot ... ok
+test independent_providers_emit_one_unchanged_payload ... ok
+test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
+test conflict_before_quorum_quarantines_and_releases_payload ... ok
+test pending_capacity_does_not_lose_existing_quorum_progress ... ok
+test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test conflict_after_emission_is_explicit_and_never_reemits ... ok
+test equal_hash_different_metadata_is_a_conflict ... ok
+test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
+test reconnect_is_not_an_independent_vote_and_invalidates_old_session ... ok
+test slot_and_provider_capacities_are_recoverable ... ok
+test randomized_interleavings_emit_each_slot_once ... ok
+test retention_stays_bounded_under_long_running_replay ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/replay.rs (target/debug/deps/replay-316f084c38fbc48c)
+
+running 3 tests
+test conflicting_fixture_halts_without_emitting_a_block ... ok
+test agreement_fixture_emits_once_despite_connection_restart ... ok
+test malformed_replay_and_bad_argument_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/upstream.rs (target/debug/deps/upstream-19a1b943a44d0465)
+
+running 6 tests
+test conflicting_bank_reuse_and_oversized_event_store_are_rejected ... ok
+test bridge_capacity_is_explicit_and_advance_reports_eviction ... ok
+test different_local_bank_ids_reconcile_by_hash ... ok
+test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
+test discard_is_scoped_to_connection_and_bank ... ok
+test same_local_bank_id_across_connections_never_combines_payloads ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/benchmark.rs (target/debug/examples/benchmark-2711032327e04cc7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/two_providers.rs (target/debug/examples/two_providers-ca63f2f360edc505)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/upstream_bridge.rs (target/debug/examples/upstream_bridge-c687927239fb1ae7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling libc v0.2.191
+   Compiling bytes v1.12.1
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling futures-core v0.3.34
+   Compiling futures-sink v0.3.34
+   Compiling anyhow v1.0.104
+   Compiling either v1.19.0
+   Compiling slab v0.4.12
+   Compiling syn v3.0.9
+   Compiling memchr v2.8.3
+   Compiling futures-channel v0.3.34
+   Compiling hashbrown v0.17.1
+   Compiling futures-io v0.3.34
+   Compiling itertools v0.14.0
+   Compiling serde_core v1.0.229
+   Compiling equivalent v1.0.3
+   Compiling pkg-config v0.3.34
+   Compiling bitflags v2.13.2
+   Compiling http v1.5.0
+   Compiling indexmap v2.14.2
+   Compiling httparse v1.10.1
+   Compiling tower-service v0.3.3
+   Compiling zeroize v1.9.1
+   Compiling rustls-pki-types v1.15.1
+   Compiling smallvec v1.16.4
+   Compiling prost-derive v0.14.4
+   Compiling http-body v1.1.0
+   Compiling try-lock v0.2.5
+   Compiling pulldown-cmark v0.13.5
+   Compiling rustix v1.1.5
+   Compiling getrandom v0.4.3
+   Compiling jobserver v0.1.35
+   Compiling untrusted v0.9.0
+   Compiling errno v0.3.14
+   Compiling mio v1.2.4
+   Compiling socket2 v0.6.5
+   Compiling getrandom v0.2.17
+   Compiling cc v1.10.0
+   Compiling signal-hook-registry v1.4.8
+   Compiling atomic-waker v1.1.2
+   Compiling core-foundation-sys v0.8.7
+   Compiling prettyplease v0.2.37
+   Compiling fnv v1.0.7
+   Compiling want v0.3.2
+   Compiling foldhash v0.1.5
+   Compiling rustls v0.23.46
+   Compiling tower-layer v0.3.3
+   Compiling sync_wrapper v1.0.2
+   Compiling unicase v2.10.0
+   Compiling zstd-safe v7.3.0
+   Compiling httpdate v1.0.3
+   Compiling crc32fast v1.5.3
+   Compiling regex-syntax v0.8.11
+   Compiling cfg-if v1.0.5
+   Compiling tokio-macros v2.7.2
+   Compiling futures-macro v0.3.34
+   Compiling prost v0.14.4
+   Compiling ring v0.17.14
+   Compiling zstd-sys v2.1.2+zstd.1.5.7
+   Compiling tokio v1.54.1
+   Compiling futures-util v0.3.34
+   Compiling hashbrown v0.15.5
+   Compiling core-foundation v0.10.1
+   Compiling regex-automata v0.4.18
+   Compiling security-framework-sys v2.17.0
+   Compiling http-body-util v0.1.5
+   Compiling fastrand v2.5.0
+   Compiling mime v0.3.17
+   Compiling simd-adler32 v0.3.10
+   Compiling subtle v2.6.1
+   Compiling once_cell v1.21.4
+   Compiling fixedbitset v0.5.7
+   Compiling adler2 v2.0.1
+   Compiling tempfile v3.27.0
+   Compiling miniz_oxide v0.9.1
+   Compiling petgraph v0.8.3
+   Compiling security-framework v3.7.0
+   Compiling axum-core v0.5.6
+   Compiling regex v1.13.1
+   Compiling prost-types v0.14.4
+   Compiling pulldown-cmark-to-cmark v22.0.3
+   Compiling pin-project-internal v1.1.13
+   Compiling log v0.4.34
+   Compiling heck v0.5.0
+   Compiling multimap v0.10.1
+   Compiling percent-encoding v2.3.2
+   Compiling matchit v0.8.4
+   Compiling prost-build v0.14.4
+   Compiling flate2 v1.1.10
+   Compiling rustls-native-certs v0.8.5
+   Compiling tonic-build v0.14.6
+   Compiling async-trait v0.1.92
+   Compiling pin-project v1.1.13
+   Compiling protoc-bin-vendored-linux-ppcle_64 v3.3.0
+   Compiling protoc-bin-vendored-linux-s390_64 v3.3.0
+   Compiling base64 v0.22.1
+   Compiling protoc-bin-vendored-linux-x86_64 v3.3.0
+   Compiling tokio-util v0.7.20
+   Compiling protoc-bin-vendored-macos-x86_64 v3.3.0
+   Compiling protoc-bin-vendored-linux-x86_32 v3.3.0
+   Compiling protoc-bin-vendored-macos-aarch_64 v3.3.0
+   Compiling protoc-bin-vendored-linux-aarch_64 v3.3.0
+   Compiling protoc-bin-vendored-win32 v3.3.0
+   Compiling tonic-prost-build v0.14.6
+   Compiling getrandom v0.3.4
+   Compiling protoc-bin-vendored v3.3.0
+   Compiling rustversion v1.0.23
+   Compiling rand_core v0.9.5
+   Compiling serde_derive v1.0.229
+   Compiling h2 v0.4.20
+   Compiling tower v0.5.3
+   Compiling tokio-stream v0.1.19
+   Compiling yellowstone-grpc-proto v14.0.1
+   Compiling thiserror-impl v2.0.21
+   Compiling rand_chacha v0.9.0
+   Compiling axum v0.8.9
+   Compiling rustls-webpki v0.103.16
+   Compiling thiserror v2.0.21
+   Compiling serde v1.0.229
+   Compiling futures-executor v0.3.34
+   Compiling hyper v1.12.0
+   Compiling siphasher v1.0.4
+   Compiling futures v0.3.34
+   Compiling arc-swap v1.9.3
+   Compiling rand v0.9.5
+   Compiling hyper-util v0.1.21
+   Compiling bytemuck_derive v1.12.1
+   Compiling tracing-subscriber v0.3.23
+   Compiling bytesize-serde v0.2.1
+   Compiling tokio-rustls v0.26.6
+   Compiling solana-signature v3.6.0
+   Compiling hyper-timeout v0.5.2
+   Compiling solana-hash v4.7.0
+   Compiling serde_json v1.0.154
+   Compiling zstd v0.13.3
+   Compiling tonic v0.14.6
+   Compiling tonic-prost v0.14.6
+   Compiling tonic-health v0.14.6
+   Compiling yellowstone-grpc-client v15.0.0
+   Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `release` profile [optimized] target(s) in 18.47s
+     Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-18cd601d5075c46a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/replay.rs (target/release/deps/yellowstone_replay-8b0aacb47a96d4ee)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/reconcile.rs (target/release/deps/reconcile-e27dba46beb5a93b)
+
+running 14 tests
+test below_commitment_cannot_vote_or_poison_slot ... ok
+test conflict_before_quorum_quarantines_and_releases_payload ... ok
+test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
+test conflict_after_emission_is_explicit_and_never_reemits ... ok
+test equal_hash_different_metadata_is_a_conflict ... ok
+test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test invalid_configuration_is_rejected ... ok
+test independent_providers_emit_one_unchanged_payload ... ok
+test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
+test pending_capacity_does_not_lose_existing_quorum_progress ... ok
+test reconnect_is_not_an_independent_vote_and_invalidates_old_session ... ok
+test slot_and_provider_capacities_are_recoverable ... ok
+test randomized_interleavings_emit_each_slot_once ... ok
+test retention_stays_bounded_under_long_running_replay ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/replay.rs (target/release/deps/replay-17860b8e8354c978)
+
+running 3 tests
+test conflicting_fixture_halts_without_emitting_a_block ... ok
+test agreement_fixture_emits_once_despite_connection_restart ... ok
+test malformed_replay_and_bad_argument_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+     Running tests/upstream.rs (target/release/deps/upstream-8d8fa35275aff7d4)
+
+running 6 tests
+test conflicting_bank_reuse_and_oversized_event_store_are_rejected ... ok
+test different_local_bank_ids_reconcile_by_hash ... ok
+test bridge_capacity_is_explicit_and_advance_reports_eviction ... ok
+test discard_is_scoped_to_connection_and_bank ... ok
+test same_local_bank_id_across_connections_never_combines_payloads ... ok
+test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/benchmark.rs (target/release/examples/benchmark-84be3b652720f103)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/two_providers.rs (target/release/examples/two_providers-335707e9d2b71210)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/upstream_bridge.rs (target/release/examples/upstream_bridge-d9e11cc333fd8302)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Checking bytes v1.12.1
+    Checking futures-core v0.3.34
+    Checking libc v0.2.191
+    Checking futures-sink v0.3.34
+    Checking slab v0.4.12
+    Checking memchr v2.8.3
+    Checking equivalent v1.0.3
+    Checking hashbrown v0.17.1
+    Checking futures-io v0.3.34
+    Checking serde_core v1.0.229
+    Checking tower-service v0.3.3
+    Checking futures-channel v0.3.34
+    Checking zeroize v1.9.1
+    Checking fnv v1.0.7
+    Checking untrusted v0.9.0
+    Checking rustls-pki-types v1.15.1
+    Checking atomic-waker v1.1.2
+    Checking try-lock v0.2.5
+    Checking core-foundation-sys v0.8.7
+    Checking smallvec v1.16.4
+    Checking want v0.3.2
+    Checking httparse v1.10.1
+    Checking tower-layer v0.3.3
+    Checking futures-util v0.3.34
+    Checking http v1.5.0
+    Checking httpdate v1.0.3
+    Checking indexmap v2.14.2
+   Compiling cfg-if v1.0.5
+    Checking sync_wrapper v1.0.2
+    Checking mime v0.3.17
+    Checking subtle v2.6.1
+    Checking bitflags v2.13.2
+    Checking errno v0.3.14
+    Checking socket2 v0.6.5
+   Compiling jobserver v0.1.35
+    Checking signal-hook-registry v1.4.8
+    Checking mio v1.2.4
+    Checking getrandom v0.2.17
+   Compiling cc v1.10.0
+    Checking http-body v1.1.0
+   Compiling rustix v1.1.5
+   Compiling pulldown-cmark v0.13.5
+   Compiling getrandom v0.4.3
+    Checking http-body-util v0.1.5
+    Checking core-foundation v0.10.1
+    Checking tokio v1.54.1
+    Checking security-framework-sys v2.17.0
+    Checking adler2 v2.0.1
+    Checking simd-adler32 v0.3.10
+    Checking axum-core v0.5.6
+    Checking miniz_oxide v0.9.1
+    Checking security-framework v3.7.0
+   Compiling petgraph v0.8.3
+   Compiling prost-types v0.14.4
+    Checking crc32fast v1.5.3
+    Checking matchit v0.8.4
+   Compiling pulldown-cmark-to-cmark v22.0.3
+   Compiling tempfile v3.27.0
+    Checking percent-encoding v2.3.2
+    Checking rustls-native-certs v0.8.5
+    Checking pin-project v1.1.13
+    Checking flate2 v1.1.10
+    Checking prost v0.14.4
+    Checking base64 v0.22.1
+    Checking getrandom v0.3.4
+    Checking thiserror v2.0.21
+    Checking futures-executor v0.3.34
+    Checking serde v1.0.229
+    Checking rand_core v0.9.5
+    Checking siphasher v1.0.4
+    Checking arc-swap v1.9.3
+    Checking futures v0.3.34
+    Checking rand_chacha v0.9.0
+    Checking tracing-subscriber v0.3.23
+    Checking serde_json v1.0.154
+   Compiling ring v0.17.14
+   Compiling zstd-sys v2.1.2+zstd.1.5.7
+    Checking rand v0.9.5
+   Compiling prost-build v0.14.4
+    Checking solana-hash v4.7.0
+    Checking bytesize-serde v0.2.1
+    Checking solana-signature v3.6.0
+   Compiling tonic-prost-build v0.14.6
+   Compiling yellowstone-grpc-proto v14.0.1
+    Checking tokio-util v0.7.20
+    Checking h2 v0.4.20
+    Checking tower v0.5.3
+    Checking tokio-stream v0.1.19
+   Compiling rustls v0.23.46
+    Checking axum v0.8.9
+    Checking rustls-webpki v0.103.16
+    Checking hyper v1.12.0
+   Compiling zstd-safe v7.3.0
+    Checking hyper-util v0.1.21
+    Checking zstd v0.13.3
+    Checking hyper-timeout v0.5.2
+    Checking tokio-rustls v0.26.6
+    Checking tonic v0.14.6
+    Checking tonic-prost v0.14.6
+    Checking tonic-health v0.14.6
+    Checking yellowstone-grpc-client v15.0.0
+    Checking yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
+    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+error: large size difference between variants
+  --> examples/two_providers.rs:17:1
+   |
+17 | /   enum Message {
+18 | | /     Connected {
+19 | | |         provider: ProviderId,
+20 | | |         reply: oneshot::Sender<Session>,
+21 | | |     },
+   | | |_____- the second-largest variant contains at least 10 bytes
+22 | | /     Event {
+23 | | |         session: Session,
+24 | | |         event: BlockMachineOutput<BankBuffer>,
+25 | | |     },
+   | | |_____- the largest variant contains at least 432 bytes
+...  |
+28 | |       },
+29 | |   }
+   | |___^ the entire enum is at least 432 bytes
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#large_enum_variant
+   = note: `-D clippy::large-enum-variant` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::large_enum_variant)]`
+help: consider boxing the large fields or introducing indirection in some other way to reduce the total size of the enum
+   |
+24 -         event: BlockMachineOutput<BankBuffer>,
+24 +         event: Box<BlockMachineOutput<BankBuffer>>,
+   |
+
+error: could not compile `yellowstone-reconcile` (example "two_providers") due to 1 previous error

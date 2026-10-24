@@ -1,0 +1,6 @@
+{"event":"connect","provider":1}
+{"event":"connect","provider":2}
+{"event":"block","provider":1,"generation":1,"bank_id":7,"commitment":"finalized","meta":{"slot":10,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","parent_slot":9,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","entry_count":2,"executed_transaction_count":1},"payload":"provider-1-payload"}
+{"event":"block","provider":2,"generation":1,"bank_id":7,"commitment":"finalized","meta":{"slot":10,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","parent_slot":9,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","entry_count":2,"executed_transaction_count":1},"payload":"provider-2-payload"}
+{"event":"connect","provider":1}
+{"event":"block","provider":1,"generation":2,"bank_id":7,"commitment":"finalized","meta":{"slot":10,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","parent_slot":9,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","entry_count":2,"executed_transaction_count":1},"payload":"provider-1-payload"}

@@ -28,13 +28,20 @@ fn meta(slot: u64) -> BlockMeta {
 }
 
 fn sealed(slot: u64, bytes: usize) -> SealedBlock<Vec<u8>> {
-    SealedBlock { meta: meta(slot), commitment: Commitment::Finalized, payload: vec![0u8; bytes] }
+    SealedBlock {
+        meta: meta(slot),
+        commitment: Commitment::Finalized,
+        payload: vec![0u8; bytes],
+    }
 }
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     // 2 MiB is a plausible mainnet block payload; override to match your own capture.
-    let payload_bytes: usize = args.get(1).and_then(|s| s.parse().ok()).unwrap_or(2 * 1024 * 1024);
+    let payload_bytes: usize = args
+        .get(1)
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(2 * 1024 * 1024);
     let lag: u64 = args.get(2).and_then(|s| s.parse().ok()).unwrap_or(64);
 
     let config = Config::default();

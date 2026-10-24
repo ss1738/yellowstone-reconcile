@@ -106,3 +106,36 @@ Two consequences for operators:
 
 LIMIT: assumes one block per slot per provider and no payload pressure, excludes gRPC,
 reconstruction and persistence, and the slot rate is an input rather than a guarantee.
+
+## Restarting from a checkpoint
+
+Providers replay from the start of their own retention on reconnect, not from wherever you left
+off. So the property that matters across a process restart is that nothing already committed is
+emitted twice, because a second emission is a duplicate downstream write.
+
+The contract is:
+
+1. Persist the highest slot you have **durably** committed, after your sink confirms it.
+2. On restart, construct the reconciler with `first_slot = checkpoint + 1`.
+3. Treat `Error::StaleSlot` on replayed slots as expected and not as a fault.
+4. Keep calling `advance` forward only. `Error::CheckpointRegression` means the checkpoint you
+   read is older than the retention already in effect; do not retry it lower.
+
+MEASURED (`cargo test --test restart`, owner Mini, 2026-10-25, 3 tests passing):
+
+| property | result |
+|---|---|
+| Emit slots 1 to 10, persist checkpoint 10, drop the reconciler, rebuild at `first_slot = 11`, replay slots 1 to 10 | every replayed slot refused with `StaleSlot`; `emitted = 0`; `pending_blocks = 0` |
+| Slots after the checkpoint | emit normally (11, 12, 13) |
+| `advance` backwards from 15 to 14 | `CheckpointRegression`, and `first_slot` stays 15 |
+| `advance` re-applied at the same slot | idempotent |
+| Checkpoint ahead of the stream (`first_slot = 100`, slot 50 arrives) | refused, no state allocated |
+
+Note that refused replays allocate no slot state, so a provider replaying a long history after
+restart does not consume the pending budget described above.
+
+These tests passed on first run against the existing implementation. They prove the behaviour
+rather than correct it; the gap was that the restart path was untested, not that it was wrong.
+
+LIMIT: in-memory only. Durability of the checkpoint itself, and exactly-once delivery into the
+sink, remain the integrating application's responsibility and are not exercised here.

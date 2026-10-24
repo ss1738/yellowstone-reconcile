@@ -66,7 +66,9 @@ fn main() {
     );
 
     // Does the live provider recover once the silent one returns, without losing the quorum?
-    let recovered = core.observe(_silent, sealed(1)).map(|o| matches!(o, Outcome::Emitted { .. }));
+    let recovered = core
+        .observe(_silent, sealed(1))
+        .map(|o| matches!(o, Outcome::Emitted { .. }));
     println!(
         "MEASURED recovery_after_rejection emitted_on_first_agreement={:?} pending_now={}",
         recovered,

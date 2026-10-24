@@ -2026,7 +2026,7 @@ checksum = "1ebf944e87a7c253233ad6766e082e3cd714b5d03812acc24c318f549614536e"
 [[package]]
 name = "yellowstone-block-machine"
 version = "0.12.0"
-source = "git+https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d45522505cfdd6b4710d2287b29e5d99a"
+source = "git+https://github.com/rpcpool/yellowstone-block-machine?rev=0c732a049d6d18008a541f47b09ddb7b949cbb65#0c732a049d6d18008a541f47b09ddb7b949cbb65"
 dependencies = [
  "bs58",
  "bytesize 2.7.0",
@@ -2092,6 +2092,7 @@ dependencies = [
 name = "yellowstone-reconcile"
 version = "0.1.0"
 dependencies = [
+ "bs58",
  "futures-util",
  "serde",
  "serde_json",

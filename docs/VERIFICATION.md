@@ -115,3 +115,24 @@ MEASURED (Ironman, 25 October 2026): `demo/` (the replay driver compiled to WebA
 site) passes its 4 tests with `cargo test` and builds for `wasm32-unknown-unknown` (136,015 bytes). It is a
 separate crate and is **not** part of `scripts/verify.sh` or `evidence/source-manifest.sha256`; no raw log
 of that run was saved. The page was exercised by hand in a browser against all three fixtures.
+
+### Pass 2, 26 October 2026: demo findings and what has not been run
+
+MEASURED (`strings` on the file served at `/reconcile.wasm`, sha256
+`adefc9a0fb351dbc20912d76d02280fa6254d677d471be31f8d546f817c71fd8`, which matched the copy built on
+25 October): the deployed binary embeds the build machine's account name and checkout path
+(`/Users/<account>/mini-work/yellowstone-reconcile/src/lib.rs` and the cargo registry under the same
+home). Cause (INFERRED): cargo records source paths in panic messages and the build did not remap them.
+The deployed file has not been changed; replacing it is a separate deployment step.
+
+Added, not yet run: `demo/verify.sh` and `demo/manifest.py` (separate scope from `scripts/verify.sh`;
+the main manifest is unaffected). The script builds with `--remap-path-prefix`, builds twice from clean
+and fails on a hash difference or a build-machine path. Until it has run on an owned Mini, there is no
+saved log, no demo manifest under `evidence/demo/`, and no claim that a rebuilt artifact matches the
+deployed one. On 26 October both owned Minis were offline (`tailscale status`: `ironman` last seen about
+45 minutes earlier, `apsarth` a day earlier; SSH to port 22 timed out), so no Rust command was run.
+
+`tests/pass2_regressions.rs` (three tests: bridge commit-time capacity retry, bridge event-order
+characterisation, a refused newer-schema file left unchanged) is written and has **not** been run.
+Adding it changes the main source manifest; `evidence/source-manifest.sha256` still describes the
+tree of the last verified run and no longer matches the working tree until the main suite is re-run.

@@ -73,7 +73,8 @@ MEASURED ([contract](docs/CORRECTNESS.md), [sink](src/sink.rs), [wire guard](src
 - SQLite requires finalized blocks and a trusted anchor. Block writes and linked watermark updates
   share a transaction; tests do not establish power-loss safety or arbitrary external exactly-once effects.
 - Counts are bounded, but opaque payload bytes and upstream/transport allocations need separate limits.
-- The guard retains at most 8,192 bank identities per connection. Safe continuous rotation is unbuilt.
+- `GuardedSource::new(source, max_banks)` takes the bank-identity limit from the caller and ends the
+  connection when it is reached; the shipped examples pass 8,192. Safe continuous rotation is unbuilt.
   The transport example is a bounded smoke tool, not a continuous ingestion service.
 
 MEASURED ([Cargo.toml](Cargo.toml), [dependency review](docs/DEPENDENCY-REVIEW.md)): upstream is pinned

@@ -16,6 +16,12 @@ Runnable reference, no credentials:
 cargo run --locked --features upstream --example upstream_bridge
 ```
 
+INFERRED (`src/upstream.rs` `ingest`; upstream `state_machine.rs` `deliver_or_queue` at the
+pinned revision): `UpstreamBridge` needs each connection's outputs in the order its `BlockStream`
+yields them. That stream emits a block before any commitment update for it. A commitment update for
+a bank the bridge has not seen is dropped, not replayed, so feeding events out of order, or from
+anything other than one `BlockStream` per connection, can leave a block waiting forever.
+
 MEASURED (`examples/upstream_bridge.rs`): both mock connections use bank ID 7, yet count as two
 providers because connection identity is separate. The example uses an illustrative `Events`
 store; it is not a live protobuf/transport integration. `tests/reconstruction.rs` and

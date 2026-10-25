@@ -153,3 +153,5 @@ still contain them, and history was not rewritten). Verification: `evidence/veri
 Not run: any live check, since no valid credential exists. The mutation check of the payload
 decoder was abandoned when the Mini ran out of disk copying its `target/` directory; I removed
 my own copy only, and no result from that check is claimed.
+
+Later the same day the request was rewritten to US$7,470 (83 hours, no provider allowance) because a live pilot is no longer planned; see `grant/BUDGET.md`.

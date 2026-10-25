@@ -23,7 +23,7 @@ working verification route.
    and a sustained soak.
 4. Obtain independent review and remediate findings. Resolve the experimental upstream pin via
    a supported release or an explicit independently reviewed maintenance decision.
-5. Re-estimate the provisional $12,210 request around genuinely remaining work. Confirm the
+5. Re-estimate the provisional $7,470 request (no live pilot) around genuinely remaining work. Confirm the
    current form and public links before submission.
 
 INFERRED: a working prototype is a basis for validation, not proof of demand or funding likelihood.

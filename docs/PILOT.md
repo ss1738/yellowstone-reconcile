@@ -40,7 +40,9 @@ python3 scripts/pilot.py --run
 Or use `clusterrun` pinned to `-m 3` with a private wrapper that sources the private file there.
 No Rust compilation runs on the MacBook. Default target: 100 agreed finalized blocks within
 300 seconds. A zero exit requires that target and a successful summary. Interrupt, idle timeout,
-capacity exhaustion, malformed input and conflicts fail the run. Inspect `pilot-results/` on
+capacity exhaustion, malformed input and conflicts fail the run, and the report states why
+(`failure`; a sanitized message, never an endpoint or token). `RECONCILE_MAX_SECONDS` is capped at
+1,200: see the next section. Inspect `pilot-results/` on
 the Mini; it is gitignored. Reports omit raw transport errors and endpoint/token values.
 Review all evidence before copying any of it into the public repository.
 
@@ -66,7 +68,12 @@ guarantees. A successful smoke does not establish later acceptance criteria.
 MEASURED (`src/wire.rs`, `src/lib.rs`, `examples/two_providers.rs`): the wire guard stops at
 8,192 distinct bank identities per connection; the core retains at most 4,096 slot records,
 and this example does not advance its retention floor. Its target is capped at 1,000 blocks.
-Consequently this harness is a smoke test, not a continuous ingestion or soak implementation.
+INFERRED (arithmetic on the 212 ms/slot measurement): 8,192 banks is reached after about
+1,737 seconds (29 minutes) at one bank per slot, sooner if forks add banks. The connection then ends
+with `BankCapacity` and this example does not rotate, so a 24-hour soak is impossible until safe
+rotation exists, and a run longer than that would fail for that reason rather than a provider fault.
+Hence the 1,200-second cap. Consequently this harness is a smoke test, not a continuous ingestion
+or soak implementation.
 Automatic safe rotation, replay/history negotiation and real-payload durable integration remain
 future work. Repeated short smoke runs do not prove gap-free continuity.
 

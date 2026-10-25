@@ -90,7 +90,7 @@ not implement continuous rotation/replay or a live durable payload sink.
 MEASURED (`src/sink.rs`, `tests/sink.rs`): the optional `sqlite` feature atomically stores byte
 payloads and follows parent links when advancing a durable watermark. It handles synthetic
 unordered delivery and restart; the highest stored slot alone is not a safe checkpoint.
-See operations for anchor assumptions. Actual upstream payload serialization is still future work.
+Only `Finalized` blocks are stored. See operations for anchor assumptions and what it does not do. Actual upstream payload serialization is still future work.
 
 ```sh
 cargo run --locked --release --features sqlite --example sqlite_sink
@@ -120,10 +120,13 @@ MEASURED: this repository includes the reconciliation core, upstream bridge, rep
 fixtures, transport example, tests, benchmark and grant drafts (see their source paths).
 Test execution evidence and limitations are recorded separately in `docs/VERIFICATION.md`.
 
-MEASURED (`.github/workflows/`): revised local Actions workflows use explicit owner dispatch
-on a self-hosted Ironman runner and execute the full suite. Runner registration remains pending;
-historical hosted CI success did not cover all features. No automatic cloud Rust build or
-automatic execution of public pull-request code on an owner's Mini is configured in this revision.
+MEASURED (`.github/workflows/`): `ci.yml` is a GitHub-hosted workflow (push and pull request,
+read-only token, no secrets) covering default, `sqlite` and `upstream` features, fixture exit
+codes and Clippy. It has **not run** in its current form: the last hosted runs predate it and
+covered default and upstream features only. `verify.yml` is manual-dispatch on a self-hosted
+Ironman runner for the full suite; no runner is registered, so it cannot run. The grpc and
+simulation features are verified only by `scripts/verify.sh` on an owner Mini
+(`evidence/verification-audit.log`).
 
 INFERRED: this is an application prototype, not an audited production release. No adopter,
 maintainer endorsement, funding award or completed live provider pilot is claimed.

@@ -76,3 +76,19 @@ The inspection did not establish global absence of competing cross-provider reco
 No live endpoint or token variables were configured in this execution environment when checked.
 That limits this review to offline source and synthetic/replay validation. A credentialed
 two-provider pilot, upstream feedback and independent review remain separate requirements.
+
+## Recheck, 25 October 2026 (afternoon, GitHub API, read-only)
+
+MEASURED: upstream `main` is still `b828807d45522505cfdd6b4710d2287b29e5d99a` (committed
+13 October). Issues #19, #20 (PR), #21, #22 (PR) and #23 are all open with PR #22 unmerged at head
+`0c732a049d6d18008a541f47b09ddb7b949cbb65`; #23 has no comments. No GitHub release exists.
+
+MEASURED: `compare` shows the pinned revision is `main` plus exactly two commits, touching
+`forks.rs`, `state_machine.rs` and `AGENTS.md`. It does **not** contain PR #20's head
+(`e0a4029`, diverged), so upstream issue #19, the malformed-input panic, is **not** fixed in the
+pin. `WireGuard` is the only protection against it, and `examples/dependency_probe.rs` reproduces
+both panics on the pinned crate. The experimental pin covers #21 only.
+
+MEASURED: a search of GitHub repositories for "yellowstone reconcile" returned only this
+repository. That is one search term. It does not establish that no other implementation exists,
+including private ones or ones inside consumers such as Shipstern.

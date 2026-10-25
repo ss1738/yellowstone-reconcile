@@ -240,7 +240,26 @@ killed with SIGABRT after committing, full reconciliation with unordered emissio
 metadata drift. `evidence/sink-metadata-regression-before-fix.log` preserves the new metadata
 regression failing before its correction.
 
+Hardening from the 25 October audit (`AUDIT.md`):
+
+- `commit` rejects any block below `Finalized` (`SinkError::NotFinalized`). The watermark follows
+  parent links, so two forkable blocks sharing a parent could otherwise move it along a branch
+  that is later abandoned. Configure the reconciler with `minimum_commitment = Finalized`.
+- The file carries `PRAGMA user_version = 1`. A higher version is refused (`SchemaVersion`).
+  Version 0 is a new file or one made before versioning, which used the same tables.
+- Two handles on one file are serialized by `BEGIN IMMEDIATE`; `tests/sink.rs` runs two writer
+  threads and requires every block exactly once.
+- `tests/sink.rs` kills a child with SIGABRT both after commits and inside an open write
+  transaction. The second models the uncommitted state with raw SQL; it does not call `commit`.
+
+What the sink does **not** do: it does not validate payload bytes, does not compare payloads on
+replay, does not check blockhash against payload, and cannot know whether the anchor is right.
+A primary key on slot makes the sink's own write idempotent. It does not make any external
+effect exactly-once, and a restart redelivers every block above the watermark. A wrong anchor
+that is too high skips history; one that matches nothing stalls the watermark, so every restart
+replays from the anchor and the file grows. Provider history must reach back to
+`resume_slot()`; if it does not, the gap is unrecoverable and the caller must detect it.
+
 LIMIT: one local SQLite file and synthetic blocks, so no gRPC and no real provider. Process death
-is exercised, power loss is not. A networked database such as Postgres is not implemented, and no
-pilot integrator has agreed this contract. The watermark assumes one canonical child per
-`parent_slot`; with `Confirmed` blocks only the parent hash match separates forks.
+is exercised, power loss and disk-full are not. A networked database such as Postgres is not
+implemented, and no pilot integrator has agreed this contract.

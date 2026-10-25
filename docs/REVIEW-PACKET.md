@@ -6,7 +6,7 @@ Status: prepared locally; no independent reviewer engaged and no review complete
 
 On the owner's Ironman Mini, run `bash scripts/verify.sh` after syncing with `mini-test -m 3`.
 Compare executable inputs with `evidence/source-manifest.sha256`; inspect
-`evidence/verification-current.log` and the deliberately failing pre-fix regression log.
+`evidence/verification-audit.log` and the deliberately failing pre-fix logs (`evidence/audit-regressions-before-fix.log`, `evidence/sink-metadata-regression-before-fix.log`).
 
 Read `docs/CORRECTNESS.md`, `docs/DEPENDENCY-REVIEW.md`, `docs/PILOT.md` and `src/` before
 assessing the grant's claims. `grant/BUDGET.md` excludes this delivered preparation from billing.

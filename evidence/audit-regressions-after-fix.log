@@ -1,0 +1,51 @@
+# Audit regressions AFTER the fixes. Raw clusterrun outputs from ironman (Mini 3), 2026-10-25.
+# Run 3: sink + wire pass. The pilot step in this run failed to BUILD (my type-inference error in
+# examples/two_providers.rs); it is kept because it shows why examples need a build, not just tests.
+# mini-test
+# when: 20261025-131541
+# mini: 3 (builduser@build-host)
+# proj: yellowstone-reconcile
+# cmd: cargo fmt --all; cargo test --locked --all-features --test sink --test wire --no-fail-fast 2>&1 | grep -E "FAILED|test result|panicked|^error|warning: unused"; echo PILOT-NEGATIVE-AFTER; rm -rf /tmp/yr-pilot-neg; YELLOWSTONE_A_URL=https://127.0.0.1:1 YELLOWSTONE_B_URL=https://127.0.0.1:2 YELLOWSTONE_A_NAME=a YELLOWSTONE_B_NAME=b RECONCILE_MAX_SECONDS=60 python3 scripts/pilot.py --run --output /tmp/yr-pilot-neg > /tmp/yr-pilot-neg.out 2>&1; echo pilot_exit=$?; tail -n 1 /tmp/yr-pilot-neg.out | python3 -c "import sys,json;r=json.loads(sys.stdin.read());print({k:r[k] for k in (\"passed\",\"failure\",\"exit_code\",\"emitted_records\")}); print(r[\"summary\"][\"failure\"])"
+# ---
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+PILOT-NEGATIVE-AFTER
+pilot_exit=1
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+# Run 4: pilot against unreachable local endpoints after the build fix.
+# mini-test
+# when: 20261025-131610
+# mini: 3 (builduser@build-host)
+# proj: yellowstone-reconcile
+# cmd: cargo fmt --all --check && echo FMT_OK; rm -rf /tmp/yr-pilot-neg; YELLOWSTONE_A_URL=https://127.0.0.1:1 YELLOWSTONE_B_URL=https://127.0.0.1:2 YELLOWSTONE_A_NAME=a YELLOWSTONE_B_NAME=b RECONCILE_MAX_SECONDS=60 python3 scripts/pilot.py --run --output /tmp/yr-pilot-neg > /tmp/yr-pilot-neg.out 2>&1; echo pilot_exit=$?; python3 -c "
+import json,glob
+r=json.load(open(glob.glob(\"/tmp/yr-pilot-neg/*/report.json\")[0]))
+print({k:r[k] for k in (\"passed\",\"failure\",\"exit_code\",\"emitted_records\")})
+print(\"child summary failure:\", r[\"summary\"][\"failure\"])"
+# ---
+FMT_OK
+pilot_exit=1
+{'passed': False, 'failure': 'provider 1 exhausted reconnect attempts', 'exit_code': 1, 'emitted_records': 0}
+child summary failure: provider 1 exhausted reconnect attempts
+
+# Run 5: core counterexample attempts (tests/audit_sequences.rs).
+# mini-test
+# when: 20261025-131649
+# mini: 3 (builduser@build-host)
+# proj: yellowstone-reconcile
+# cmd: cargo fmt --all; cargo test --locked --test audit_sequences 2>&1 | grep -E "^test |test result|panicked|left|right"
+# ---
+test a_late_vote_after_retention_passed_the_slot_cannot_emit ... ok
+test quorum_of_one_still_reports_a_later_conflict_as_after_emission ... ok
+test slot_boundaries_neither_wrap_nor_emit_invalid_blocks ... ok
+test a_reconnecting_provider_that_changes_its_report_is_a_conflict ... ok
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

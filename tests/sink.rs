@@ -252,3 +252,90 @@ fn reconciler_with_unordered_emission_loses_nothing_across_a_restart() {
 fn block_b(slot: u64) -> SealedBlock<Vec<u8>> {
     block_with_parent(slot, slot - 1, "b")
 }
+
+/// A forkable block must not steer the watermark or be stored as final output.
+#[test]
+fn blocks_below_finalized_are_refused() {
+    let mut sink = SqliteSink::open(db("commitment"), 0).unwrap();
+    for commitment in [Commitment::Processed, Commitment::Confirmed] {
+        let mut weak = block(1);
+        weak.commitment = commitment;
+        assert!(sink.commit(&weak).is_err(), "{commitment:?} was stored");
+    }
+    assert_eq!(sink.len().unwrap(), 0);
+    assert_eq!(sink.watermark().unwrap(), 0);
+}
+
+/// A file whose tables look right but which a newer version of this sink marked as its own must
+/// not be written to by code that does not know what changed.
+#[test]
+fn a_database_from_a_newer_schema_version_is_refused() {
+    let path = db("newer");
+    SqliteSink::open(&path, 0).unwrap();
+    rusqlite::Connection::open(&path)
+        .unwrap()
+        .execute_batch("PRAGMA user_version = 99;")
+        .unwrap();
+    assert!(SqliteSink::open(&path, 0).is_err());
+}
+
+/// Two handles on one file, as two processes or threads would be. Every block lands once and
+/// the watermark, computed inside the transaction, ends at the top.
+#[test]
+fn concurrent_writers_store_every_block_once() {
+    let path = db("concurrent");
+    SqliteSink::open(&path, 0).unwrap();
+    let handles: Vec<_> = [1u64, 2]
+        .into_iter()
+        .map(|start| {
+            let path = path.clone();
+            std::thread::spawn(move || {
+                let mut sink = SqliteSink::open(&path, 0).unwrap();
+                for slot in (start..=40).step_by(2) {
+                    sink.commit(&block(slot)).unwrap();
+                }
+            })
+        })
+        .collect();
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    let sink = SqliteSink::open(&path, 0).unwrap();
+    assert_eq!(sink.len().unwrap(), 40);
+    assert_eq!(sink.watermark().unwrap(), 40);
+}
+
+const MID_TX_ENV: &str = "YR_SINK_MID_TX_DB";
+
+/// Child: begin a write transaction the way `commit` does, write the row and the watermark, then
+/// die before COMMIT. Models the uncommitted state; it does not call `commit` itself.
+#[test]
+fn mid_transaction_child() {
+    let Ok(path) = std::env::var(MID_TX_ENV) else {
+        return;
+    };
+    let conn = rusqlite::Connection::open(path).unwrap();
+    conn.execute_batch(
+        "BEGIN IMMEDIATE;
+         INSERT INTO blocks VALUES (1, x'05', 0, x'05', 3, 2, x'00');
+         UPDATE watermark SET slot = 1 WHERE id = 0;",
+    )
+    .unwrap();
+    std::process::abort();
+}
+
+#[test]
+fn a_process_dying_inside_a_write_transaction_leaves_nothing_and_no_lock() {
+    let path = db("mid-tx");
+    SqliteSink::open(&path, 0).unwrap();
+    let status = Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "mid_transaction_child", "--nocapture"])
+        .env(MID_TX_ENV, &path)
+        .status()
+        .unwrap();
+    assert!(!status.success(), "child was expected to abort");
+    let mut sink = SqliteSink::open(&path, 0).unwrap();
+    assert_eq!(sink.len().unwrap(), 0);
+    assert_eq!(sink.watermark().unwrap(), 0);
+    assert_eq!(sink.commit(&block(1)).unwrap(), Commit::Inserted);
+}

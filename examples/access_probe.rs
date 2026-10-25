@@ -1,7 +1,7 @@
 //! Read-only single-provider access check. Never prints credentials or raw transport errors.
 use futures_util::StreamExt;
 use std::{
-    collections::HashMap,
+    collections::{BTreeMap, HashMap},
     env,
     sync::{Arc, Mutex},
     time::Duration,
@@ -11,8 +11,9 @@ use yellowstone_block_machine::{
     stream::{BlockMachineOutput, BlockStream},
     yellowstone_grpc_client::{ClientTlsConfig, GeyserGrpcBuilder},
     yellowstone_grpc_proto::geyser::{
-        subscribe_update::UpdateOneof, SubscribeRequest, SubscribeRequestFilterAccounts,
-        SubscribeRequestFilterBlockFooter, SubscribeRequestFilterSlots, SubscribeUpdate,
+        subscribe_update::UpdateOneof, SlotStatus, SubscribeRequest,
+        SubscribeRequestFilterAccounts, SubscribeRequestFilterBlockFooter,
+        SubscribeRequestFilterSlots, SubscribeUpdate,
     },
 };
 use yellowstone_reconcile::wire::{GuardedError, GuardedSource};
@@ -77,14 +78,38 @@ async fn main() -> Result<(), &'static str> {
     // Counts only; no transaction/account contents or authentication metadata are logged.
     let counts = Arc::new(Mutex::new([0u64; 6]));
     let shared = counts.clone();
+    // Slot statuses split by whether a bank id was present, and bank-scoped fields that are not
+    // optional on the wire (an old server leaves them at zero): enough to tell "provider does not
+    // send bank ids" from "one status lacks one" in a later run. Counts only, no content.
+    let slot_banks = Arc::new(Mutex::new(BTreeMap::<String, [u64; 2]>::new()));
+    let zero_banks = Arc::new(Mutex::new([0u64; 2]));
+    let (shared_slots, shared_zero) = (slot_banks.clone(), zero_banks.clone());
     let source = source.inspect(move |item| {
         if let Ok(update) = item {
             let index = match &update.update_oneof {
-                Some(UpdateOneof::Slot(_)) => 0,
+                Some(UpdateOneof::Slot(slot)) => {
+                    let status = SlotStatus::try_from(slot.status).map_or_else(
+                        |_| format!("unknown({})", slot.status),
+                        |s| format!("{s:?}"),
+                    );
+                    let present = usize::from(slot.bank_id.is_some());
+                    shared_slots
+                        .lock()
+                        .expect("slot lock")
+                        .entry(status)
+                        .or_default()[present] += 1;
+                    0
+                }
                 Some(UpdateOneof::BlockMeta(_)) => 1,
-                Some(UpdateOneof::Entry(_)) => 2,
+                Some(UpdateOneof::Entry(entry)) => {
+                    shared_zero.lock().expect("zero lock")[0] += u64::from(entry.bank_id == 0);
+                    2
+                }
                 Some(UpdateOneof::BlockFooter(_)) => 3,
-                Some(UpdateOneof::Transaction(_)) => 4,
+                Some(UpdateOneof::Transaction(tx)) => {
+                    shared_zero.lock().expect("zero lock")[1] += u64::from(tx.bank_id == 0);
+                    4
+                }
                 Some(UpdateOneof::Account(_)) => 5,
                 _ => return,
             };
@@ -139,6 +164,8 @@ async fn main() -> Result<(), &'static str> {
         "slots":counts[0],"block_meta":counts[1],"entries":counts[2],"footers":counts[3],
         "transactions":counts[4],"accounts":counts[5],"reconstructed":frozen,
         "commitment_updates":finalized_updates,"failure":failure,
+        "slot_status_without_and_with_bank_id":*slot_banks.lock().expect("slot lock"),
+        "entries_and_transactions_with_bank_id_zero":*zero_banks.lock().expect("zero lock"),
         "limit":"Single-provider access/reconstruction check; not a two-provider reconciliation pilot."})
     );
     if passed {

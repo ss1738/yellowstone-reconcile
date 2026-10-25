@@ -157,8 +157,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let max_seconds: u64 = env::var("RECONCILE_MAX_SECONDS")
         .unwrap_or_else(|_| "300".into())
         .parse()?;
-    if max_seconds == 0 || max_seconds > 3600 {
-        return Err("RECONCILE_MAX_SECONDS must be 1..=3600".into());
+    // The wire guard ends a connection after 8192 distinct banks, which at 212 ms per slot and one
+    // bank per slot is about 1,737 s. Forks add banks, so stay well under. Longer runs need
+    // connection rotation, which this example does not implement.
+    if max_seconds == 0 || max_seconds > 1200 {
+        return Err("RECONCILE_MAX_SECONDS must be 1..=1200".into());
     }
     let started = tokio::time::Instant::now();
     let deadline = started + Duration::from_secs(max_seconds);
@@ -181,7 +184,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     drop(sender);
     let mut bridge = UpstreamBridge::new(Config::default(), 128, 100_000)?;
-    let result = loop {
+    let result: Result<(), Box<dyn std::error::Error>> = loop {
         let message = tokio::select! {
             _ = tokio::signal::ctrl_c() => break Err("pilot interrupted before target".into()),
             _ = tokio::time::sleep_until(deadline) => break Err("pilot deadline reached before target".into()),
@@ -191,13 +194,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         match message {
             Some(Message::Connected { provider, reply }) => {
                 connections[usize::from(provider.0 - 1)] += 1;
-                let _ = reply.send(bridge.connect(provider)?);
+                match bridge.connect(provider) {
+                    Ok(session) => {
+                        let _ = reply.send(session);
+                    }
+                    Err(_) => break Err("bridge refused a provider connection".into()),
+                }
             }
             Some(Message::Event { session, event }) => {
                 events[usize::from(session.provider.0 - 1)] += 1;
                 let outcome = match bridge.ingest(session, *event) {
                     Ok(outcome) => outcome,
-                    Err(_) => break Err("bridge rejected input or reached capacity".into()),
+                    Err(error) => break Err(format!("bridge rejected input: {error}").into()),
                 };
                 match outcome {
                     Some(Outcome::Emitted { block, providers }) => {
@@ -237,6 +245,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "{}",
         serde_json::json!({
             "kind":"summary", "target_reached":result.is_ok(),
+            // Every error above is a fixed message, a WireError or a BridgeError; none holds an endpoint.
+            "failure":result.as_ref().err().map(|error| error.to_string()),
             "elapsed_seconds":started.elapsed().as_secs_f64(),
             "connections":connections, "upstream_events":events,
             "first_slot":first_slot, "last_slot":last_slot,

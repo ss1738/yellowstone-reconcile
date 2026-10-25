@@ -9,7 +9,7 @@
 //! Failure direction: a missing parent link stalls the watermark, which costs extra replay. It
 //! never moves the watermark past a missing ancestor after the trusted anchor. Skipped slots
 //! need no row. An anchor ahead of required history is unsafe: it declares that history done.
-use crate::{BlockHash, SealedBlock};
+use crate::{BlockHash, Commitment, SealedBlock};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use std::{fmt, path::Path};
 
@@ -23,7 +23,18 @@ pub enum SinkError {
         slot: u64,
     },
     Corrupt(&'static str),
+    /// Only finalized blocks may be stored: the watermark follows parent links, and forkable
+    /// blocks sharing a parent would let it advance along a branch that is later abandoned.
+    NotFinalized {
+        slot: u64,
+        commitment: Commitment,
+    },
+    /// The file was written by a sink with a schema this code does not know.
+    SchemaVersion(i64),
 }
+
+/// Value of `PRAGMA user_version` for the schema created by this module.
+const SCHEMA_VERSION: i64 = 1;
 
 impl fmt::Display for SinkError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -32,6 +43,15 @@ impl fmt::Display for SinkError {
             Self::SlotOutOfRange(slot) => write!(f, "slot {slot} does not fit a SQLite integer"),
             Self::Mismatch { slot } => write!(f, "slot {slot} is stored with a different block"),
             Self::Corrupt(what) => write!(f, "corrupt sink: {what}"),
+            Self::NotFinalized { slot, commitment } => {
+                write!(
+                    f,
+                    "slot {slot} is {commitment:?}; only Finalized blocks are stored"
+                )
+            }
+            Self::SchemaVersion(version) => {
+                write!(f, "sink schema version {version} is not supported")
+            }
         }
     }
 }
@@ -109,6 +129,11 @@ impl SqliteSink {
         conn.query_row("PRAGMA journal_mode = WAL", [], |row| {
             row.get::<_, String>(0)
         })?;
+        // 0 is a new file or one created before versioning, which used this same schema.
+        let version: i64 = conn.query_row("PRAGMA user_version", [], |row| row.get(0))?;
+        if version != 0 && version != SCHEMA_VERSION {
+            return Err(SinkError::SchemaVersion(version));
+        }
         conn.execute_batch(
             "PRAGMA synchronous = FULL;
              CREATE TABLE IF NOT EXISTS blocks (
@@ -131,12 +156,23 @@ impl SqliteSink {
             "INSERT OR IGNORE INTO watermark (id, slot, blockhash) VALUES (0, ?1, NULL)",
             [to_i64(anchor)?],
         )?;
+        conn.pragma_update(None, "user_version", SCHEMA_VERSION)?;
         Ok(Self { conn })
     }
 
     /// Store the block and advance the watermark atomically. Idempotent on slot.
+    ///
+    /// The payload is opaque and is not validated. The block must be `Finalized`: configure the
+    /// reconciler with `minimum_commitment = Finalized` (the default) when feeding this sink.
+    /// A block with an equal slot but different identity metadata is an error, never an update.
     pub fn commit(&mut self, block: &SealedBlock<Vec<u8>>) -> Result<Commit, SinkError> {
         let meta = &block.meta;
+        if block.commitment < Commitment::Finalized {
+            return Err(SinkError::NotFinalized {
+                slot: meta.slot,
+                commitment: block.commitment,
+            });
+        }
         let slot = to_i64(meta.slot)?;
         let parent_slot = to_i64(meta.parent_slot)?;
         let entry_count = to_i64(meta.entry_count)?;

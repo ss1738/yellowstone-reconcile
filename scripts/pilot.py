@@ -47,9 +47,11 @@ def main():
     try:
         blocks = int(os.environ.get("RECONCILE_MAX_BLOCKS", "100"))
         seconds = int(os.environ.get("RECONCILE_MAX_SECONDS", "300"))
-        assert 1 <= blocks <= 1000 and 1 <= seconds <= 3600
+        # 1200 s: the wire guard's 8192-bank limit ends a connection after about 1,737 s at 212 ms
+        # per slot, and no rotation exists yet. A longer run would fail for that reason alone.
+        assert 1 <= blocks <= 1000 and 1 <= seconds <= 1200
     except (ValueError, AssertionError):
-        print("Invalid pilot bounds: blocks 1..1000; seconds 1..3600.", file=sys.stderr)
+        print("Invalid pilot bounds: blocks 1..1000; seconds 1..1200.", file=sys.stderr)
         return 2
     # Build scripts do not need provider credentials. Keep build output separate from pilot evidence.
     build_env = {key: value for key, value in os.environ.items()
@@ -82,12 +84,19 @@ def main():
     watchdog.start()
     summary = None
     emitted = 0
+    harness_error = None
     try:
         with (output / "events.jsonl").open("x") as stream:
             for line in child.stdout:
-                event = json.loads(line)
-                if event.get("kind") not in ("emitted", "summary"):
-                    raise ValueError("unexpected pilot event")
+                # Child output is data. Never echo an unparseable line: it could carry anything.
+                try:
+                    event = json.loads(line)
+                    if event.get("kind") not in ("emitted", "summary"):
+                        raise ValueError
+                except (ValueError, AttributeError):
+                    harness_error = "child produced output that is not a pilot event"
+                    child.kill()
+                    break
                 stream.write(json.dumps(event) + "\n")
                 stream.flush()
                 if event["kind"] == "emitted":
@@ -102,8 +111,12 @@ def main():
         watchdog.cancel()
         stop.set()
         sampler.join()
-    passed = code == 0 and bool(summary and summary.get("target_reached")) and emitted == blocks
-    report = {"kind": "pilot_result", "passed": passed, "exit_code": code,
+    passed = (harness_error is None and code == 0 and bool(summary and summary.get("target_reached"))
+              and emitted == blocks)
+    # A failed run states why. The child's summary carries its own sanitized failure message.
+    failure = None if passed else (
+        harness_error or (summary or {}).get("failure") or "child ended without a summary")
+    report = {"kind": "pilot_result", "passed": passed, "failure": failure, "exit_code": code,
               "emitted_records": emitted, "target_blocks": blocks,
               "deadline_seconds": seconds, "elapsed_seconds": time.monotonic() - started,
               "sampled_peak_process_rss_kib": peak_rss_kib[0],

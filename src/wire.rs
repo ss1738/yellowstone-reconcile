@@ -20,8 +20,11 @@ pub enum WireError {
     InvalidHash {
         field: &'static str,
     },
+    /// A bank-scoped slot status arrived without `bank_id`. The status is recorded because the
+    /// pinned protocol makes only `FirstShredReceived`, `Completed` and `Dead` bankless.
     MissingBankId {
         slot: u64,
+        status: SlotStatus,
     },
     UnknownSlotStatus,
     BankSlotMismatch {
@@ -96,7 +99,10 @@ impl WireGuard {
                         | SlotStatus::SlotFinalized
                 ) && slot.bank_id.is_none()
                 {
-                    return Err(WireError::MissingBankId { slot: slot.slot });
+                    return Err(WireError::MissingBankId {
+                        slot: slot.slot,
+                        status,
+                    });
                 }
                 slot.bank_id.map(|bank| (bank, slot.slot))
             }

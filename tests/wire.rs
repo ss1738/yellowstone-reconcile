@@ -97,7 +97,10 @@ fn missing_bank_id_and_unknown_status_are_not_silently_accepted() {
     update.bank_id = None;
     assert_eq!(
         guard.check(&event).unwrap_err(),
-        WireError::MissingBankId { slot: 10 }
+        WireError::MissingBankId {
+            slot: 10,
+            status: SlotStatus::SlotCreatedBank
+        }
     );
     let Some(UpdateOneof::Slot(update)) = event.update_oneof.as_mut() else {
         panic!()
@@ -150,4 +153,57 @@ async fn guarded_stream_reports_source_error_without_leaking_its_display() {
     let error = source.next().await.unwrap().unwrap_err();
     assert_eq!(error.to_string(), "upstream source error");
     assert!(source.next().await.is_none());
+}
+
+fn slot_update(status: SlotStatus, bank: Option<u64>) -> SubscribeUpdate {
+    SubscribeUpdate {
+        update_oneof: Some(UpdateOneof::Slot(SubscribeUpdateSlot {
+            slot: 10,
+            bank_id: bank,
+            status: status as i32,
+            ..Default::default()
+        })),
+        ..Default::default()
+    }
+}
+
+/// The PublicNode run stopped on `MissingBankId` but logged only the slot, so the status that
+/// lacked a bank could not be identified afterwards. The error must carry it.
+#[test]
+fn missing_bank_id_names_the_status_that_lacked_it() {
+    for (status, name) in [
+        (SlotStatus::SlotCreatedBank, "SlotCreatedBank"),
+        (SlotStatus::SlotProcessed, "SlotProcessed"),
+        (SlotStatus::SlotConfirmed, "SlotConfirmed"),
+        (SlotStatus::SlotFinalized, "SlotFinalized"),
+    ] {
+        let error = WireGuard::new(2)
+            .unwrap()
+            .check(&slot_update(status, None))
+            .unwrap_err();
+        assert!(
+            error.to_string().contains(name),
+            "{error} does not name {name}"
+        );
+    }
+}
+
+/// Slot-scoped statuses carry no bank by protocol definition, and a present bank id of zero is
+/// a bank, not an absence.
+#[test]
+fn slot_scoped_statuses_need_no_bank_and_zero_is_a_present_bank() {
+    for status in [
+        SlotStatus::SlotFirstShredReceived,
+        SlotStatus::SlotCompleted,
+        SlotStatus::SlotDead,
+    ] {
+        let mut guard = WireGuard::new(2).unwrap();
+        guard.check(&slot_update(status, None)).unwrap();
+        assert_eq!(guard.tracked_banks(), 0);
+    }
+    let mut guard = WireGuard::new(2).unwrap();
+    guard
+        .check(&slot_update(SlotStatus::SlotFinalized, Some(0)))
+        .unwrap();
+    assert_eq!(guard.tracked_banks(), 1);
 }

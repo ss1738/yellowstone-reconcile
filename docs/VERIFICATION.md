@@ -2,7 +2,7 @@
 
 ## Current source
 
-MEASURED: `evidence/verification-current.log` records run `20261025-121042` on Ironman,
+MEASURED: `evidence/verification-current.log` records run `20261025-124903` on Ironman,
 Rust/Cargo 1.95.0. `scripts/verify.sh` completed with exit 0:
 
 - Default-feature tests: 20 reported passing tests.
@@ -18,7 +18,7 @@ MEASURED: all-feature tests include 14 core, 2 reconstruction, 3 CLI, 3 restart,
 re-executed by the process-abort test; counts are runner reports, not independent proof obligations.
 Evidence: test-result sections in `evidence/verification-current.log` and source files in `tests/`.
 
-MEASURED: the 32 paths in `evidence/source-manifest.sha256` identify this run's executable inputs,
+MEASURED: the 33 paths in `evidence/source-manifest.sha256` identify this run's executable inputs,
 including workflows. The formatted transport example and manifest were retrieved from Ironman;
 a local regeneration matched exactly. Recheck with:
 
@@ -55,6 +55,12 @@ a statistical mainnet size distribution or a Geyser wire-memory ceiling. At the 
 input, the stall example derives 27.1 seconds. Neither is an operational guarantee.
 
 ## Pilot and CI readiness
+
+MEASURED: a subsequent owner-authorized single-provider PublicNode check connected and subscribed
+using the supplied token, but stopped on `MissingBankId` with no reconstructed blocks.
+See `evidence/publicnode-access.log`, `examples/access_probe.rs` and `docs/PUBLICNODE-RESULT.md`.
+This is actual network access evidence, not a successful reconstruction or two-provider pilot.
+The private credential wrappers were removed; remote absence is recorded in `pilot-preflight.log`.
 
 MEASURED: `evidence/pilot-preflight.log` shows owner-Mini detection succeeded but provider access
 checks failed. `scripts/pilot.py --run` exited 2 before build or connection when those credentials

@@ -38,6 +38,10 @@ name = "two_providers"
 required-features = ["grpc"]
 
 [[example]]
+name = "access_probe"
+required-features = ["grpc"]
+
+[[example]]
 name = "dependency_probe"
 required-features = ["simulation"]
 

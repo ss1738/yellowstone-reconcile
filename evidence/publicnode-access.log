@@ -1,0 +1,10 @@
+# clusterrun
+# when: 20261025-124845
+# mini: 3 (builduser@build-host)
+# script: publicnode_access_once.sh
+# ---
+{"stage":"connected"}
+{"stage":"subscribed"}
+{"reason":"MissingBankId { slot: 461169824 }","stage":"wire_rejected"}
+{"accounts":0,"block_meta":0,"commitment_updates":0,"entries":44,"failure":"wire guard rejected input","footers":0,"limit":"Single-provider access/reconstruction check; not a two-provider reconciliation pilot.","passed":false,"reconstructed":0,"slots":2,"stage":"result","transactions":20}
+Error: "single-provider check incomplete"

@@ -1,11 +1,12 @@
-name: CI
-# GitHub-hosted, read-only token, no secrets: safe to run on untrusted pull requests.
-# Covers default, sqlite and upstream features. The grpc and simulation features, the full
-# example set and the live-provider tools run only under verify.yml on an owner Mini.
+name: Hosted check (manual)
+# The owner's standing rule is that Rust builds and tests run on the owner's Mini machines.
+# This GitHub-hosted workflow therefore runs ONLY when someone starts it by hand. It is not an
+# automatic CI and it has never been run. To make it automatic, add push and pull_request
+# triggers: that is an owner decision, because it compiles Rust on GitHub's machines.
+# Read-only token, no secrets: safe for untrusted code if the owner does enable it.
+# The authoritative verification is scripts/verify.sh on an owner Mini (see docs/RUNNER-SETUP.md).
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

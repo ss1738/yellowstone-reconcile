@@ -1,146 +1,131 @@
 # yellowstone-reconcile
 
-Reconcile complete Solana blocks across independent Yellowstone gRPC connections. Rust, Apache-2.0.
-**Status: prototype. Unaudited, not yet run against two live providers.**
-[Grant proposal (PDF)](docs/yellowstone-reconcile-proposal.pdf) |
-[Correctness contract](docs/CORRECTNESS.md) | [Verification](docs/VERIFICATION.md) |
-[Self-audit](AUDIT.md) | [Research record](docs/RESEARCH-2026-10-25.md)
-[Live demo](https://reconcile.satyawansingh.com/demo) (the library compiled to WebAssembly, replaying fixtures; source in [`demo/`](demo/))
+Reconcile sealed Solana blocks reported by independent Yellowstone providers.
+**Prototype, unaudited; a successful live two-provider pilot is still outstanding.**
+
+[Start with a fixture](#try-a-fixture) · [Integration guide](docs/INTEGRATION.md) ·
+[Correctness contract](docs/CORRECTNESS.md) · [Verification evidence](docs/VERIFICATION.md)
 
 ## What it does
 
-Solana's [Alpenglow integration guidance](https://solana.com/upgrades/alpenglow) says a bank id means
-nothing outside the connection it arrived on, and that reconciling across connections is the
-consumer's job. This library takes one upstream
-[block-machine](https://github.com/rpcpool/yellowstone-block-machine) stream per connection,
-compares the sealed blocks on blockhash, parent and counts instead of bank id, and emits a block
-only when a configurable number of distinct providers (default two, at Finalized) agree. A
-disagreement is quarantined and reported, not resolved by majority. A SQLite sink stores each
-block and its linked resume point in one transaction, supporting idempotent replay after a process
-restart. This requires a trusted anchor and finalized chain; power-loss safety and arbitrary
-downstream effects are not established by the tests.
-It is off-chain tooling; it does not verify ledger validity, only that providers agree.
+MEASURED ([core](src/lib.rs), [bridge](src/upstream.rs)): each connection reconstructs its own
+blocks. The library compares slot, blockhash, parent slot/hash and entry/transaction counts.
+By default, two distinct providers must report the same metadata at Finalized commitment before
+one provider's unchanged payload is emitted. Disagreement quarantines the slot and reports a
+conflict; a later majority does not repair it automatically.
 
-## Status at a glance
+INFERRED: this may help indexer and infrastructure teams that already consume multiple feeds.
+Demand for this particular library remains unvalidated. Provider agreement is not ledger
+validation, payload equality or proof that operators are independent.
 
-| Tested offline (synthetic or simulated input) | Not done |
-|---|---|
-| Agreement, conflict, reconnect and retention rules (`tests/`) | A run against two live providers |
-| Bridge from upstream streams; raw-input guard (`src/wire.rs`) | A consumer who has asked for it |
-| SQLite sink: finalized-only, crash and unordered recovery | Connection rotation (the guard ends a stream after 8,192 banks) |
-| Real reconstructed events stored and read back (`tests/real_payload.rs`) | Independent code review |
-| Replay CLI and fixtures | A supported upstream release (the pin is an open pull request) |
+## Try a fixture
 
-## Quick start
-
-Needs Rust 1.95 (pinned by `rust-toolchain.toml`) and network access once, for the pinned git
-dependency. A full build uses about 3 GB.
+On a build machine with the pinned Rust 1.95 toolchain, Git and network access for dependencies:
 
 ```sh
-bash scripts/verify.sh        # the complete locked suite; its output is evidence/verification-final.log
-cargo run --bin yellowstone-replay -- fixtures/agreement.jsonl
-cargo run --bin yellowstone-replay -- fixtures/conflict.jsonl   # exits 1: provider conflict
-cargo run --features upstream --example upstream_bridge
+git clone https://github.com/ss1738/yellowstone-reconcile.git
+cd yellowstone-reconcile
+cargo run --locked --bin yellowstone-replay -- fixtures/agreement.jsonl
 ```
 
-The agreement fixture uses the same local bank id on two providers and reconnects one. The replay
-CLI reads sealed, qualified block observations as JSON lines, not raw Geyser fragments; hashes in
-the fixtures are hexadecimal, whereas upstream wire hashes are binary or base58.
+MEASURED ([agreement fixture](fixtures/agreement.jsonl), [CLI regression](tests/replay.rs)):
+this emits one block and classifies the reconnect replay as a duplicate. No provider account,
+API token, database or running Solana validator is required for this offline command.
 
-## Integration
-
-Use one upstream `BlockStream` per connection. Feed its outputs into `UpstreamBridge`:
-
-1. Assign a stable `ProviderId` per independent provider, not per endpoint or reconnect.
-2. Call `connect` for each connection/reconnection; discard the old reconstructor.
-3. Pass each stream's `BlockMachineOutput` with its returned `Session` to `ingest`.
-4. Process `Emitted` outputs. Halt the affected downstream processing on `Conflict`.
-5. Advance retention explicitly and handle pending/quarantined slots in the prune report.
-
-The upstream dependency is currently pinned to `0c732a049d6d18008a541f47b09ddb7b949cbb65`,
-the head of upstream [PR #22](https://github.com/rpcpool/yellowstone-block-machine/pull/22),
-which is **open and unmerged**. Upstream `main` is
-`b828807d45522505cfdd6b4710d2287b29e5d99a`; on that baseline the repaired-dead-slot
-lineage described in [docs/DEPENDENCY-REVIEW.md](docs/DEPENDENCY-REVIEW.md) is not handled,
-because the relevant prune happens inside upstream `BlockStream` and cannot be corrected
-downstream. Anyone depending on this crate should decide deliberately between the merged
-baseline and the unmerged PR.
-`upstream` enables the typed bridge; `grpc` additionally enables the opt-in transport example.
-
-### Two-provider transport demonstration
-
-Configure distinct HTTPS providers on the same cluster. Export the environment variables
-listed in `.env.example`, keeping tokens out of command-line arguments and source files.
-The example reads the environment; it does not load `.env` automatically.
+Try disagreement separately; exit status **1** is the expected result:
 
 ```sh
-cargo run --release --features grpc --example two_providers
+cargo run --locked --bin yellowstone-replay -- fixtures/conflict.jsonl
 ```
 
-MEASURED (source: `examples/two_providers.rs`): the example subscribes independently,
-recreates connection state on retry, uses a bounded event channel, and stops on conflicts
-or configured block count. It prints accepted metadata; it is not a persistent indexer.
-Live provider operation is not established by compilation or offline fixture tests.
+The CLI input is sealed, qualified block observations in JSONL, not raw Geyser events. Fixture
+hashes are hexadecimal. Do not feed optimistic fragments directly into the agreement core.
 
-For the bounded smoke harness and evidence capture, see [pilot protocol](docs/PILOT.md).
-`python3 scripts/pilot.py --preflight` checks configuration without connecting or compiling;
-`--run` requires provider access. No live pilot is claimed. The harness does
-not implement continuous rotation/replay or a live durable payload sink.
+## Choose the integration layer
 
-### Storing real block payloads
+MEASURED (source files linked below):
 
-`wire::encode_events` and `wire::decode_events` turn a reconstructed block's protobuf events
-(`Block<BankBuffer>.events`) into the opaque bytes the sink stores and back. The encoding carries an
-event count, so a payload cut at any point, or padded, is an error and never a shorter block.
-MEASURED (`tests/real_payload.rs`): events from the upstream simulation survive two providers, the
-reconciler, SQLite and a reopen unchanged. The wire is simulated; no live feed has been stored.
-
-### SQLite recovery example
-
-MEASURED (`src/sink.rs`, `tests/sink.rs`): the optional `sqlite` feature atomically stores byte
-payloads and follows parent links when advancing a durable watermark. It handles synthetic
-unordered delivery and restart; the highest stored slot alone is not a safe checkpoint.
-Only `Finalized` blocks are stored. See operations for anchor assumptions and what it does not do. Storing payloads from a real feed is future work.
+| Use case | Interface / feature | Runnable example |
+|---|---|---|
+| Already have sealed block metadata and an opaque payload | `Reconciler<P>`; default features | [Replay CLI](src/bin/replay.rs) |
+| Have one upstream reconstructor per connection | `UpstreamBridge`; `upstream` | [Offline bridge](examples/upstream_bridge.rs) |
+| Connect raw Yellowstone gRPC streams | `GuardedSource` plus a separate upstream `BlockStream` per connection; `grpc` | [Two-provider smoke example](examples/two_providers.rs) |
+| Store finalized byte payloads with a linked watermark | `SqliteSink`; `sqlite` | [SQLite recovery](examples/sqlite_sink.rs) |
+| Replay fixtures in a browser build | Separate WebAssembly crate | [Demo source and build instructions](demo/README.md) |
 
 ```sh
-cargo run --locked --release --features sqlite --example sqlite_sink
+cargo run --locked --features upstream --example upstream_bridge
+cargo run --locked --features sqlite --example sqlite_sink
 ```
 
-`scripts/verify.sh` runs it.
+Read the [integration guide](docs/INTEGRATION.md) before adapting either example. The offline
+bridge uses a small illustrative event store; the SQLite example uses synthetic byte payloads.
+[Real-payload regressions](tests/real_payload.rs) use upstream-simulated protobuf events, not a live feed.
 
-## Correctness boundaries
+## Limits to understand before use
 
-- Provider agreement is not cryptographic validation or proof that providers are independent.
-- Payload completeness depends on upstream reconstruction and matching subscription semantics.
-- Accepted payload is from the first qualifying observation; it is not byte-verified against peers.
-- Output order follows arrival/quorum, not slot order. Chain continuity and skipped-slot recovery
-  belong to the host application.
-- Deduplication is in memory within the retained window. Durable exactly-once delivery requires
-  transactional coordination with the downstream sink; this library does not promise it.
-- Counts of retained blocks/providers/events are bounded. Opaque payload byte sizes and upstream
-  transport buffers require their own limits.
-- A disagreement after an earlier emission is reported, not silently undone.
+MEASURED ([contract](docs/CORRECTNESS.md), [sink](src/sink.rs), [wire guard](src/wire.rs)):
 
-See [correctness contract](docs/CORRECTNESS.md), [operations](docs/OPERATIONS.md),
-[verification](docs/VERIFICATION.md), the [proposal source](grant/proposal.md) and its [budget basis](grant/BUDGET.md).
+- Provider IDs are operator-assigned trust identities. Reconnects create new generations, not votes.
+- Output follows arrival/quorum, not slot order. The host owns chain continuity and backfill.
+- Halt downstream handling on conflicts, including ones reported after an earlier emission.
+  An emitted block or stored row is not automatically reversed.
+- SQLite requires finalized blocks and a trusted anchor. Block writes and linked watermark updates
+  share a transaction; tests do not establish power-loss safety or arbitrary external exactly-once effects.
+- Counts are bounded, but opaque payload bytes and upstream/transport allocations need separate limits.
+- The guard retains at most 8,192 bank identities per connection. Safe continuous rotation is unbuilt.
+  The transport example is a bounded smoke tool, not a continuous ingestion service.
 
-The proposal follows the Foundation's Developer Tooling template: component development,
-six months of maintenance and quantified external adoption. The $7,470 request is an estimate;
-the live two-provider pilot remains uncompleted and is not funded by this scope.
+MEASURED ([Cargo.toml](Cargo.toml), [dependency review](docs/DEPENDENCY-REVIEW.md)): upstream is pinned
+at `0c732a049d6d18008a541f47b09ddb7b949cbb65`, the experimental PR #22 revision. At the
+26 October check it remained open and unmerged. The pin lacks the upstream issue #19 malformed-input
+fix; our boundary checks address identified paths, not all possible dependency defects.
 
-## Project status
+MEASURED ([PublicNode result](docs/PUBLICNODE-RESULT.md)): one real feed authenticated and streamed
+updates but produced no reconstructed blocks before a missing-bank-ID rejection. Its cause remains
+unresolved. No successful two-provider pilot, production adopter or independent audit is claimed.
 
-MEASURED: this repository includes the reconciliation core, upstream bridge, replay CLI,
-fixtures, transport example, tests, benchmark and grant drafts (see their source paths).
-Test execution evidence and limitations are recorded separately in `docs/VERIFICATION.md`.
+## Verify the repository
 
-MEASURED (`docs/RUNNER-SETUP.md`, `gh api`, 25 October 2026): there is **no automatic CI**. Verification
-is `scripts/verify.sh`, run by hand on the maintainer's build machine (`evidence/verification-final.log`). Neither
-workflow has run: `ci.yml` is a GitHub-hosted check that starts only by hand, and `verify.yml`
-needs a self-hosted runner that is not registered (0 runners). The runner configuration is
-written up for maintainer review and nothing enables it.
+On a build machine:
 
-INFERRED: this is an application prototype, not an audited production release. No adopter,
-maintainer endorsement, funding award or completed live provider pilot is claimed.
+```sh
+bash scripts/verify.sh
+```
 
-Apache-2.0. See `LICENSE` and `NOTICE`.
+MEASURED ([script](scripts/verify.sh)): this checks formatting, default/all-feature debug/release
+tests, lint, docs, fixture exit codes and offline examples. It prints to the terminal; it does
+**not** create or refresh an evidence file automatically. To capture a new run while preserving
+its failure status, use Bash with pipefail and a new log path:
+
+```sh
+bash -o pipefail -c 'bash scripts/verify.sh 2>&1 | tee /tmp/yellowstone-verify.log'
+```
+
+Compare source identity separately:
+
+```sh
+python3 scripts/source_manifest.py | diff -u evidence/source-manifest.sha256 -
+```
+
+A changed manifest is not automatically a regression: it means the archived evidence no longer
+identifies the current executable inputs and must be re-established by a new verified run.
+MEASURED ([verification record](docs/VERIFICATION.md)): the main manifest excludes the separate
+browser demo. Its commands and evidence must be evaluated separately; a main-suite pass is not
+proof that the WebAssembly build or deployed site matches that source.
+
+MEASURED ([runner setup](docs/RUNNER-SETUP.md)): verification is manual. Neither a configured YAML
+workflow nor old CI runs establish coverage of a newer tree. The recorded runner/CI status is dated;
+no current automatic CI pass is implied here.
+
+## Project information
+
+- [Contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md).
+- [Operations](docs/OPERATIONS.md), [pilot protocol](docs/PILOT.md) and [self-audit](AUDIT.md).
+- [Research and overlap](docs/RESEARCH-2026-10-25.md).
+- [Funding proposal source](grant/proposal.md) and [budget assumptions](grant/BUDGET.md).
+  Funding documents are separate from the library's tested correctness contract.
+
+MEASURED ([LICENSE](LICENSE)): Apache-2.0. Publishing to a package registry is disabled in
+[Cargo.toml](Cargo.toml). INFERRED: treat the current repository as an inspectable prototype,
+not a supported production release.

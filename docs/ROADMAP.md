@@ -16,8 +16,8 @@ working verification route.
 
 1. Obtain two independent compatible provider feeds and plan quotations. Run the smoke protocol
    in `docs/PILOT.md`; record source identity and failures. Access is not currently available.
-2. Obtain a named integrator's recovery requirements and scope feedback. Outreach drafts are
-   preparation, not evidence of an adopter; none has been sent.
+2. Obtain a named integrator's recovery requirements and scope feedback. No message has been sent;
+   none of this is evidence of an adopter.
 3. Store payloads from a real feed (the encoding is done and tested on simulated events);
    implement replay/history negotiation, safe rotation and backfill; validate controlled outages
    and a sustained soak.

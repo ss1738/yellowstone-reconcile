@@ -141,7 +141,7 @@ completed work is billed.
 
 ## Second pass, same day
 
-Summary and decisions are in `SUBMISSION-READINESS.md`; sources in `docs/RESEARCH-2026-10-25.md`.
+Sources are in `docs/RESEARCH-2026-10-25.md`; the mapping to the funding page is in `grant/FUNDING-FIT.md`.
 One finding above is reversed: finding 3 restored an automatic GitHub-hosted build, which
 conflicts with the maintainer's practice of building and testing Rust on their own machines. `ci.yml` is now
 manual-only and there is no automatic CI (`docs/RUNNER-SETUP.md`). Also changed: real block payloads

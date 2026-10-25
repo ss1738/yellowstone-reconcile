@@ -24,8 +24,8 @@ bank IDs to force this feed through.
 
 MEASURED: no second provider was connected and no two-provider reconciliation was performed.
 The token was used only via a private one-use wrapper outside the repository. Local cleanup
-removed that wrapper; the remote wrapper removes itself on exit. Replace the token in Allnodes
-as planned. No account, subscription purchase, transaction submission or deployment
+removed that wrapper; the remote wrapper removes itself on exit. The token was shared outside the repository, so it must be treated as exposed and replaced at the
+provider. No account, subscription purchase, transaction submission or deployment
 was performed by this test.
 
 ## Audit of the failure (25 October 2026, no new network access)

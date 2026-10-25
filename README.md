@@ -97,7 +97,7 @@ reconciler, SQLite and a reopen unchanged. The wire is simulated; no live feed h
 MEASURED (`src/sink.rs`, `tests/sink.rs`): the optional `sqlite` feature atomically stores byte
 payloads and follows parent links when advancing a durable watermark. It handles synthetic
 unordered delivery and restart; the highest stored slot alone is not a safe checkpoint.
-Only `Finalized` blocks are stored. See operations for anchor assumptions and what it does not do. Actual upstream payload serialization is still future work.
+Only `Finalized` blocks are stored. See operations for anchor assumptions and what it does not do. Storing payloads from a real feed is future work.
 
 ```sh
 cargo run --locked --release --features sqlite --example sqlite_sink
@@ -119,7 +119,7 @@ cargo run --locked --release --features sqlite --example sqlite_sink
 - A disagreement after an earlier emission is reported, not silently undone.
 
 See [correctness contract](docs/CORRECTNESS.md), [operations](docs/OPERATIONS.md),
-[verification](docs/VERIFICATION.md), and [grant draft](grant/APPLICATION.md).
+[verification](docs/VERIFICATION.md), the [proposal source](grant/proposal.md) and its [budget basis](grant/BUDGET.md).
 
 ## Project status
 
@@ -131,7 +131,7 @@ MEASURED (`docs/RUNNER-SETUP.md`, `gh api`, 25 October 2026): there is **no auto
 is `scripts/verify.sh`, run by hand on the maintainer's build machine (`evidence/verification-final.log`). Neither
 workflow has run: `ci.yml` is a GitHub-hosted check that starts only by hand, and `verify.yml`
 needs a self-hosted runner that is not registered (0 runners). The runner configuration is
-written up for owner review and nothing enables it.
+written up for maintainer review and nothing enables it.
 
 INFERRED: this is an application prototype, not an audited production release. No adopter,
 maintainer endorsement, funding award or completed live provider pilot is claimed.

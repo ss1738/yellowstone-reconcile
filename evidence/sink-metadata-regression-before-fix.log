@@ -1,0 +1,28 @@
+# mini-test
+# when: 20261025-121023
+# mini: 3 (builduser@build-host)
+# proj: yellowstone-reconcile
+# cmd: export PATH="$HOME/.cargo/bin:$PATH"; cargo test --locked --features sqlite --test sink replay_with_the_same_hash_but_different_metadata_is_refused
+# ---
+   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/sink.rs (target/debug/deps/sink-6d49767be6c7404b)
+
+running 1 test
+test replay_with_the_same_hash_but_different_metadata_is_refused ... FAILED
+
+failures:
+
+---- replay_with_the_same_hash_but_different_metadata_is_refused stdout ----
+
+thread 'replay_with_the_same_hash_but_different_metadata_is_refused' (8893262) panicked at tests/sink.rs:73:9:
+assertion failed: matches!(sink.commit(&changed), Err(SinkError::Mismatch { slot: 1 }))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    replay_with_the_same_hash_but_different_metadata_is_refused
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test sink`

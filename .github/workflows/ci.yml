@@ -1,31 +1,18 @@
-name: CI
+name: Full verification on owner Mini
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Register this label only on the owner's Ironman Mini. Never on the cousin's Mini.
+    runs-on: [self-hosted, macOS, ARM64, ironman]
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Test default features
-        run: cargo test --locked
-      - name: Test with upstream bridge
-        run: cargo test --locked --features upstream
-      - name: Agreement fixture must succeed
-        run: cargo run --locked --bin yellowstone-replay -- fixtures/agreement.jsonl
-      - name: Conflict fixture must halt with status 1
-        run: |
-          if cargo run --locked --bin yellowstone-replay -- fixtures/conflict.jsonl; then
-            echo "expected a non-zero exit on provider conflict"; exit 1
-          fi
-      - name: Malformed fixture must not panic
-        run: |
-          set +e
-          cargo run --locked --bin yellowstone-replay -- fixtures/malformed.jsonl 2>&1 | tee /tmp/m.log
-          grep -qi "panicked" /tmp/m.log && { echo "panic on malformed input"; exit 1; }
-          exit 0
+      - name: Verify runner identity
+        run: test "$(hostname | tr '[:upper:]' '[:lower:]' | cut -d. -f1)" = ironman
+      - name: Verify all features, recovery, fixtures and examples
+        run: bash scripts/verify.sh

@@ -7,15 +7,25 @@ rustc --version
 cargo --version
 python3 scripts/source_manifest.py
 cargo fmt --all --check
-cargo test --all-features --all-targets
-cargo test --release --all-features --all-targets
-cargo clippy --all-features --all-targets -- -D warnings
-RUSTDOCFLAGS='-D warnings' cargo doc --all-features --no-deps
-cargo run --release --bin yellowstone-replay -- fixtures/agreement.jsonl
-if cargo run --release --bin yellowstone-replay -- fixtures/conflict.jsonl; then
-  echo 'FAIL: conflicting replay unexpectedly succeeded' >&2
-  exit 1
-fi
-cargo run --release --example benchmark
-cargo run --features upstream --example upstream_bridge
-cargo run --features simulation --example dependency_probe
+cargo test --locked --all-targets
+cargo test --locked --all-features --all-targets
+cargo test --locked --release --all-features --all-targets
+cargo clippy --locked --all-features --all-targets -- -D warnings
+RUSTDOCFLAGS='-D warnings' cargo doc --locked --all-features --no-deps
+cargo run --locked --release --bin yellowstone-replay -- fixtures/agreement.jsonl
+for fixture in conflict malformed; do
+  status=0
+  cargo run --locked --release --bin yellowstone-replay -- "fixtures/$fixture.jsonl" || status=$?
+  if [ "$status" -ne 1 ]; then
+    echo "FAIL: $fixture replay returned $status, expected exactly 1" >&2
+    exit 1
+  fi
+done
+cargo run --locked --release --example benchmark
+cargo run --locked --features upstream --example upstream_bridge
+cargo run --locked --features simulation --example dependency_probe
+cargo run --locked --release --features sqlite --example sqlite_sink
+cargo run --locked --release --example durable_sink
+cargo run --locked --release --example stall_budget -- 212
+cargo run --locked --release --example payload_variance
+python3 scripts/pilot.py --preflight

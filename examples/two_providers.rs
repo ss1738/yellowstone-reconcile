@@ -154,6 +154,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if max_blocks == 0 || max_blocks > 1000 {
         return Err("RECONCILE_MAX_BLOCKS must be 1..=1000".into());
     }
+    let max_seconds: u64 = env::var("RECONCILE_MAX_SECONDS")
+        .unwrap_or_else(|_| "300".into())
+        .parse()?;
+    if max_seconds == 0 || max_seconds > 3600 {
+        return Err("RECONCILE_MAX_SECONDS must be 1..=3600".into());
+    }
+    let started = tokio::time::Instant::now();
+    let deadline = started + Duration::from_secs(max_seconds);
+    let mut connections = [0u64; 2];
+    let mut events = [0u64; 2];
+    let mut first_slot = None;
+    let mut last_slot = None;
     let (sender, mut receive) = mpsc::channel(64);
     let mut workers = Vec::new();
     for (provider, endpoint, token_key) in [
@@ -171,29 +183,44 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut bridge = UpstreamBridge::new(Config::default(), 128, 100_000)?;
     let result = loop {
         let message = tokio::select! {
-            _ = tokio::signal::ctrl_c() => break Ok(()),
+            _ = tokio::signal::ctrl_c() => break Err("pilot interrupted before target".into()),
+            _ = tokio::time::sleep_until(deadline) => break Err("pilot deadline reached before target".into()),
             message = receive.recv() => message,
             _ = tokio::time::sleep(Duration::from_secs(60)) => break Err("no provider activity for 60 seconds".into()),
         };
         match message {
             Some(Message::Connected { provider, reply }) => {
+                connections[usize::from(provider.0 - 1)] += 1;
                 let _ = reply.send(bridge.connect(provider)?);
             }
-            Some(Message::Event { session, event }) => match bridge.ingest(session, *event)? {
-                Some(Outcome::Emitted { block, providers }) => {
-                    println!(
-                        "{}",
-                        serde_json::json!({"slot":block.meta.slot,"blockhash":block.meta.blockhash,"providers":providers})
-                    );
-                    if bridge.core().stats().emitted >= max_blocks {
-                        break Ok(());
+            Some(Message::Event { session, event }) => {
+                events[usize::from(session.provider.0 - 1)] += 1;
+                let outcome = match bridge.ingest(session, *event) {
+                    Ok(outcome) => outcome,
+                    Err(_) => break Err("bridge rejected input or reached capacity".into()),
+                };
+                match outcome {
+                    Some(Outcome::Emitted { block, providers }) => {
+                        first_slot = Some(
+                            first_slot.map_or(block.meta.slot, |old: u64| old.min(block.meta.slot)),
+                        );
+                        last_slot = Some(
+                            last_slot.map_or(block.meta.slot, |old: u64| old.max(block.meta.slot)),
+                        );
+                        println!(
+                            "{}",
+                            serde_json::json!({"kind":"emitted","slot":block.meta.slot,"blockhash":block.meta.blockhash,"providers":providers})
+                        );
+                        if bridge.core().stats().emitted >= max_blocks {
+                            break Ok(());
+                        }
                     }
+                    Some(Outcome::Conflict { .. } | Outcome::Quarantined { .. }) => {
+                        break Err("provider disagreement: stop and investigate".into())
+                    }
+                    _ => (),
                 }
-                Some(Outcome::Conflict { .. } | Outcome::Quarantined { .. }) => {
-                    break Err("provider disagreement: stop and investigate".into())
-                }
-                _ => (),
-            },
+            }
             Some(Message::Exhausted { provider }) => {
                 break Err(format!("provider {} exhausted reconnect attempts", provider.0).into())
             }
@@ -206,5 +233,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     for worker in workers {
         worker.abort();
     }
+    println!(
+        "{}",
+        serde_json::json!({
+            "kind":"summary", "target_reached":result.is_ok(),
+            "elapsed_seconds":started.elapsed().as_secs_f64(),
+            "connections":connections, "upstream_events":events,
+            "first_slot":first_slot, "last_slot":last_slot,
+            "stats":bridge.core().stats(), "bridge_pending":bridge.pending_blocks(),
+            "upstream_fork_reports":bridge.upstream_fork_reports()
+        })
+    );
     result
 }

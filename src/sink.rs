@@ -2,12 +2,13 @@
 //!
 //! `Reconciler` output is unordered across slots, so "the highest slot committed" is not a safe
 //! checkpoint: committing slot 12 before slot 11 and then crashing would resume at 13 and lose 11.
-//! This sink keeps a watermark that only advances along parent links, so every slot at or below
-//! it is present, and writes it in the same transaction as the block. A restart can redeliver
+//! This sink keeps a watermark that only advances along parent links back to a trusted anchor,
+//! and writes it in the same transaction as the block. A restart can redeliver
 //! blocks above the watermark, and `commit` absorbs those as `Commit::AlreadyPresent`.
 //!
 //! Failure direction: a missing parent link stalls the watermark, which costs extra replay. It
-//! never moves the watermark past a slot that is absent.
+//! never moves the watermark past a missing ancestor after the trusted anchor. Skipped slots
+//! need no row. An anchor ahead of required history is unsafe: it declares that history done.
 use crate::{BlockHash, SealedBlock};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use std::{fmt, path::Path};
@@ -17,7 +18,7 @@ pub enum SinkError {
     Sqlite(rusqlite::Error),
     /// SQLite integers are signed 64-bit, so slots above `i64::MAX` cannot be stored.
     SlotOutOfRange(u64),
-    /// The slot is already stored with a different blockhash or parent. Not overwritten.
+    /// The slot is already stored with different identity metadata. Not overwritten.
     Mismatch {
         slot: u64,
     },
@@ -100,7 +101,9 @@ fn advance(conn: &Connection) -> Result<(), SinkError> {
 impl SqliteSink {
     /// Open or create the database. `anchor` is the slot already considered done when the
     /// database is created, normally the `parent_slot` of the first block you will store. It is
-    /// ignored when the database already exists. A wrong anchor stalls the watermark, which is safe.
+    /// ignored when the database already exists. The caller must establish that history through
+    /// the anchor is complete or deliberately excluded. An anchor ahead of required history can
+    /// skip that history on restart; the sink cannot validate this external precondition.
     pub fn open(path: impl AsRef<Path>, anchor: u64) -> Result<Self, SinkError> {
         let conn = Connection::open(path)?;
         conn.query_row("PRAGMA journal_mode = WAL", [], |row| {
@@ -136,19 +139,36 @@ impl SqliteSink {
         let meta = &block.meta;
         let slot = to_i64(meta.slot)?;
         let parent_slot = to_i64(meta.parent_slot)?;
+        let entry_count = to_i64(meta.entry_count)?;
+        let transaction_count = to_i64(meta.executed_transaction_count)?;
         let tx = self
             .conn
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let stored: Option<(Vec<u8>, Vec<u8>)> = tx
+        type StoredIdentity = (Vec<u8>, Vec<u8>, i64, i64, i64);
+        let stored: Option<StoredIdentity> = tx
             .query_row(
-                "SELECT blockhash, parent_blockhash FROM blocks WHERE slot = ?1",
+                "SELECT blockhash, parent_blockhash, parent_slot, entry_count, \
+                 executed_transaction_count FROM blocks WHERE slot = ?1",
                 [slot],
-                |row| Ok((row.get(0)?, row.get(1)?)),
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                    ))
+                },
             )
             .optional()?;
         let outcome = match stored {
-            Some((hash, parent)) => {
-                if hash != meta.blockhash.0 || parent != meta.parent_blockhash.0 {
+            Some((hash, parent, stored_parent_slot, entries, transactions)) => {
+                if hash != meta.blockhash.0
+                    || parent != meta.parent_blockhash.0
+                    || stored_parent_slot != parent_slot
+                    || entries != entry_count
+                    || transactions != transaction_count
+                {
                     return Err(SinkError::Mismatch { slot: meta.slot });
                 }
                 Commit::AlreadyPresent
@@ -163,8 +183,8 @@ impl SqliteSink {
                         meta.blockhash.0.as_slice(),
                         parent_slot,
                         meta.parent_blockhash.0.as_slice(),
-                        to_i64(meta.entry_count)?,
-                        to_i64(meta.executed_transaction_count)?,
+                        entry_count,
+                        transaction_count,
                         block.payload,
                     ],
                 )?;

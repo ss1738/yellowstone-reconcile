@@ -1,47 +1,92 @@
-# Verification status
+# Verification status: 25 October 2026
 
-MEASURED: the complete run on Ironman (Rust/Cargo 1.95.0) on 25 October 2026 passed
-25 tests in debug and the same 25 in release, formatting, all-feature/example compilation,
-Clippy with warnings denied, and documentation with warnings denied.
-Evidence: `evidence/verification.log` (run `20261025-003729`).
+## Current source
 
-MEASURED: `evidence/locked-verification.log` records a follow-up passing all-feature test
-run using `--locked`. `Cargo.lock` was generated on Ironman and retrieved unchanged.
-The 18 executable-input hashes in `evidence/source-manifest.sha256` matched the local
-source tree after retrieval. Reproduce the comparison with `python3 scripts/source_manifest.py`.
+MEASURED: `evidence/verification-current.log` records run `20261025-121042` on Ironman,
+Rust/Cargo 1.95.0. `scripts/verify.sh` completed with exit 0:
 
-MEASURED: the randomized-order test covers 32 seeds, each with 500 slots, 3 providers
-and 2 observations per provider/slot (96,000 observations). The retention regression
-processes 100,000 slots with a 16-slot retained-state cap. Sources: `tests/reconcile.rs`
-and the passing test output in `evidence/verification.log`.
+- Default-feature tests: 20 reported passing tests.
+- All features/all targets: 48 reported passing tests in debug and the same 48 in release.
+- Formatting, Clippy with warnings denied, documentation with warnings denied.
+- Agreement replay succeeded; conflict and malformed replay each exited exactly 1.
+- Synthetic benchmark, upstream bridge and upstream defect probe.
+- SQLite unordered-delivery/restart, in-process sink-ordering, stall-budget and payload-size examples.
+- Credential-free pilot preflight.
 
-MEASURED: both synthetic wire-reconstruction scenarios passed through the pinned upstream
-`BlockStream`: agreeing providers with different local bank ids emitted one block, while a
-provider missing a footer did not contribute a quorum vote. Source: `tests/reconstruction.rs`.
+MEASURED: all-feature tests include 14 core, 2 reconstruction, 3 CLI, 3 restart, 12 SQLite,
+7 upstream bridge and 7 wire tests. The 12 reported SQLite tests include `crash_child`, a helper
+re-executed by the process-abort test; counts are runner reports, not independent proof obligations.
+Evidence: test-result sections in `evidence/verification-current.log` and source files in `tests/`.
 
-The script checks formatting, debug and release tests, all-feature compilation, Clippy,
-documentation, successful agreement replay, expected conflict failure and a synthetic benchmark.
+MEASURED: the 32 paths in `evidence/source-manifest.sha256` identify this run's executable inputs,
+including workflows. The formatted transport example and manifest were retrieved from Ironman;
+a local regeneration matched exactly. Recheck with:
 
-MEASURED: agreement replay emitted one block and classified replay after reconnection as a
-duplicate. Conflicting replay exited nonzero before emission. The upstream bridge example
-selected one provider's unchanged payload. Evidence: `evidence/verification.log`.
+```sh
+python3 scripts/source_manifest.py > /tmp/yellowstone-current.sha256
+diff -u evidence/source-manifest.sha256 /tmp/yellowstone-current.sha256
+```
 
-MEASURED: the synthetic release benchmark processed 200,000 metadata blocks with unit payload
-in 0.037012 seconds in the recorded run (approximately 5.40 million per second). This microbenchmark
-excludes gRPC, reconstruction, real payloads, persistence and end-to-end latency; it is not a claim
-of network ingestion capacity. Source: `examples/benchmark.rs`, `evidence/verification.log`.
+The manifest excludes prose, generated PDFs and evidence; updating this page does not change
+which executable source was tested. It includes its generator script, not the generated manifest.
 
-MEASURED: the earlier gRPC verification run passed its tests but failed Clippy on a large message
-enum. The subsequent source boxes that message payload and the complete run passed.
-The failed run remains available in `evidence/verification-grpc-repair.log`.
+## Recovery and dependency observations
 
-Limits:
+MEASURED: the SQLite example first stored slots `[4,3,2,1,8,7]`; the watermark remained 4 despite
+the highest stored slot being 8. After reopening and replay, it reported 20 rows and watermark 20,
+with two already-stored redeliveries absorbed. `tests/sink.rs` separately exercises SIGABRT;
+the example itself closes/reopens cleanly. Evidence: `evidence/verification-current.log`.
 
-- Synthetic metadata benchmark timings are not end-to-end ingestion throughput.
-- The live two-provider example requires credentials and is opt-in; no live pilot is claimed.
-- Finite randomized schedules are not exhaustive verification or a security audit.
-- Upstream code is a dependency; this companion's tests do not re-audit its reconstruction rules.
-- Passing tests does not establish adoption, ecosystem impact, upstream acceptance or funding.
+MEASURED: `evidence/sink-metadata-regression-before-fix.log` records a focused regression failing
+because same-hash replay with changed parent/count metadata returned `AlreadyPresent`. The
+current sink checks parent slot/hash and both counts as well as blockhash. The regression now
+passes for all three mutated fields; the original row and watermark are preserved. Opaque payload
+bytes are intentionally not compared. Trusted-anchor preconditions are documented explicitly.
 
-The source manifest excludes prose and evidence files so documenting results does not change
-the identity of the code and fixtures that were tested.
+MEASURED: the dependency probe caught both known malformed-hash panic paths and the wire guard
+rejected those same inputs. With the experimental PR #22 pin, the repaired-dead-slot scenario
+reported zero fork diagnostics and delivered 70 slots. Historical baseline reproduction delivered
+only 2 of 70; see `docs/DEPENDENCY-REVIEW.md` and `evidence/dependency-review/`.
+These are synthetic cases, not production incidence or a complete audit of upstream code.
+
+MEASURED: the payload example retained 598,486,305 synthetic bytes (570.8 MiB) when cycling its
+hard-coded RPC-size inputs through the 128-block bound. That is not measured process RSS,
+a statistical mainnet size distribution or a Geyser wire-memory ceiling. At the supplied 212 ms
+input, the stall example derives 27.1 seconds. Neither is an operational guarantee.
+
+## Pilot and CI readiness
+
+MEASURED: `evidence/pilot-preflight.log` shows owner-Mini detection succeeded but provider access
+checks failed. `scripts/pilot.py --run` exited 2 before build or connection when those credentials
+were absent. No live network pilot has been executed. The owner requested offline preparation.
+
+MEASURED: `evidence/readiness-status-2026-10-25.json` records historical GitHub CI successes on
+commit `7999f67`, zero registered self-hosted runners, upstream PR #22 open/unmerged and scoping
+issue #23 with zero comments. Historical CI tested default/upstream features only; it is not
+coverage of this revised local workflow or the SQLite/wire features.
+
+MEASURED (`.github/workflows/ci.yml`, `.github/workflows/verify.yml`): both local workflows now
+require explicit owner dispatch on a self-hosted Ironman-labelled Mini, check hostname and call
+the full verification script. This respects the owner's Mini-only Rust-build requirement and
+does not execute public pull-request code automatically on a personal machine. Runner registration
+and a subsequent Actions run are outstanding. No runner was registered or workflow published here.
+
+## Reproduce on the owner's machine
+
+```sh
+mini-test -m 3 -- 'bash scripts/verify.sh'
+```
+
+Do not use automatic Mini selection; Mini 1 is not the owner's device. See `docs/PILOT.md` for
+credential preparation and the opt-in smoke protocol after compatible provider access is available.
+
+## Historical evidence and limits
+
+`evidence/verification.log`, `locked-verification.log`, `verification-initial.log` and
+`verification-grpc-repair.log` are historical runs, not current-source verification. The initial
+manifest is preserved in `evidence/source-manifest-initial.sha256`.
+
+INFERRED: passing finite synthetic tests supports prototype review. It does not establish provider
+compatibility, continuous gap-free ingestion, power-loss safety, payload validity, independence,
+adoption, external review or funding likelihood. Full upstream payload persistence, replay/rotation,
+a live pilot, sustained soak and independent review remain future gates. Publishing is disabled.

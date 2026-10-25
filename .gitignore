@@ -5,4 +5,5 @@
 *.key
 *.pem
 /target/
+/pilot-results/
 grant/*.pdf

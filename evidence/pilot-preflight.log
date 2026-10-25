@@ -1,0 +1,6 @@
+clusterrun -> Mini-3 (builduser@build-host) : export_updated_evidence.sh
+saving      -> /build/.clusterrun/20261025-121140-export_updated_evidence.out
+----------------------------------------------------------------
+{"kind": "preflight", "checks": {"endpoints_configured": false, "distinct_endpoints": false, "https_endpoints": false, "provider_names_configured": false, "distinct_provider_names": false, "owner_mini": true}, "ready": false, "limit": "Configuration checks do not establish provider independence or protocol compatibility."}
+MEASURED credential-free pilot refused with exit=2 before build or connection
+Pilot not started: complete preflight checks on an owner Mini.

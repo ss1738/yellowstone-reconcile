@@ -80,6 +80,24 @@ recreates connection state on retry, uses a bounded event channel, and stops on 
 or configured block count. It prints accepted metadata; it is not a persistent indexer.
 Live provider operation is not established by compilation or offline fixture tests.
 
+For the bounded smoke harness and evidence capture, see [pilot protocol](docs/PILOT.md).
+`python3 scripts/pilot.py --preflight` checks configuration without connecting or compiling;
+`--run` requires provider access on an owner Mini. No live pilot is claimed. The harness does
+not implement continuous rotation/replay or a live durable payload sink.
+
+### SQLite recovery example
+
+MEASURED (`src/sink.rs`, `tests/sink.rs`): the optional `sqlite` feature atomically stores byte
+payloads and follows parent links when advancing a durable watermark. It handles synthetic
+unordered delivery and restart; the highest stored slot alone is not a safe checkpoint.
+See operations for anchor assumptions. Actual upstream payload serialization is still future work.
+
+```sh
+cargo run --locked --release --features sqlite --example sqlite_sink
+```
+
+Run this command on the owner Mini. The complete local verification command above covers it.
+
 ## Correctness boundaries
 
 - Provider agreement is not cryptographic validation or proof that providers are independent.
@@ -101,6 +119,11 @@ See [correctness contract](docs/CORRECTNESS.md), [operations](docs/OPERATIONS.md
 MEASURED: this repository includes the reconciliation core, upstream bridge, replay CLI,
 fixtures, transport example, tests, benchmark and grant drafts (see their source paths).
 Test execution evidence and limitations are recorded separately in `docs/VERIFICATION.md`.
+
+MEASURED (`.github/workflows/`): revised local Actions workflows use explicit owner dispatch
+on a self-hosted Ironman runner and execute the full suite. Runner registration remains pending;
+historical hosted CI success did not cover all features. No automatic cloud Rust build or
+automatic execution of public pull-request code on an owner's Mini is configured in this revision.
 
 INFERRED: this is an application prototype, not an audited production release. No adopter,
 maintainer endorsement, funding award or completed live provider pilot is claimed.

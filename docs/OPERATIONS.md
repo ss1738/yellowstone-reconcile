@@ -215,12 +215,14 @@ slot 8 is committed before slot 5 and the process crashes, resuming at 9 loses s
 ## SQLite sink with an atomic resume point
 
 `sink::SqliteSink` (feature `sqlite`) stores the block and advances a watermark in one transaction.
-The watermark moves only along `parent_slot` and `parent_blockhash` links, so every slot at or
-below it is stored, including across skipped slots. Restart with `Config::first_slot =
+The watermark moves only along `parent_slot` and `parent_blockhash` links back to a trusted anchor.
+Linked ancestors after that anchor are stored; skipped slots need no row. Restart with `Config::first_slot =
 sink.resume_slot()`. Blocks above the watermark may be redelivered and are absorbed as
 `Commit::AlreadyPresent`. A different block for a stored slot returns `SinkError::Mismatch` and is
-not overwritten. A wrong anchor or a broken link stalls the watermark, which costs replay and never
-loses a slot.
+not overwritten. Replay compares blockhash, parent slot/hash and both counts; opaque payloads are
+not compared byte-for-byte. A broken link stalls advancement and costs replay. An anchor ahead
+of required history is unsafe: `open` treats that history as already done and `resume_slot` skips
+it. The caller must independently establish the anchor or deliberately exclude earlier history.
 
 MEASURED (`cargo run --release --features sqlite --example sqlite_sink`, owner Mini, 2026-10-25).
 Twenty slots, one provider leading and the other delivering in reversed groups of four, a crash
@@ -233,10 +235,10 @@ after six emissions (slots 4, 3, 2, 1, 8, 7), then a restart that replays the wh
 | After restart | 14 inserted, 2 redelivered and absorbed (7, 8), 8 replays refused |
 | Sink totals | 20 rows, watermark 20, every slot stored once |
 
-`cargo test --features sqlite --test sink`: 10 tests including a child process that is killed with
-SIGABRT after committing, and a full reconciler run with unordered emission. Two deliberate
-mutations of the link logic (ignore gaps, ignore the parent hash) were each caught by the test
-written for them.
+MEASURED (`evidence/verification-current.log`, `tests/sink.rs`): the suite covers a child process
+killed with SIGABRT after committing, full reconciliation with unordered emission, and replay
+metadata drift. `evidence/sink-metadata-regression-before-fix.log` preserves the new metadata
+regression failing before its correction.
 
 LIMIT: one local SQLite file and synthetic blocks, so no gRPC and no real provider. Process death
 is exercised, power loss is not. A networked database such as Postgres is not implemented, and no

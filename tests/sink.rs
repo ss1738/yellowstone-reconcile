@@ -59,6 +59,27 @@ fn a_different_block_for_a_stored_slot_is_refused_and_not_overwritten() {
     assert_eq!(sink.blockhash(1).unwrap(), Some(hash(1)));
 }
 
+#[test]
+fn replay_with_the_same_hash_but_different_metadata_is_refused() {
+    let mut sink = SqliteSink::open(db("metadata-mismatch"), 0).unwrap();
+    sink.commit(&block(1)).unwrap();
+    for field in 0..3 {
+        let mut changed = block(1);
+        match field {
+            0 => changed.meta.parent_slot = 99,
+            1 => changed.meta.entry_count += 1,
+            _ => changed.meta.executed_transaction_count += 1,
+        }
+        assert!(matches!(
+            sink.commit(&changed),
+            Err(SinkError::Mismatch { slot: 1 })
+        ));
+    }
+    assert_eq!(sink.len().unwrap(), 1);
+    assert_eq!(sink.watermark().unwrap(), 1);
+    assert_eq!(sink.payload(1).unwrap().unwrap(), b"slot-1-a");
+}
+
 /// The watermark must not jump to the highest slot when lower slots are still missing.
 #[test]
 fn out_of_order_commits_hold_the_watermark_at_the_first_gap() {
@@ -92,12 +113,13 @@ fn a_hash_mismatched_parent_link_stalls_the_watermark() {
 }
 
 #[test]
-fn a_wrong_anchor_stalls_rather_than_skipping() {
+fn an_anchor_ahead_of_required_history_excludes_that_history() {
     let mut sink = SqliteSink::open(db("anchor"), 50).unwrap();
     sink.commit(&block(1)).unwrap();
     sink.commit(&block(2)).unwrap();
     assert_eq!(sink.watermark().unwrap(), 50);
     assert_eq!(sink.resume_slot().unwrap(), 51);
+    // The caller declared history through 50 done. This is unsafe if it still needs slots 3..50.
 }
 
 #[test]

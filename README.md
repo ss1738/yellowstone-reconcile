@@ -1,5 +1,9 @@
 # yellowstone-reconcile
 
+**Grant proposal (PDF, current):** [docs/yellowstone-reconcile-proposal.pdf](docs/yellowstone-reconcile-proposal.pdf).
+Status: working prototype, unaudited, not yet run against two live providers. See [AUDIT.md](AUDIT.md) and
+[SUBMISSION-READINESS.md](SUBMISSION-READINESS.md).
+
 A conservative Rust companion for reconciling complete Solana blocks from independent
 Yellowstone connections. Local development release; publishing is disabled.
 
@@ -85,6 +89,14 @@ For the bounded smoke harness and evidence capture, see [pilot protocol](docs/PI
 `--run` requires provider access on an owner Mini. No live pilot is claimed. The harness does
 not implement continuous rotation/replay or a live durable payload sink.
 
+### Storing real block payloads
+
+`wire::encode_events` and `wire::decode_events` turn a reconstructed block's protobuf events
+(`Block<BankBuffer>.events`) into the opaque bytes the sink stores and back. The encoding carries an
+event count, so a payload cut at any point, or padded, is an error and never a shorter block.
+MEASURED (`tests/real_payload.rs`): events from the upstream simulation survive two providers, the
+reconciler, SQLite and a reopen unchanged. The wire is simulated; no live feed has been stored.
+
 ### SQLite recovery example
 
 MEASURED (`src/sink.rs`, `tests/sink.rs`): the optional `sqlite` feature atomically stores byte
@@ -120,13 +132,11 @@ MEASURED: this repository includes the reconciliation core, upstream bridge, rep
 fixtures, transport example, tests, benchmark and grant drafts (see their source paths).
 Test execution evidence and limitations are recorded separately in `docs/VERIFICATION.md`.
 
-MEASURED (`.github/workflows/`): `ci.yml` is a GitHub-hosted workflow (push and pull request,
-read-only token, no secrets) covering default, `sqlite` and `upstream` features, fixture exit
-codes and Clippy. It has **not run** in its current form: the last hosted runs predate it and
-covered default and upstream features only. `verify.yml` is manual-dispatch on a self-hosted
-Ironman runner for the full suite; no runner is registered, so it cannot run. The grpc and
-simulation features are verified only by `scripts/verify.sh` on an owner Mini
-(`evidence/verification-audit.log`).
+MEASURED (`docs/RUNNER-SETUP.md`, `gh api`, 25 October 2026): there is **no automatic CI**. Verification
+is `scripts/verify.sh`, run by hand on an owner Mini (`evidence/verification-final.log`). Neither
+workflow has run: `ci.yml` is a GitHub-hosted check that starts only by hand, and `verify.yml`
+needs a self-hosted runner that is not registered (0 runners). The runner configuration is
+written up for owner review and nothing enables it.
 
 INFERRED: this is an application prototype, not an audited production release. No adopter,
 maintainer endorsement, funding award or completed live provider pilot is claimed.

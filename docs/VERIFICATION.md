@@ -1,40 +1,38 @@
 # Verification status: 25 October 2026
 
-## Current source (post-audit)
+## Current source (final, second audit pass)
 
-MEASURED: `evidence/verification-audit.log` is the raw output of `mini-test -m 3 -- bash
-scripts/verify.sh` on Ironman, Rust/Cargo 1.95.0, run 25 October 2026 against commit `7874365`
-plus the audit changes (committed afterwards; the manifest identifies them). `scripts/verify.sh`
-exited 0. Passing tests reported by the runner, summed from that log:
+MEASURED: `evidence/verification-final.log` is the raw output of `mini-test -m 3 -- bash
+scripts/verify.sh` on Ironman, Rust/Cargo 1.95.0, 25 October 2026, against the tree whose 36
+executable inputs are listed in `evidence/source-manifest.sha256`. I diffed that manifest against
+the hashes the Mini printed and they match; the Mini's formatter had rewritten two files, which
+were copied back first. `scripts/verify.sh` exited 0. Passing tests the runner reported, summed
+from that log:
 
-- Default features: 24 tests.
-- All features, all targets: 59 tests in debug and the same 59 in release.
-- Formatting, Clippy with warnings denied, documentation with warnings denied, all with `--locked`.
+- Default features: 24. All features, all targets: 61 in debug and the same 61 in release.
+- 4 Python harness tests (`scripts/test_pilot.py`), which run offline with no build.
+- Formatting, Clippy with warnings denied and documentation with warnings denied, all `--locked`.
 - Agreement replay succeeded; conflict and malformed replay each exited exactly 1.
 - Benchmark, upstream bridge, upstream defect probe, SQLite recovery, in-process sink ordering,
   stall-budget and payload-size examples, and the credential-free pilot preflight.
 
-MEASURED: the 59 are 14 core, 4 audit sequences, 2 reconstruction, 3 CLI, 3 restart, 17 SQLite,
-7 upstream bridge and 9 wire. The 17 SQLite tests include `crash_child` and `mid_transaction_child`,
-helpers re-executed by the two abort tests, so 15 are real. Counts are runner reports, not
-independent proof obligations: `randomized_interleavings_emit_each_slot_once` samples a finite set
-of schedules and is one test, not a proof over all interleavings.
+MEASURED: the 61 are 14 core, 4 audit sequences, 2 real-payload, 2 reconstruction, 3 CLI,
+3 restart, 17 SQLite, 7 upstream bridge and 9 wire. Of those, 2 SQLite tests are helpers re-executed
+by the abort tests. They are independent scenarios only in part: the randomized interleaving test
+samples finitely many schedules and counts as one; the real-payload test uses a simulated wire,
+not a network. Counts are runner reports, not proof obligations.
 
-MEASURED: `evidence/source-manifest.sha256` lists the 34 executable inputs of that run, including
-workflows. It was regenerated locally and diffed against the hashes the Mini printed; they match.
-The previous manifest is kept as `source-manifest-pre-audit.sha256`. Recheck with:
+Earlier runs keep their original meaning: `verification-current.log` (`7874365`, 48 tests),
+`verification-audit.log` (first audit pass, 59 tests, manifest `source-manifest-audit.sha256`) and
+the pre-audit manifest `source-manifest-pre-audit.sha256`. Private host identifiers (address and
+account name) were replaced with placeholders in published logs on 25 October; raw originals are
+kept outside the repository.
+
+Recheck the manifest with:
 
 ```sh
 python3 scripts/source_manifest.py | diff -u evidence/source-manifest.sha256 -
 ```
-
-The manifest excludes prose, generated PDFs and evidence; editing docs does not change which
-executable source was tested.
-
-MEASURED: the earlier run, `evidence/verification-current.log` (`20261025-124903`, commit
-`7874365`, 48 tests, 33-path manifest `source-manifest-pre-audit.sha256`), is preserved unchanged
-as the pre-audit result. Regressions that failed before their fixes are in
-`evidence/audit-regressions-before-fix.log`, and their passing runs in `-after-fix.log`.
 
 ## Recovery and dependency observations
 
@@ -77,14 +75,12 @@ commit `7999f67`, zero registered self-hosted runners, upstream PR #22 open/unme
 issue #23 with zero comments. Historical CI tested default/upstream features only; it is not
 coverage of this revised local workflow or the SQLite/wire features.
 
-MEASURED (`.github/workflows/`): `ci.yml` runs on GitHub-hosted Ubuntu with a read-only token and
-covers default, `sqlite` and `upstream` features, Clippy and fixture exit codes. The same command
-set passed on Ironman (macOS), recorded in the audit session, but **the workflow itself has not
-run on GitHub** and Ubuntu behavior is unverified. `verify.yml` is manual dispatch on a
-self-hosted Ironman-labelled runner and checks the hostname; with zero registered runners it
-cannot run. Neither workflow executes pull-request code on a personal machine. The grpc and
-simulation features have no CI at all and rely on `scripts/verify.sh` on a Mini. Nothing here is
-an operational green run of either workflow.
+MEASURED (`docs/RUNNER-SETUP.md`): there is no automatic CI. `ci.yml` is a GitHub-hosted workflow that
+starts only by hand, because the owner's rule is that Rust builds run on the owner's Minis; it has
+never run. `verify.yml` targets a self-hosted `ironman` runner that is not registered (0 runners,
+`gh api`, 25 October), so it cannot run either. Neither is triggered by a push or a pull request.
+The grpc and simulation features are covered only by `scripts/verify.sh`. Operational verification
+is the manual Mini run above, nothing more.
 
 ## Reproduce on the owner's machine
 

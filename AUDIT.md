@@ -126,7 +126,7 @@ The pin was not changed.
 
 Claims removed or softened: "CI passing", "never" (payload fusion, restart), memory figures
 presented as a ceiling, and any suggestion the free feed worked. Added: the PublicNode result
-and the 29-minute guard lifetime. The request stays USD 13,200, arithmetic rechecked (130 h x $90
+and the 29-minute guard lifetime. The request stayed USD 13,200 in this pass (superseded by 12,210 in the second pass), arithmetic rechecked (130 h x $90
 + $1,500); `grant/BUDGET.md` now shows the basis and says why the audit did not raise it. No
 completed work is billed.
 
@@ -139,3 +139,18 @@ completed work is billed.
   after-fix log.
 - A test helper overflowed at `u64::MAX`; that was my test, not the library.
 - No agents were spawned, no credentials were used, and nothing was pushed, deployed or sent.
+
+## Second pass, same day
+
+Summary and decisions are in `SUBMISSION-READINESS.md`; sources in `docs/RESEARCH-2026-10-25.md`.
+One finding above is reversed: finding 3 restored an automatic GitHub-hosted build, which
+conflicts with the owner's rule that Rust builds run on the owner's Mini machines. `ci.yml` is now
+manual-only and there is no automatic CI (`docs/RUNNER-SETUP.md`). Also changed: real block payloads
+are encoded with a count and tested through the sink (`tests/real_payload.rs`); the pilot
+harness's malformed-output parsing has offline tests (`scripts/test_pilot.py`); the request is
+US$12,210; published evidence has the Mini's address and account name replaced by placeholders
+(raw copies kept privately; earlier commits in the pushed range and six files already public
+still contain them, and history was not rewritten). Verification: `evidence/verification-final.log`.
+Not run: any live check, since no valid credential exists. The mutation check of the payload
+decoder was abandoned when the Mini ran out of disk copying its `target/` directory; I removed
+my own copy only, and no result from that check is claimed.

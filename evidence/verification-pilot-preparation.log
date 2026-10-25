@@ -1,6 +1,6 @@
 # mini-test
 # when: 20261025-120838
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: export PATH="$HOME/.cargo/bin:$PATH"; cargo fmt --all && bash scripts/verify.sh
 # ---
@@ -39,7 +39,7 @@ edf8b5187fcf73821fdd8ddb47ce6058022a60e41feb35648a58465ef335aebe  tests/restart.
 c70691f4bb9f8c95ea254b4ca50531b10dd5b9880f6c28821b093f8de1b6ca24  tests/sink.rs
 a29c3010383de2d7e7ddcdc1caa19b3788ac9bf28478a883ef53a6da1baf63e0  tests/upstream.rs
 f90f33ec18f8db7709fc182f9e52705c530c0de018e00c6505341579e75b2fb9  tests/wire.rs
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.90s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-e9cbd07cc690db5b)
 
@@ -145,7 +145,7 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.73s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-3d1304f48b643ee3)
 
@@ -304,7 +304,7 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running unittests examples/upstream_bridge.rs (target/debug/examples/upstream_bridge-3f647f2ed6c0fffa)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.65s
      Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-f8121f62c27c8ced)
 
@@ -463,11 +463,11 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running unittests examples/upstream_bridge.rs (target/release/examples/upstream_bridge-f8bbd2a60141c895)
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.47s
- Documenting yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+ Documenting yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.88s
-   Generated /build/work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
+   Generated ~/mini-work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
     Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/yellowstone-replay fixtures/agreement.jsonl`
 {"session":{"generation":1,"provider":1}}
@@ -505,21 +505,21 @@ MEASURED lifetime=1 stored_in_emission_order=[4, 3, 2, 1, 8, 7] watermark=4 naiv
 MEASURED lifetime=2 resume_slot=5 naive_resume_slot=9 naive_would_lose_slots=[5, 6]
 MEASURED lifetime=2 inserted=14 redelivered_and_absorbed=2 replays_refused=8 sink_rows=20 watermark=20 every_slot_stored_once=true
 LIMIT: SQLite on one local disk, synthetic blocks, no gRPC or real provider. Process death is covered by tests/sink.rs (SIGABRT); power loss and a networked database are not exercised. The watermark follows parent links, so it assumes the stored chain is finalized: with Confirmed blocks a fork sharing a parent_slot would not be told apart by slot alone, only by the parent_blockhash match.
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.33s
      Running `target/release/examples/durable_sink`
 MEASURED lifetime=1 committed_slots=12 checkpoint_on_disk=12
 MEASURED lifetime=2 resumed_from=12 replayed_slots_refused=24 checkpoint_on_disk=20
 MEASURED sink_rows=20 distinct_slots=20 double_written_slots=[] every_slot_written_once=true
 LIMIT: the sink is in-process and the checkpoint is a plain file, so this shows the ordering contract (commit, then checkpoint) rather than real durability. A crash between the sink commit and the checkpoint write still re-delivers that one slot, which is why the sink write must be idempotent on slot. No gRPC, reconstruction or real provider.
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.27s
      Running `target/release/examples/stall_budget 212`
 MEASURED slot_ms=212 max_pending_blocks=128 blocks_buffered_before_rejection=128 stall_budget_seconds=27.1
 MEASURED recovery_after_rejection emitted_on_first_agreement=Ok(true) pending_now=127
 MEASURED max_retained_slots=4096 retention_window_seconds=868 emitted=4096 pruned_before_slot=4086 pending_dropped=0 quarantined_dropped=0
 LIMIT: slot_ms is an input, not a guarantee; it was measured once and varies. The budgets assume one block per slot per provider and no payload-size pressure, which binds first on large blocks (see the lag_memory example). Nothing here exercises gRPC, reconstruction or persistence.
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.24s
      Running `target/release/examples/payload_variance`
 MEASURED sample_blocks=10 min_bytes=2389 median_like_mean_bytes=4700121 max_bytes=8281597 spread=3467x

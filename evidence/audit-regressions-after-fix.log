@@ -3,7 +3,7 @@
 # examples/two_providers.rs); it is kept because it shows why examples need a build, not just tests.
 # mini-test
 # when: 20261025-131541
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: cargo fmt --all; cargo test --locked --all-features --test sink --test wire --no-fail-fast 2>&1 | grep -E "FAILED|test result|panicked|^error|warning: unused"; echo PILOT-NEGATIVE-AFTER; rm -rf /tmp/yr-pilot-neg; YELLOWSTONE_A_URL=https://127.0.0.1:1 YELLOWSTONE_B_URL=https://127.0.0.1:2 YELLOWSTONE_A_NAME=a YELLOWSTONE_B_NAME=b RECONCILE_MAX_SECONDS=60 python3 scripts/pilot.py --run --output /tmp/yr-pilot-neg > /tmp/yr-pilot-neg.out 2>&1; echo pilot_exit=$?; tail -n 1 /tmp/yr-pilot-neg.out | python3 -c "import sys,json;r=json.loads(sys.stdin.read());print({k:r[k] for k in (\"passed\",\"failure\",\"exit_code\",\"emitted_records\")}); print(r[\"summary\"][\"failure\"])"
 # ---
@@ -24,7 +24,7 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 # Run 4: pilot against unreachable local endpoints after the build fix.
 # mini-test
 # when: 20261025-131610
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: cargo fmt --all --check && echo FMT_OK; rm -rf /tmp/yr-pilot-neg; YELLOWSTONE_A_URL=https://127.0.0.1:1 YELLOWSTONE_B_URL=https://127.0.0.1:2 YELLOWSTONE_A_NAME=a YELLOWSTONE_B_NAME=b RECONCILE_MAX_SECONDS=60 python3 scripts/pilot.py --run --output /tmp/yr-pilot-neg > /tmp/yr-pilot-neg.out 2>&1; echo pilot_exit=$?; python3 -c "
 import json,glob
@@ -40,7 +40,7 @@ child summary failure: provider 1 exhausted reconnect attempts
 # Run 5: core counterexample attempts (tests/audit_sequences.rs).
 # mini-test
 # when: 20261025-131649
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: cargo fmt --all; cargo test --locked --test audit_sequences 2>&1 | grep -E "^test |test result|panicked|left|right"
 # ---

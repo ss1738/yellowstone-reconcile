@@ -1,10 +1,10 @@
 # mini-test
 # when: 20261025-004505
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: cargo test --locked --features upstream --test upstream slot_level_fork_report_does_not_discard_a_sealed_candidate -- --nocapture
 # ---
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
      Running tests/upstream.rs (target/debug/deps/upstream-e1768d095c35c28a)
 

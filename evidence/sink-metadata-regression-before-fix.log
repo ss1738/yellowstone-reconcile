@@ -1,10 +1,10 @@
 # mini-test
 # when: 20261025-121023
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: export PATH="$HOME/.cargo/bin:$PATH"; cargo test --locked --features sqlite --test sink replay_with_the_same_hash_but_different_metadata_is_refused
 # ---
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
      Running tests/sink.rs (target/debug/deps/sink-6d49767be6c7404b)
 

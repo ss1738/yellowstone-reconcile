@@ -39,7 +39,7 @@ edf8b5187fcf73821fdd8ddb47ce6058022a60e41feb35648a58465ef335aebe  tests/restart.
 a8db513ecd70bd32447bb95670cd8f31b27abae050201b4d9aa18614ea0a07bb  tests/sink.rs
 a29c3010383de2d7e7ddcdc1caa19b3788ac9bf28478a883ef53a6da1baf63e0  tests/upstream.rs
 a55bf72a3a9a002aeaa3be41582d64e0b9f1424e2598d55a1195eab95f7e03f1  tests/wire.rs
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-e9cbd07cc690db5b)
 
@@ -155,7 +155,7 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-3d1304f48b643ee3)
 
@@ -353,7 +353,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
    Compiling tonic-health v0.14.6
    Compiling yellowstone-grpc-client v15.0.0
    Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=0c732a049d6d18008a541f47b09ddb7b949cbb65#0c732a04)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 10.49s
      Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-f8121f62c27c8ced)
 
@@ -538,12 +538,12 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.82s
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
- Documenting yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
+ Documenting yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.81s
-   Generated /build/work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
+   Generated ~/mini-work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
     Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/yellowstone-replay fixtures/agreement.jsonl`
 {"session":{"generation":1,"provider":1}}
@@ -570,13 +570,13 @@ LIMIT: in-memory metadata with unit payload; excludes gRPC, reconstruction, full
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
      Running `target/debug/examples/upstream_bridge`
 slot=10 providers=[ProviderId(1), ProviderId(2)] selected_payload=[1]
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
      Running `target/debug/examples/dependency_probe`
 MEASURED issue19 invalid_blockhash_panicked=true invalid_entry_hash_panicked=true guarded_blockhash_rejected=true guarded_entry_rejected=true
 MEASURED issue21 upstream_fork_reports=0 emitted_slots=70 bridge_fork_diagnostics=0
 LIMIT: synthetic reproduction against pinned 0.12.0; no production incidence or complete dependency correctness claim
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.56s
      Running `target/release/examples/sqlite_sink`
 MEASURED lifetime=1 stored_in_emission_order=[4, 3, 2, 1, 8, 7] watermark=4 naive_max_checkpoint=8

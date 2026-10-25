@@ -2,7 +2,7 @@
 # Run 1: sink + wire tests, fail-fast (stops after the first failing test binary).
 # mini-test
 # when: 20261025-131351
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: cargo test --locked --all-features --test sink --test wire 2>&1 | grep -E "^test |test result|panicked|error" | head -50; echo ======PILOT-NEGATIVE; YELLOWSTONE_A_URL=https://127.0.0.1:1 YELLOWSTONE_B_URL=https://127.0.0.1:2 YELLOWSTONE_A_NAME=a YELLOWSTONE_B_NAME=b RECONCILE_MAX_SECONDS=60 python3 scripts/pilot.py --run --output /tmp/yr-pilot-neg 2>&1 | tail -3; echo exit=$?; ls /tmp/yr-pilot-neg/*; python3 -c "import json,glob;r=json.load(open(glob.glob(\"/tmp/yr-pilot-neg/*/report.json\")[0]));print(sorted(r.keys()));print(sorted((r[\"summary\"] or {}).keys()))"
 # ---
@@ -33,7 +33,7 @@ zsh:1: =====PILOT-NEGATIVE not found
 # The pilot summary below has no 'failure' key: a failed run states no reason.
 # mini-test
 # when: 20261025-131410
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: cargo test --locked --all-features --test sink --test wire --no-fail-fast 2>&1 | grep -E "FAILED|test result|panicked"; echo PILOT-NEGATIVE; rm -rf /tmp/yr-pilot-neg; YELLOWSTONE_A_URL=https://127.0.0.1:1 YELLOWSTONE_B_URL=https://127.0.0.1:2 YELLOWSTONE_A_NAME=a YELLOWSTONE_B_NAME=b RECONCILE_MAX_SECONDS=60 python3 scripts/pilot.py --run --output /tmp/yr-pilot-neg > /tmp/yr-pilot-neg.out 2>&1; echo pilot_exit=$?; tail -c 1500 /tmp/yr-pilot-neg.out
 # ---
@@ -59,6 +59,6 @@ std.1.5.7
    Compiling tonic-health v0.14.6
    Compiling yellowstone-grpc-client v15.0.0
    Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=0c732a049d6d18008a541f47b09ddb7b949cbb65#0c732a04)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 11.08s
 {"kind": "pilot_result", "passed": false, "exit_code": 1, "emitted_records": 0, "target_blocks": 100, "deadline_seconds": 60, "elapsed_seconds": 3.9345350420000003, "sampled_peak_process_rss_kib": 15440, "manifest_sha256": "c89a30ad2246a1845705406ff04073c8155eb033224bcb73570d45019ba9504d", "summary": {"bridge_pending": 0, "connections": [0, 0], "elapsed_seconds": 3.469125459, "first_slot": null, "kind": "summary", "last_slot": null, "stats": {"conflicts": 0, "duplicates": 0, "emitted": 0, "pending_blocks": 0, "retained_slots": 0}, "target_reached": false, "upstream_events": [0, 0], "upstream_fork_reports": 0}, "limits": ["Smoke pilot only; not a soak, crash-recovery or outage test.", "RSS sampled every 250ms; includes upstream and transport allocations.", "No durable live payload sink or payload equality verification."]}

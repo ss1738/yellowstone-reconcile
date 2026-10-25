@@ -1,6 +1,6 @@
 # clusterrun
 # when: 20261025-124845
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # script: publicnode_access_once.sh
 # ---
 {"stage":"connected"}

@@ -92,3 +92,8 @@ both panics on the pinned crate. The experimental pin covers #21 only.
 MEASURED: a search of GitHub repositories for "yellowstone reconcile" returned only this
 repository. That is one search term. It does not establish that no other implementation exists,
 including private ones or ones inside consumers such as Shipstern.
+
+Related existing solutions, read 25 October 2026 (see `docs/RESEARCH-2026-10-25.md`): the upstream
+Yellowstone client's `DedupStream` and `subscribe_with_reconnect` deduplicate replays for one
+logical subscription and forget banks at or below the finalized slot; a keyword search of its
+dedup code found no quorum or conflict handling. This does not establish that no equivalent exists.

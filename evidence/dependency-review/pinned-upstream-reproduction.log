@@ -1,6 +1,6 @@
 # mini-test
 # when: 20261025-004639
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: bash scripts/verify.sh
 # ---
@@ -28,7 +28,7 @@ f46aefc2d0bb3638fbd969fd0915051022914d4982a6fed21db374a6bdb7e8d1  tests/reconstr
 e79ecd694b4467975ba47db1cf8c2c28f63f0ebcd31676bf0396ed8b83355dd2  tests/replay.rs
 a29c3010383de2d7e7ddcdc1caa19b3788ac9bf28478a883ef53a6da1baf63e0  tests/upstream.rs
 f90f33ec18f8db7709fc182f9e52705c530c0de018e00c6505341579e75b2fb9  tests/wire.rs
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-cb4c56ede2653d3e)
 
@@ -129,7 +129,7 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 1.64s
      Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-6827f676974fc042)
 
@@ -230,13 +230,13 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.43s
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
- Documenting yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
+ Documenting yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.66s
-   Generated /build/work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Generated ~/mini-work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.59s
      Running `target/release/yellowstone-replay fixtures/agreement.jsonl`
 {"session":{"generation":1,"provider":1}}
@@ -253,16 +253,16 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 {"local_bank_id":7,"outcome":{"agreeing_providers":1,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","kind":"pending","slot":10}}
 {"local_bank_id":7,"outcome":{"expected":{"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"kind":"conflict","previously_emitted":false,"received":{"blockhash":"0404040404040404040404040404040404040404040404040404040404040404","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"slot":10}}
 line 4: provider conflict; replay halted
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.26s
      Running `target/release/examples/benchmark`
 MEASURED synthetic_metadata_blocks=200000 elapsed_seconds=0.069593 blocks_per_second=2873861 stats=Stats { emitted: 200000, duplicates: 0, conflicts: 0, pending_blocks: 0, retained_slots: 101 }
 LIMIT: in-memory metadata with unit payload; excludes gRPC, reconstruction, full payloads, persistence and end-to-end latency
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.38s
      Running `target/debug/examples/upstream_bridge`
 slot=10 providers=[ProviderId(1), ProviderId(2)] selected_payload=[1]
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.38s
      Running `target/debug/examples/dependency_probe`
 MEASURED issue19 invalid_blockhash_panicked=true invalid_entry_hash_panicked=true guarded_blockhash_rejected=true guarded_entry_rejected=true

@@ -22,7 +22,7 @@ exit codes, upstream defect probes and SQLite recovery. No runner registration i
    safe rotation and backfill; validate controlled outages and a sustained soak.
 4. Obtain independent review and remediate findings. Resolve the experimental upstream pin via
    a supported release or an explicit independently reviewed maintenance decision.
-5. Re-estimate the provisional $13,200 request around genuinely remaining work. Confirm private
+5. Re-estimate the provisional $12,210 request around genuinely remaining work. Confirm private
    applicant details, public links and current form; obtain owner approval for submission.
 
 INFERRED: a working prototype is a basis for validation, not proof of demand or funding likelihood.

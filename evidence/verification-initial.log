@@ -1,6 +1,6 @@
 # mini-test
 # when: 20261025-003305
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: bash scripts/verify.sh
 # ---
@@ -84,7 +84,7 @@ cargo 1.95.0 (f2d3ce0bd 2026-03-21)
    Compiling solana-hash v4.7.0
    Compiling bytesize-serde v0.2.1
    Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 15.71s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-1048ba485f20ef39)
 
@@ -217,7 +217,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
    Compiling solana-hash v4.7.0
    Compiling bytesize-serde v0.2.1
    Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 5.92s
      Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-f9f893dfe71ce094)
 
@@ -335,18 +335,18 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
     Checking rand v0.9.5
     Checking solana-signature v3.6.0
     Checking yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.25s
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
- Documenting yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
+ Documenting yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.56s
-   Generated /build/work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
+   Generated ~/mini-work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
    Compiling proc-macro2 v1.0.107
    Compiling quote v1.0.47
    Compiling syn v3.0.9
    Compiling serde_derive v1.0.229
    Compiling serde v1.0.229
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 3.13s
      Running `target/release/yellowstone-replay fixtures/agreement.jsonl`
 {"session":{"generation":1,"provider":1}}
@@ -363,7 +363,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 {"local_bank_id":7,"outcome":{"agreeing_providers":1,"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","kind":"pending","slot":10}}
 {"local_bank_id":7,"outcome":{"expected":{"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"kind":"conflict","previously_emitted":false,"received":{"blockhash":"0404040404040404040404040404040404040404040404040404040404040404","entry_count":2,"executed_transaction_count":1,"parent_blockhash":"0202020202020202020202020202020202020202020202020202020202020202","parent_slot":9,"slot":10},"slot":10}}
 line 4: provider conflict; replay halted
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 0.26s
      Running `target/release/examples/benchmark`
 MEASURED synthetic_metadata_blocks=200000 elapsed_seconds=0.071715 blocks_per_second=2788833 stats=Stats { emitted: 200000, duplicates: 0, conflicts: 0, pending_blocks: 0, retained_slots: 101 }

@@ -46,6 +46,14 @@ capacity exhaustion, malformed input and conflicts fail the run, and the report 
 the Mini; it is gitignored. Reports omit raw transport errors and endpoint/token values.
 Review all evidence before copying any of it into the public repository.
 
+## Settling the PublicNode question without the guard
+
+`PROBE_OBSERVE_ONLY=1 cargo run --locked --release --features grpc --example access_probe` connects,
+subscribes and, for 30 seconds, only counts what arrives: slot statuses with and without a bank id,
+and entries and transactions at `bank_id == 0`. It applies no guard and reconstructs nothing, so its
+`observed` result is not a pass. It needs a valid token in the environment, which the earlier
+credential no longer is. Not run.
+
 ## Acceptance and evidence
 
 1. Smoke: both providers connect; 100 blocks agree; record slot range, event/reconnect counts,

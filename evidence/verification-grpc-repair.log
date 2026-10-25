@@ -1,6 +1,6 @@
 # mini-test
 # when: 20261025-003601
-# mini: 3 (builduser@build-host)
+# mini: 3 (ironman)
 # proj: yellowstone-reconcile
 # cmd: bash scripts/verify.sh
 # ---
@@ -184,7 +184,7 @@ cargo 1.95.0 (f2d3ce0bd 2026-03-21)
    Compiling tonic-health v0.14.6
    Compiling yellowstone-grpc-client v15.0.0
    Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 26.90s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-3d21ef026edf62ce)
 
@@ -398,7 +398,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
    Compiling tonic-health v0.14.6
    Compiling yellowstone-grpc-client v15.0.0
    Compiling yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
-   Compiling yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
     Finished `release` profile [optimized] target(s) in 18.47s
      Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-18cd601d5075c46a)
 
@@ -573,7 +573,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
     Checking tonic-health v0.14.6
     Checking yellowstone-grpc-client v15.0.0
     Checking yellowstone-block-machine v0.12.0 (https://github.com/rpcpool/yellowstone-block-machine?rev=b828807d45522505cfdd6b4710d2287b29e5d99a#b828807d)
-    Checking yellowstone-reconcile v0.1.0 (/build/work/yellowstone-reconcile)
+    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
 error: large size difference between variants
   --> examples/two_providers.rs:17:1
    |

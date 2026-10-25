@@ -16,7 +16,9 @@ consumer's job. This library takes one upstream
 compares the sealed blocks on blockhash, parent and counts instead of bank id, and emits a block
 only when a configurable number of distinct providers (default two, at Finalized) agree. A
 disagreement is quarantined and reported, not resolved by majority. A SQLite sink stores each
-block and its resume point in one transaction, so a crash neither loses nor double-stores a slot.
+block and its linked resume point in one transaction, supporting idempotent replay after a process
+restart. This requires a trusted anchor and finalized chain; power-loss safety and arbitrary
+downstream effects are not established by the tests.
 It is off-chain tooling; it does not verify ledger validity, only that providers agree.
 
 ## Status at a glance
@@ -121,6 +123,10 @@ cargo run --locked --release --features sqlite --example sqlite_sink
 
 See [correctness contract](docs/CORRECTNESS.md), [operations](docs/OPERATIONS.md),
 [verification](docs/VERIFICATION.md), the [proposal source](grant/proposal.md) and its [budget basis](grant/BUDGET.md).
+
+The proposal follows the Foundation's Developer Tooling template: component development,
+six months of maintenance and quantified external adoption. The $7,470 request is an estimate;
+the live two-provider pilot remains uncompleted and is not funded by this scope.
 
 ## Project status
 

@@ -23,8 +23,10 @@ working verification route.
    and a sustained soak.
 4. Obtain independent review and remediate findings. Resolve the experimental upstream pin via
    a supported release or an explicit independently reviewed maintenance decision.
-5. Re-estimate the provisional $7,470 request (no live pilot) around genuinely remaining work. Confirm the
-   current form and public links before submission.
+5. The revised $7,470 proposal includes component development, six months of maintenance and four
+   external integration targets, following the live Developer Tooling template checked 26 October.
+   The applicant confirmed these future obligations. No live pilot is funded; acceptance of offline
+   integrations for adoption must be agreed with the Foundation. See `grant/SUBMISSION.md`.
 
 INFERRED: a working prototype is a basis for validation, not proof of demand or funding likelihood.
 No production deployment, paid service purchase or release publication has happened.

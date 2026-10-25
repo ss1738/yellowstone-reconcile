@@ -28,4 +28,5 @@ cargo run --locked --release --features sqlite --example sqlite_sink
 cargo run --locked --release --example durable_sink
 cargo run --locked --release --example stall_budget -- 212
 cargo run --locked --release --example payload_variance
+python3 -m unittest scripts/test_pilot.py
 python3 scripts/pilot.py --preflight

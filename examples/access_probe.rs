@@ -116,6 +116,43 @@ async fn main() -> Result<(), &'static str> {
             shared.lock().expect("counter lock")[index] += 1;
         }
     });
+    if env::var("PROBE_OBSERVE_ONLY").as_deref() == Ok("1") {
+        // No guard and no reconstruction: only count what the provider sends for 30 seconds.
+        // This separates "the feed carries no bank ids" from "one status lacks one" without
+        // weakening the check that stops the real probe. It is not a reconstruction result.
+        let mut source = Box::pin(source);
+        let deadline = tokio::time::Instant::now() + Duration::from_secs(30);
+        let mut failure = None;
+        loop {
+            match tokio::time::timeout_at(deadline, source.next()).await {
+                Ok(Some(Ok(_))) => {}
+                Ok(Some(Err(_))) => {
+                    failure = Some("stream transport error");
+                    break;
+                }
+                Ok(None) => {
+                    failure = Some("stream ended");
+                    break;
+                }
+                Err(_) => break,
+            }
+        }
+        let counts = *counts.lock().expect("counter lock");
+        println!(
+            "{}",
+            serde_json::json!({"stage":"observed","failure":failure,
+            "slots":counts[0],"block_meta":counts[1],"entries":counts[2],"footers":counts[3],
+            "transactions":counts[4],"accounts":counts[5],
+            "slot_status_without_and_with_bank_id":*slot_banks.lock().expect("slot lock"),
+            "entries_and_transactions_with_bank_id_zero":*zero_banks.lock().expect("zero lock"),
+            "limit":"Observation only: no guard, no reconstruction. Not a pilot or a pass."})
+        );
+        return if failure.is_none() {
+            Ok(())
+        } else {
+            Err("observation incomplete")
+        };
+    }
     let source = GuardedSource::new(source, 8192).map_err(|_| "guard setup failed")?;
     let mut stream = BlockStream::<_, SubscribeUpdate, _>::new(
         source,

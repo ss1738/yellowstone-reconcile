@@ -29,6 +29,28 @@ def preflight():
             "limit": "Configuration checks do not establish provider independence or protocol compatibility."}
 
 
+def read_events(lines, sink):
+    """Copy the child's JSON events to `sink`. Returns (emitted, summary, error).
+
+    Child output is data. An unparseable or unexpected line stops the read with a fixed message
+    and is never echoed, because it could carry anything, including an endpoint."""
+    emitted, summary = 0, None
+    for line in lines:
+        try:
+            event = json.loads(line)
+            if event.get("kind") not in ("emitted", "summary"):
+                raise ValueError
+        except (ValueError, AttributeError):
+            return emitted, summary, "child produced output that is not a pilot event"
+        sink.write(json.dumps(event) + "\n")
+        sink.flush()
+        if event["kind"] == "emitted":
+            emitted += 1
+        else:
+            summary = event
+    return emitted, summary, None
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -82,27 +104,11 @@ def main():
     sampler.start()
     watchdog = threading.Timer(seconds + 15, child.kill)
     watchdog.start()
-    summary = None
-    emitted = 0
-    harness_error = None
     try:
         with (output / "events.jsonl").open("x") as stream:
-            for line in child.stdout:
-                # Child output is data. Never echo an unparseable line: it could carry anything.
-                try:
-                    event = json.loads(line)
-                    if event.get("kind") not in ("emitted", "summary"):
-                        raise ValueError
-                except (ValueError, AttributeError):
-                    harness_error = "child produced output that is not a pilot event"
-                    child.kill()
-                    break
-                stream.write(json.dumps(event) + "\n")
-                stream.flush()
-                if event["kind"] == "emitted":
-                    emitted += 1
-                else:
-                    summary = event
+            emitted, summary, harness_error = read_events(child.stdout, stream)
+            if harness_error:
+                child.kill()
         code = child.wait()
     finally:
         if child.poll() is None:

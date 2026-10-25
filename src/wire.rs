@@ -11,8 +11,9 @@ use std::{
     pin::Pin,
     task::{Context, Poll},
 };
-use yellowstone_block_machine::yellowstone_grpc_proto::geyser::{
-    subscribe_update::UpdateOneof, SlotStatus, SubscribeUpdate,
+use yellowstone_block_machine::yellowstone_grpc_proto::{
+    geyser::{subscribe_update::UpdateOneof, SlotStatus, SubscribeUpdate},
+    prost::{self, Message},
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -144,6 +145,48 @@ fn validate_hash(value: &str, field: &'static str) -> Result<(), WireError> {
         return Err(WireError::InvalidHash { field });
     }
     Ok(())
+}
+
+/// A stored block payload that does not decode to exactly the events it was written with.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PayloadError;
+impl fmt::Display for PayloadError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "stored block payload is damaged or truncated")
+    }
+}
+impl std::error::Error for PayloadError {}
+
+/// Serialize a block's reconstructed events as an opaque sink payload: an event count, then each
+/// event length-delimited. The count lets `decode_events` reject a payload cut between two events
+/// instead of reading it as a shorter block. Holds the encoded copy alongside the originals, so
+/// a multi-megabyte block needs about twice its size while being written.
+pub fn encode_events<'a>(events: impl IntoIterator<Item = &'a SubscribeUpdate>) -> Vec<u8> {
+    let events: Vec<&SubscribeUpdate> = events.into_iter().collect();
+    let mut out = Vec::new();
+    prost::encoding::encode_varint(events.len() as u64, &mut out);
+    for event in events {
+        event
+            .encode_length_delimited(&mut out)
+            .expect("a Vec grows without bound");
+    }
+    out
+}
+
+/// Inverse of `encode_events`. Any cut, trailing byte or wrong count is an error.
+pub fn decode_events(mut bytes: &[u8]) -> Result<Vec<SubscribeUpdate>, PayloadError> {
+    let count = prost::encoding::decode_varint(&mut bytes).map_err(|_| PayloadError)?;
+    // The count is untrusted, so grow the vector as events decode instead of reserving it.
+    let mut events = Vec::new();
+    for _ in 0..count {
+        events
+            .push(SubscribeUpdate::decode_length_delimited(&mut bytes).map_err(|_| PayloadError)?);
+    }
+    if bytes.is_empty() {
+        Ok(events)
+    } else {
+        Err(PayloadError)
+    }
 }
 
 #[derive(Debug)]

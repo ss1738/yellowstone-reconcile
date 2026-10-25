@@ -5,6 +5,7 @@ Reconcile complete Solana blocks across independent Yellowstone gRPC connections
 [Grant proposal (PDF)](docs/yellowstone-reconcile-proposal.pdf) |
 [Correctness contract](docs/CORRECTNESS.md) | [Verification](docs/VERIFICATION.md) |
 [Self-audit](AUDIT.md) | [Research record](docs/RESEARCH-2026-10-25.md)
+[Live demo](https://reconcile.satyawansingh.com/demo) (the library compiled to WebAssembly, replaying fixtures; source in [`demo/`](demo/))
 
 ## What it does
 

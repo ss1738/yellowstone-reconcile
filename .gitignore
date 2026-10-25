@@ -7,3 +7,4 @@
 /target/
 /pilot-results/
 grant/*.pdf
+/demo/target/

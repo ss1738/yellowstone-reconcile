@@ -108,3 +108,10 @@ INFERRED: passing finite synthetic tests supports prototype review. It does not 
 compatibility, continuous gap-free ingestion, power-loss safety, payload validity, independence,
 adoption, external review or funding likelihood. Full upstream payload persistence, replay/rotation,
 a live pilot, sustained soak and independent review remain future gates. Publishing is disabled.
+
+## Browser demo
+
+MEASURED (Ironman, 25 October 2026): `demo/` (the replay driver compiled to WebAssembly for the project
+site) passes its 4 tests with `cargo test` and builds for `wasm32-unknown-unknown` (136,015 bytes). It is a
+separate crate and is **not** part of `scripts/verify.sh` or `evidence/source-manifest.sha256`; no raw log
+of that run was saved. The page was exercised by hand in a browser against all three fixtures.

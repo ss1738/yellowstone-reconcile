@@ -18,8 +18,8 @@ file keeps the meaning it had when written, so older ones describe older source.
 
 ## Superseded runs (kept unchanged as history)
 
-`verification-audit.log` (first audit pass), `verification-current.log`, `verification-before-access-probe.log`,
-`verification-pilot-preparation.log`, `verification.log`, `verification-initial.log`,
+`verification-audit.log` (first audit pass), `verification-current.log`,
+`verification.log`, `verification-initial.log`,
 `verification-grpc-repair.log`, `locked-verification.log`, and the manifests
 `source-manifest-audit.sha256`, `source-manifest-pre-audit.sha256`, `source-manifest-initial.sha256`.
 

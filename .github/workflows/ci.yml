@@ -1,10 +1,10 @@
 name: Hosted check (manual)
-# The owner's standing rule is that Rust builds and tests run on the owner's Mini machines.
-# This GitHub-hosted workflow therefore runs ONLY when someone starts it by hand. It is not an
-# automatic CI and it has never been run. To make it automatic, add push and pull_request
-# triggers: that is an owner decision, because it compiles Rust on GitHub's machines.
-# Read-only token, no secrets: safe for untrusted code if the owner does enable it.
-# The authoritative verification is scripts/verify.sh on an owner Mini (see docs/RUNNER-SETUP.md).
+# The maintainer builds and tests Rust on their own machines. This GitHub-hosted workflow
+# therefore runs ONLY when someone starts it by hand. It is not an automatic CI and it has never
+# been run. To make it automatic, add push and pull_request triggers; that moves compilation to
+# GitHub's machines, which is the maintainer's decision.
+# Read-only token, no secrets: safe for untrusted code if it is enabled.
+# The authoritative verification is scripts/verify.sh on the maintainer's machine (docs/RUNNER-SETUP.md).
 on:
   workflow_dispatch:
 permissions:

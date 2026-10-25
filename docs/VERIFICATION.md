@@ -28,6 +28,13 @@ the pre-audit manifest `source-manifest-pre-audit.sha256`. Private host identifi
 account name) were replaced with placeholders in published logs on 25 October; raw originals are
 kept outside the repository.
 
+**Known difference, 25 October 2026 (afternoon):** three executable inputs changed after the run
+above and have **not** been re-verified, because the build machine was unreachable:
+`Cargo.toml` (added `repository`, `readme`, `keywords`, `categories`; changed one comment) and the
+two workflow files (comments and one name). No dependency, feature, source or test changed, and
+`Cargo.lock` is untouched. Until `scripts/verify.sh` is re-run, the diff below will list exactly
+those three paths.
+
 Recheck the manifest with:
 
 ```sh

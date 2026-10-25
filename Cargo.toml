@@ -6,6 +6,10 @@ rust-version = "1.95"
 license = "Apache-2.0"
 description = "Conservative reconciliation of sealed Solana blocks across independent Yellowstone connections"
 publish = false
+repository = "https://github.com/ss1738/yellowstone-reconcile"
+readme = "README.md"
+keywords = ["solana", "yellowstone", "geyser", "reconciliation"]
+categories = ["development-tools", "network-programming"]
 
 [features]
 default = []
@@ -17,7 +21,7 @@ simulation = ["grpc", "yellowstone-block-machine/test-tools"]
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-# Experimental PR #22 pin, independently tested locally; see docs/DEPENDENCY-REVIEW.md.
+# Experimental pin: the head of upstream PR #22 (open, unmerged); see docs/DEPENDENCY-REVIEW.md.
 yellowstone-block-machine = { git = "https://github.com/rpcpool/yellowstone-block-machine", rev = "0c732a049d6d18008a541f47b09ddb7b949cbb65", optional = true }
 solana-commitment-config = { version = "3", optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "signal"], optional = true }

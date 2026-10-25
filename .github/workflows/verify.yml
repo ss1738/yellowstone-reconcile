@@ -1,4 +1,4 @@
-name: Verify on owner Mini
+name: Verify on the maintainer's build machine
 on:
   workflow_dispatch:
 permissions:

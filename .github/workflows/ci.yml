@@ -1,18 +1,41 @@
-name: Full verification on owner Mini
+name: CI
+# GitHub-hosted, read-only token, no secrets: safe to run on untrusted pull requests.
+# Covers default, sqlite and upstream features. The grpc and simulation features, the full
+# example set and the live-provider tools run only under verify.yml on an owner Mini.
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
 permissions:
   contents: read
 jobs:
   test:
-    # Register this label only on the owner's Ironman Mini. Never on the cousin's Mini.
-    runs-on: [self-hosted, macOS, ARM64, ironman]
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Verify runner identity
-        run: test "$(hostname | tr '[:upper:]' '[:lower:]' | cut -d. -f1)" = ironman
-      - name: Verify all features, recovery, fixtures and examples
-        run: bash scripts/verify.sh
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Test default features
+        run: cargo test --locked --all-targets
+      - name: Test sqlite sink
+        run: cargo test --locked --features sqlite --all-targets
+      - name: Test upstream bridge
+        run: cargo test --locked --features upstream --all-targets
+      - name: Clippy
+        run: cargo clippy --locked --features sqlite,upstream --all-targets -- -D warnings
+      - name: Fixtures must exit exactly as specified
+        run: |
+          cargo build --locked --release --bin yellowstone-replay
+          bin=target/release/yellowstone-replay
+          "$bin" fixtures/agreement.jsonl
+          for fixture in conflict malformed; do
+            status=0
+            "$bin" "fixtures/$fixture.jsonl" || status=$?
+            if [ "$status" -ne 1 ]; then
+              echo "$fixture returned $status, expected exactly 1" >&2
+              exit 1
+            fi
+          done

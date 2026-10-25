@@ -1,53 +1,48 @@
 # yellowstone-reconcile
 
-**Grant proposal (PDF, current):** [docs/yellowstone-reconcile-proposal.pdf](docs/yellowstone-reconcile-proposal.pdf).
-Status: working prototype, unaudited, not yet run against two live providers. See [AUDIT.md](AUDIT.md) and
-[SUBMISSION-READINESS.md](SUBMISSION-READINESS.md).
+Reconcile complete Solana blocks across independent Yellowstone gRPC connections. Rust, Apache-2.0.
+**Status: prototype. Unaudited, not yet run against two live providers.**
+[Grant proposal (PDF)](docs/yellowstone-reconcile-proposal.pdf) |
+[Correctness contract](docs/CORRECTNESS.md) | [Verification](docs/VERIFICATION.md) |
+[Self-audit](AUDIT.md) | [Research record](docs/RESEARCH-2026-10-25.md)
 
-A conservative Rust companion for reconciling complete Solana blocks from independent
-Yellowstone connections. Local development release; publishing is disabled.
+## What it does
 
-MEASURED (source: `src/lib.rs`, `src/upstream.rs`): the implementation compares block
-hashes, parents and counts after per-connection reconstruction, requires a configurable
-number of distinct providers, and quarantines disagreements. The default requires two
-providers at Finalized commitment. It never combines payload fragments from different
-providers.
+Solana's [Alpenglow integration guidance](https://solana.com/upgrades/alpenglow) says a bank id means
+nothing outside the connection it arrived on, and that reconciling across connections is the
+consumer's job. This library takes one upstream
+[block-machine](https://github.com/rpcpool/yellowstone-block-machine) stream per connection,
+compares the sealed blocks on blockhash, parent and counts instead of bank id, and emits a block
+only when a configurable number of distinct providers (default two, at Finalized) agree. A
+disagreement is quarantined and reported, not resolved by majority. A SQLite sink stores each
+block and its resume point in one transaction, so a crash neither loses nor double-stores a slot.
+It is off-chain tooling; it does not verify ledger validity, only that providers agree.
 
-## Why build this?
+## Status at a glance
 
-MEASURED: the Foundation's [Alpenglow integration guidance](https://solana.com/upgrades/alpenglow)
-identifies cross-connection reconciliation as a consumer responsibility. The existing
-[Yellowstone Block Machine](https://github.com/rpcpool/yellowstone-block-machine) supplies
-the per-connection reconstruction layer. See [research evidence](docs/RESEARCH.md).
+| Tested offline (synthetic or simulated input) | Not done |
+|---|---|
+| Agreement, conflict, reconnect and retention rules (`tests/`) | A run against two live providers |
+| Bridge from upstream streams; raw-input guard (`src/wire.rs`) | A consumer who has asked for it |
+| SQLite sink: finalized-only, crash and unordered recovery | Connection rotation (the guard ends a stream after 8,192 banks) |
+| Real reconstructed events stored and read back (`tests/real_payload.rs`) | Independent code review |
+| Replay CLI and fixtures | A supported upstream release (the pin is an open pull request) |
 
-INFERRED: a reusable companion and an adversarial fixture corpus could reduce duplicate
-integration effort. Demand, upstream acceptance and grant support remain unverified.
+## Quick start
 
-## Local demonstration
-
-Run Rust commands on a Mac Mini in this owner's environment. From this repository:
+Needs Rust 1.95 (pinned by `rust-toolchain.toml`) and network access once, for the pinned git
+dependency. A full build uses about 3 GB.
 
 ```sh
-mini-test -m 3 -- 'bash scripts/verify.sh'
-```
-
-On an appropriately provisioned build machine:
-
-```sh
+bash scripts/verify.sh        # the complete locked suite; its output is evidence/verification-final.log
 cargo run --bin yellowstone-replay -- fixtures/agreement.jsonl
+cargo run --bin yellowstone-replay -- fixtures/conflict.jsonl   # exits 1: provider conflict
 cargo run --features upstream --example upstream_bridge
 ```
 
-The agreement fixture uses the same local bank id on two providers and reconnects one.
-The conflicting fixture should exit with status 1:
-
-```sh
-cargo run --bin yellowstone-replay -- fixtures/conflict.jsonl
-```
-
-The replay CLI accepts a JSONL filename and optional minimum-provider count. Its input
-must contain sealed, qualified block observations, not raw Geyser fragments. Hashes in
-these human-readable fixtures use hexadecimal; upstream wire hashes are binary/base58.
+The agreement fixture uses the same local bank id on two providers and reconnects one. The replay
+CLI reads sealed, qualified block observations as JSON lines, not raw Geyser fragments; hashes in
+the fixtures are hexadecimal, whereas upstream wire hashes are binary or base58.
 
 ## Integration
 
@@ -86,7 +81,7 @@ Live provider operation is not established by compilation or offline fixture tes
 
 For the bounded smoke harness and evidence capture, see [pilot protocol](docs/PILOT.md).
 `python3 scripts/pilot.py --preflight` checks configuration without connecting or compiling;
-`--run` requires provider access on an owner Mini. No live pilot is claimed. The harness does
+`--run` requires provider access. No live pilot is claimed. The harness does
 not implement continuous rotation/replay or a live durable payload sink.
 
 ### Storing real block payloads
@@ -108,7 +103,7 @@ Only `Finalized` blocks are stored. See operations for anchor assumptions and wh
 cargo run --locked --release --features sqlite --example sqlite_sink
 ```
 
-Run this command on the owner Mini. The complete local verification command above covers it.
+`scripts/verify.sh` runs it.
 
 ## Correctness boundaries
 
@@ -133,7 +128,7 @@ fixtures, transport example, tests, benchmark and grant drafts (see their source
 Test execution evidence and limitations are recorded separately in `docs/VERIFICATION.md`.
 
 MEASURED (`docs/RUNNER-SETUP.md`, `gh api`, 25 October 2026): there is **no automatic CI**. Verification
-is `scripts/verify.sh`, run by hand on an owner Mini (`evidence/verification-final.log`). Neither
+is `scripts/verify.sh`, run by hand on the maintainer's build machine (`evidence/verification-final.log`). Neither
 workflow has run: `ci.yml` is a GitHub-hosted check that starts only by hand, and `verify.yml`
 needs a self-hosted runner that is not registered (0 runners). The runner configuration is
 written up for owner review and nothing enables it.

@@ -15,36 +15,33 @@ advertised generic Yellowstone support alone does not establish this compatibili
 Use identical subscription semantics. Different endpoint strings or provider labels are not
 proof of operational independence. No paid subscriptions are purchased by this preparation.
 
-## Owner Mini execution
+## Running the pilot
 
-Keep credentials outside the repository, directly on Ironman, in a private mode-600 file such as
+Keep credentials outside the repository, in a private mode-600 file such as
 `$HOME/.config/yellowstone-reconcile/pilot.env`. Export the variables in `.env.example` there,
 including the two provider names. Do not paste values into chat, command arguments or evidence.
 The Python runner does not load an env file automatically.
 
-Sync code and verify offline from the MacBook:
+Verify offline first:
 
 ```sh
-mini-test -m 3 -- 'bash scripts/verify.sh'
+bash scripts/verify.sh
 ```
 
-On Ironman, after exporting those variables in its shell:
+Then, in a shell where those variables are exported:
 
 ```sh
-cd "$HOME/mini-work/yellowstone-reconcile"
 export PATH="$HOME/.cargo/bin:$PATH"
 python3 scripts/pilot.py --preflight
 python3 scripts/pilot.py --run
 ```
 
-Or use `clusterrun` pinned to `-m 3` with a private wrapper that sources the private file there.
-No Rust compilation runs on the MacBook. Default target: 100 agreed finalized blocks within
-300 seconds. A zero exit requires that target and a successful summary. Interrupt, idle timeout,
-capacity exhaustion, malformed input and conflicts fail the run, and the report states why
-(`failure`; a sanitized message, never an endpoint or token). `RECONCILE_MAX_SECONDS` is capped at
-1,200: see the next section. Inspect `pilot-results/` on
-the Mini; it is gitignored. Reports omit raw transport errors and endpoint/token values.
-Review all evidence before copying any of it into the public repository.
+Default target: 100 agreed finalized blocks within 300 seconds. A zero exit requires that target
+and a successful summary. Interrupt, idle timeout, capacity exhaustion, malformed input and
+conflicts fail the run, and the report states why (`failure`; a sanitized message, never an
+endpoint or token). `RECONCILE_MAX_SECONDS` is capped at 1,200: see Known implementation limits below. Reports are
+written under `pilot-results/`, which is gitignored, and omit raw transport errors and
+endpoint or token values. Review all evidence before copying any of it into the repository.
 
 ## Settling the PublicNode question without the guard
 
@@ -87,7 +84,7 @@ future work. Repeated short smoke runs do not prove gap-free continuity.
 
 ## Integrator review packet
 
-Send only after owner authorization: README, correctness contract, dependency review, fresh
+Send only with the maintainer's authorization: README, correctness contract, dependency review, fresh
 verification log and pilot protocol. Ask for current multi-provider reconciliation behavior,
 the missing requirement, willingness to reproduce the example, acceptable failure behavior,
 and whether upstream placement would be preferable. Record named written feedback verbatim

@@ -2,10 +2,10 @@
 
 ## Current source (final, second audit pass)
 
-MEASURED: `evidence/verification-final.log` is the raw output of `mini-test -m 3 -- bash
-scripts/verify.sh` on Ironman, Rust/Cargo 1.95.0, 25 October 2026, against the tree whose 36
+MEASURED: `evidence/verification-final.log` is the raw output of `bash scripts/verify.sh`
+on the maintainer's Mac mini (Ironman), Rust/Cargo 1.95.0, 25 October 2026, against the tree whose 36
 executable inputs are listed in `evidence/source-manifest.sha256`. I diffed that manifest against
-the hashes the Mini printed and they match; the Mini's formatter had rewritten two files, which
+the hashes the build machine printed and they match; its formatter had rewritten two files, which
 were copied back first. `scripts/verify.sh` exited 0. Passing tests the runner reported, summed
 from that log:
 
@@ -60,15 +60,15 @@ input, the stall example derives 27.1 seconds. Neither is an operational guarant
 
 ## Pilot and CI readiness
 
-MEASURED: a subsequent owner-authorized single-provider PublicNode check connected and subscribed
+MEASURED: a subsequent single-provider PublicNode check connected and subscribed
 using the supplied token, but stopped on `MissingBankId` with no reconstructed blocks.
 See `evidence/publicnode-access.log`, `examples/access_probe.rs` and `docs/PUBLICNODE-RESULT.md`.
 This is actual network access evidence, not a successful reconstruction or two-provider pilot.
 The private credential wrappers were removed; remote absence is recorded in `pilot-preflight.log`.
 
-MEASURED: `evidence/pilot-preflight.log` shows owner-Mini detection succeeded but provider access
+MEASURED: `evidence/pilot-preflight.log` shows build-machine detection succeeded but provider access
 checks failed. `scripts/pilot.py --run` exited 2 before build or connection when those credentials
-were absent. No live network pilot has been executed. The owner requested offline preparation.
+were absent. No live network pilot has been executed. Provider access was not available, so only offline preparation was done.
 
 MEASURED: `evidence/readiness-status-2026-10-25.json` records historical GitHub CI successes on
 commit `7999f67`, zero registered self-hosted runners, upstream PR #22 open/unmerged and scoping
@@ -76,19 +76,19 @@ issue #23 with zero comments. Historical CI tested default/upstream features onl
 coverage of this revised local workflow or the SQLite/wire features.
 
 MEASURED (`docs/RUNNER-SETUP.md`): there is no automatic CI. `ci.yml` is a GitHub-hosted workflow that
-starts only by hand, because the owner's rule is that Rust builds run on the owner's Minis; it has
+starts only by hand, because the maintainer's practice is to build and test Rust on their own machines; it has
 never run. `verify.yml` targets a self-hosted `ironman` runner that is not registered (0 runners,
 `gh api`, 25 October), so it cannot run either. Neither is triggered by a push or a pull request.
 The grpc and simulation features are covered only by `scripts/verify.sh`. Operational verification
-is the manual Mini run above, nothing more.
+is the manual run above, nothing more.
 
-## Reproduce on the owner's machine
+## Reproduce
 
 ```sh
-mini-test -m 3 -- 'bash scripts/verify.sh'
+bash scripts/verify.sh
 ```
 
-Do not use automatic Mini selection; Mini 1 is not the owner's device. See `docs/PILOT.md` for
+See `docs/PILOT.md` for
 credential preparation and the opt-in smoke protocol after compatible provider access is available.
 
 ## Historical evidence and limits

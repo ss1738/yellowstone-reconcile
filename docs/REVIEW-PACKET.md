@@ -1,10 +1,10 @@
 # Independent review packet
 
-Status: prepared locally; no independent reviewer engaged and no review completed.
+Status: no independent reviewer engaged and no review completed.
 
 ## Reproduce
 
-On the owner's Ironman Mini, run `bash scripts/verify.sh` after syncing with `mini-test -m 3`.
+Run `bash scripts/verify.sh` on a machine with Rust 1.95.
 Compare executable inputs with `evidence/source-manifest.sha256`; inspect
 `evidence/verification-audit.log` and the deliberately failing pre-fix logs (`evidence/audit-regressions-before-fix.log`, `evidence/sink-metadata-regression-before-fix.log`).
 
@@ -19,9 +19,9 @@ assessing the grant's claims. `grant/BUDGET.md` excludes this delivered preparat
   are needed when the wire guard or core reaches capacity?
 - Does conflict quarantine remain visible after emission, restart, retention pruning and sink commit?
   Which downstream effects require compensation or an explicit operator halt?
-- Is the caller's trusted anchor sufficiently explicit? The sink does not validate external history,
-  enforce a finalized-only input type, establish a unique canonical child or verify ledger validity.
-  Confirmed/processed forks are outside its safe watermark assumption.
+- Is the caller's trusted anchor sufficiently explicit? The sink does not validate external history
+  or verify ledger validity. It rejects blocks below `Finalized` at runtime (not in the type), and
+  a unique canonical child is a precondition: with finalized input only one child can exist.
 - Does replay compare all stored identity metadata, without accidentally claiming byte equality for
   opaque payloads? Review `replay_with_the_same_hash_but_different_metadata_is_refused`.
 - Are SQLite transaction boundaries, disk errors, corruption handling, concurrent access and

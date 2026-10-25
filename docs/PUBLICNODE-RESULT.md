@@ -1,7 +1,7 @@
 # PublicNode access check, 25 October 2026
 
-MEASURED: `evidence/publicnode-access.log` records a real read-only test on Ironman using the
-owner-supplied token and `https://solana-yellowstone-grpc.publicnode.com:443`. The diagnostic
+MEASURED: `evidence/publicnode-access.log` records a real read-only test, run from the maintainer's build machine, using a
+token I supplied and `https://solana-yellowstone-grpc.publicnode.com:443`. The diagnostic
 source is `examples/access_probe.rs`. Endpoint/token values are not printed by the probe.
 
 - Connection succeeded and the server accepted the subscription.
@@ -25,7 +25,7 @@ bank IDs to force this feed through.
 MEASURED: no second provider was connected and no two-provider reconciliation was performed.
 The token was used only via a private one-use wrapper outside the repository. Local cleanup
 removed that wrapper; the remote wrapper removes itself on exit. Replace the token in Allnodes
-as the owner planned. No account, subscription purchase, transaction submission or deployment
+as planned. No account, subscription purchase, transaction submission or deployment
 was performed by this test.
 
 ## Audit of the failure (25 October 2026, no new network access)
@@ -63,10 +63,10 @@ transactions with `bank_id == 0`. These are counts only, with no content or cred
 GUESS: the free feed may run a Yellowstone version that predates bank ids. Nothing measured
 confirms it. A fixed protocol version string is not exposed by the probe.
 
-Next live check, not run because the earlier credential must be replaced by its owner first:
+Next live check, not run because the earlier credential must be replaced by its holder first:
 
 ```sh
-# On Ironman, with a NEW token in a private mode-600 file sourced into the shell
+# On the build machine, with a NEW token in a private mode-600 file sourced into the shell
 # (YELLOWSTONE_A_URL, YELLOWSTONE_A_TOKEN); never paste values into chat or arguments.
 cd "$HOME/mini-work/yellowstone-reconcile" && export PATH="$HOME/.cargo/bin:$PATH"
 cargo run --locked --release --features grpc --example access_probe

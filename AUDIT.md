@@ -1,8 +1,7 @@
 # Audit, 25 October 2026
 
 Tags: MEASURED has a path or archived log beside it, INFERRED is reasoning from measured facts,
-GUESS is neither. All Rust ran on Ironman (Mini 3) through `mini-test -m 3`; nothing was compiled
-on the MacBook and Mini 1 was not used.
+GUESS is neither. All Rust ran on the maintainer's Mac mini (Ironman); nothing was compiled elsewhere.
 
 ## Audited source identity
 
@@ -78,7 +77,7 @@ The deployed PDF and project page still say USD 15,000, "CI passing", "never" fo
 and restart, and present synthetic payload bytes as a memory ceiling. The earlier PDF table also
 listed the USD 1,500 allowance twice (fixed in `ba3a7d0`). The PublicNode attempt appeared in no
 grant document. Fixed in `grant/*.md`, regenerated PDF and the local site files. **The deployed
-site and PDF are unchanged until the owner approves a deploy.**
+site and PDF are unchanged until a deploy is approved.**
 
 ### 8. Evidence was stale (fixed)
 `source-manifest.sha256` described the tree before this audit. Regenerated and checked against the
@@ -132,8 +131,8 @@ completed work is billed.
 
 ## How this audit went wrong, for the record
 
-- I appended the first new tests to two Rust test files with a Python script. The standing rule is
-  not to edit Rust with Python scripts. Every other Rust edit used the editor.
+- I appended the first new tests to two Rust test files with a Python script, against my own rule
+  of not editing Rust that way. Every other Rust edit used the editor.
 - An example edit failed to compile (type inference) and was caught only when the pilot built it,
   because the targeted `cargo test` run does not build examples. The failing build is kept in the
   after-fix log.
@@ -144,7 +143,7 @@ completed work is billed.
 
 Summary and decisions are in `SUBMISSION-READINESS.md`; sources in `docs/RESEARCH-2026-10-25.md`.
 One finding above is reversed: finding 3 restored an automatic GitHub-hosted build, which
-conflicts with the owner's rule that Rust builds run on the owner's Mini machines. `ci.yml` is now
+conflicts with the maintainer's practice of building and testing Rust on their own machines. `ci.yml` is now
 manual-only and there is no automatic CI (`docs/RUNNER-SETUP.md`). Also changed: real block payloads
 are encoded with a count and tested through the sink (`tests/real_payload.rs`); the pilot
 harness's malformed-output parsing has offline tests (`scripts/test_pilot.py`); the request is

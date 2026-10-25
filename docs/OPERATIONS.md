@@ -1,14 +1,11 @@
-# Operations and local development
+# Operations
 
-## Build policy for this owner
+## Build and verification
 
-Use `mini-test -m 3 -- 'bash scripts/verify.sh'` from the repository. Mini 3 maps to
-the owner's Ironman host in the installed tooling. Use `-m 2` for Apsarth if reachable.
-Do not use automatic node selection: the tooling's Mini 1 is not an authorized host
-for this owner's project data. Rust builds and tests must not run on the MacBook.
-
-The toolchain is pinned in `rust-toolchain.toml`. `Cargo.lock` records resolved package
-versions once generated on the Mini. Upstream is pinned by Git revision as well.
+Run `bash scripts/verify.sh` from the repository on a machine with Rust 1.95. The toolchain is
+pinned in `rust-toolchain.toml`, `Cargo.lock` records the resolved packages and the upstream
+dependency is pinned by Git revision. The figures marked MEASURED below were produced on the
+maintainer's Apple-silicon Mac mini ("Ironman"); the raw logs are in `evidence/`.
 
 ## Limits and monitoring
 
@@ -36,19 +33,17 @@ The example suppresses raw connection errors because they can include endpoint d
 
 ## Deployment and publication
 
-The current work is local. Do not create a GitHub remote, publish a crate, deploy a service,
-send outreach, or submit the grant until the owner explicitly requests those actions.
-`publish = false` guards accidental crate publication. The optional GitHub workflow is
-manual and requires an owner-provisioned Mini runner; no runner is assumed to exist.
+Nothing here is deployed: this is a library with examples. `publish = false` guards accidental
+crate publication. The GitHub workflows start only by hand, and the self-hosted one needs a runner
+that is not registered (`docs/RUNNER-SETUP.md`).
 
 ## Release checks
 
-1. Run the complete verification script on a Mini and save its raw output in `evidence/`.
+1. Run the complete verification script and save its raw output in `evidence/`.
 2. Review the source against the correctness contract, including negative and positive cases.
 3. Review dependencies and licenses; recheck upstream branches and PR overlap.
 4. Obtain an independent code review and run credentialed provider pilots before production.
-5. Populate application identity/contact fields and replace draft adoption hypotheses with evidence.
-6. Request permission to publish the repository and separately to submit the application.
+5. Replace draft adoption hypotheses with evidence from a named integrator.
 
 ## Sizing memory against a lagging provider
 
@@ -58,7 +53,7 @@ of providers agree, so while one provider runs ahead its payloads are all retain
 operator actually cares about is therefore `max_pending_blocks` multiplied by their own payload
 size.
 
-MEASURED (`cargo run --release --example lag_memory`, 2026-10-25, owner Mini):
+MEASURED (`cargo run --release --example lag_memory`, 2026-10-25, maintainer's build machine):
 
 | scenario | result |
 |---|---|
@@ -86,7 +81,7 @@ slot windows (212 and 213 ms/slot). Alpenglow activated on 21 October 2026; this
 the pre-Alpenglow figure, so any older sizing guidance understates how fast the bounds are
 reached. Slot time is not a constant, so pass your own measurement.
 
-MEASURED (`cargo run --release --example stall_budget`, owner Mini, default `Config`):
+MEASURED (`cargo run --release --example stall_budget`, maintainer's build machine, default `Config`):
 
 | budget | count | at 212 ms/slot |
 |---|---|---|
@@ -122,7 +117,7 @@ The contract is:
 4. Keep calling `advance` forward only. `Error::CheckpointRegression` means the checkpoint you
    read is older than the retention already in effect; do not retry it lower.
 
-MEASURED (`cargo test --test restart`, owner Mini, 2026-10-25, 3 tests passing):
+MEASURED (`cargo test --test restart`, maintainer's build machine, 2026-10-25, 3 tests passing):
 
 | property | result |
 |---|---|
@@ -147,7 +142,7 @@ Refusing replayed slots is not by itself exactly-once. The checkpoint has to be 
 **after** the sink commits. Persist it first and a crash in between loses the slot; persist it
 after and a crash in between re-delivers one slot, which the sink must absorb idempotently.
 
-MEASURED (`cargo run --release --example durable_sink`, owner Mini, 2026-10-25). Twenty slots,
+MEASURED (`cargo run --release --example durable_sink`, maintainer's build machine, 2026-10-25). Twenty slots,
 two providers, a crash after slot 12, a checkpoint file on disk, then a restart that replays the
 whole stream from slot 1:
 
@@ -224,7 +219,7 @@ not compared byte-for-byte. A broken link stalls advancement and costs replay. A
 of required history is unsafe: `open` treats that history as already done and `resume_slot` skips
 it. The caller must independently establish the anchor or deliberately exclude earlier history.
 
-MEASURED (`cargo run --release --features sqlite --example sqlite_sink`, owner Mini, 2026-10-25).
+MEASURED (`cargo run --release --features sqlite --example sqlite_sink`, maintainer's build machine, 2026-10-25).
 Twenty slots, one provider leading and the other delivering in reversed groups of four, a crash
 after six emissions (slots 4, 3, 2, 1, 8, 7), then a restart that replays the whole stream:
 

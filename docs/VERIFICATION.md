@@ -1,8 +1,8 @@
 # Verification status: 25 October 2026
 
-## Current source (final, second audit pass)
+## Current source (re-verified)
 
-MEASURED: `evidence/verification-final.log` is the raw output of `bash scripts/verify.sh`
+MEASURED: `evidence/verification-final.log` (and, for the current tree, `evidence/verification-reverify.log`) is the raw output of `bash scripts/verify.sh`
 on the maintainer's Mac mini (Ironman), Rust/Cargo 1.95.0, 25 October 2026, against the tree whose 36
 executable inputs are listed in `evidence/source-manifest.sha256`. I diffed that manifest against
 the hashes the build machine printed and they match; its formatter had rewritten two files, which
@@ -28,12 +28,12 @@ the pre-audit manifest `source-manifest-pre-audit.sha256`. Private host identifi
 account name) were replaced with placeholders in published logs on 25 October; raw originals are
 kept outside the repository.
 
-**Known difference, 25 October 2026 (afternoon):** three executable inputs changed after the run
-above and have **not** been re-verified, because the build machine was unreachable:
-`Cargo.toml` (added `repository`, `readme`, `keywords`, `categories`; changed one comment) and the
-two workflow files (comments and one name). No dependency, feature, source or test changed, and
-`Cargo.lock` is untouched. Until `scripts/verify.sh` is re-run, the diff below will list exactly
-those three paths.
+**Re-verification, 25 October 2026 (evening):** after the metadata and workflow edits
+(`Cargo.toml`, two workflow files), `scripts/verify.sh` was run again on Ironman against commit
+`b5d883b` with a clean tree: exit 0, 146 passing tests in total (24 + 61 + 61, same as before).
+Raw output: `evidence/verification-reverify.log`. `evidence/source-manifest.sha256` now describes
+that tree and matches the hashes the build machine printed; the earlier manifest is kept as
+`evidence/source-manifest-final.sha256` for `verification-final.log`.
 
 Recheck the manifest with:
 

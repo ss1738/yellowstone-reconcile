@@ -9,7 +9,9 @@ file keeps the meaning it had when written, so older ones describe older source.
 | File | What it is |
 |---|---|
 | `verification-final.log` | Full locked `scripts/verify.sh` run on the final tree (exit 0; 24 / 61 / 61 tests) |
-| `source-manifest.sha256` | SHA-256 of the 36 executable inputs that run tested. Three of them (`Cargo.toml`, two workflow files) changed afterwards and are not yet re-verified; see `docs/VERIFICATION.md` |
+| `verification-reverify.log` | Second full run after the metadata and workflow edits, commit `b5d883b` (exit 0; 24 / 61 / 61 tests) |
+| `source-manifest.sha256` | SHA-256 of the 36 executable inputs of the current tree, as tested by `verification-reverify.log` |
+| `source-manifest-final.sha256` | The same for `verification-final.log` (differs in `Cargo.toml` and two workflow files) |
 | `audit-regressions-before-fix.log`, `audit-regressions-after-fix.log` | New tests failing on the old behaviour, then passing after the fix |
 | `publicnode-access.log`, `publicnode-access-initial.log` | The one real single-provider test (authenticated, streamed, reconstructed nothing) |
 | `readiness-status-2026-10-25.json` | GitHub state read on 25 October: CI runs, runners, upstream issue and PR status |

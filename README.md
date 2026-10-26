@@ -85,7 +85,7 @@ yellowstone-reconcile = { git = "https://github.com/ss1738/yellowstone-reconcile
 
 Drop `features` for the core alone, or add `sqlite` or `grpc` for the sink or guarded transport.
 INFERRED (one check on 26 October 2026, no log kept): a throwaway crate with this dependency at
-commit `cfbf952`, using the `upstream` feature, compiled and ran `Reconciler::new` and `connect`.
+commit `0333b9e` (the same source as the earlier id `cfbf952`, before the history was rewritten), using the `upstream` feature, compiled and ran `Reconciler::new` and `connect`.
 That check is not part of the verification suite.
 
 Read the [integration guide](docs/INTEGRATION.md) before adapting either example. The offline

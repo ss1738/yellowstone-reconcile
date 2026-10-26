@@ -48,6 +48,14 @@ what the test runner reported, not proof obligations.
 `audit-regressions-before-fix.log` and `audit-regressions-after-fix.log`;
 `sink-metadata-regression-before-fix.log`; `pass2-regressions-before-fix.log` (above).
 
+## Grant research (dated facts, not code evidence)
+
+`grant-research-20261026.md`: what the application form, template, Foundation page, Alpenglow page and
+upstream projects said on 26 October 2026, what could not be verified, and the provider price basis.
+`dependency-review/published-0.12.0-check-20261026.log`: the library tested against the published
+`yellowstone-block-machine` 0.12.0 in a scratch copy (64 tests pass; the dead-slot scenario emits 2 slots
+where the pinned revision delivers 70). It is a measurement, not a verification run of the repository tree.
+
 ## Real-provider and upstream evidence
 
 `publicnode-access.log` and `publicnode-access-initial.log`: the one real single-provider test. It

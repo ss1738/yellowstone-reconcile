@@ -6,6 +6,11 @@ MEASURED ([Solana guidance](https://solana.com/upgrades/alpenglow)):
 bank IDs are local to their connection; sealed blockhashes are used for cross-connection comparison.
 The guidance separates per-connection reconstruction from cross-connection reconciliation.
 
+MEASURED ([`yellowstone-grpc-client` 16.0.0 documentation](https://docs.rs/yellowstone-grpc-client/16.0.0/yellowstone_grpc_client/)):
+upstream `BankRef` identifies a bank within one subscription's connection history, so it can't be compared across providers.
+Upstream `subscribe_with_reconnect` documents that recovery buffers updates without a size cap until finalized winners are known.
+The `UpstreamBridge` here has configurable limits (`max_pending`, `max_events_per_block`) and returns a typed error when they are exceeded.
+
 | Tool | MEASURED source description | INFERRED relationship |
 |---|---|---|
 | [Yellowstone Block Machine](https://github.com/rpcpool/yellowstone-block-machine) | Block reconstruction and lifecycle/order handling for a stream | Dependency used separately for each connection |

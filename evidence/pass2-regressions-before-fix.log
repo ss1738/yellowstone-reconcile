@@ -1,0 +1,35 @@
+# Raw output of: cargo test --locked --features upstream,sqlite --test pass2_regressions (before the fix)
+# Host Ironman (Mini 3), 26 October 2026, tree: commit 951ef4e (tests/pass2_regressions.rs added in 7a87d19).
+# Result: 2 passed, 1 failed. The failure demonstrates the defect fixed in the following commit.
+# Host address, account name and paths replaced with placeholders.
+# ---
+syncing (rsync, incremental)...
+----------------------------------------------------------------
+   Compiling yellowstone-reconcile v0.1.0 (<build-dir>/yellowstone-reconcile)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.65s
+     Running tests/pass2_regressions.rs (target/debug/deps/pass2_regressions-076a6f7e2466b3f9)
+
+running 3 tests
+test bridge::a_commitment_update_that_precedes_its_block_is_dropped_not_replayed ... ok
+test bridge::a_commitment_update_refused_for_capacity_keeps_its_payload_and_a_retry_succeeds ... ok
+test sink::refusing_a_newer_schema_leaves_the_file_as_found ... FAILED
+
+failures:
+
+---- sink::refusing_a_newer_schema_leaves_the_file_as_found stdout ----
+
+thread 'sink::refusing_a_newer_schema_leaves_the_file_as_found' (9397932) panicked at tests/pass2_regressions.rs:163:9:
+assertion `left == right` failed: a refused open must not switch the file to WAL
+  left: "wal"
+ right: "delete"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    sink::refusing_a_newer_schema_leaves_the_file_as_found
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--test pass2_regressions`
+/dev/disk3s1s1   228Gi    13Gi   2.6Gi    84%    484k   27M    2%   /
+----------------------------------------------------------------

@@ -81,7 +81,11 @@ mod bridge {
             refused,
             Err(BridgeError::Core(Error::PendingCapacity))
         ));
-        assert_eq!(bridge.pending_blocks(), 1, "the refused payload stays buffered");
+        assert_eq!(
+            bridge.pending_blocks(),
+            1,
+            "the refused payload stays buffered"
+        );
         assert_eq!(bridge.core().stats().pending_blocks, 1);
         assert_eq!(bridge.core().stats().retained_slots, 1);
 
@@ -119,7 +123,11 @@ mod bridge {
         bridge.ingest(a, frozen(10, 7)).unwrap();
 
         assert_eq!(bridge.pending_blocks(), 1, "the block waits in the bridge");
-        assert_eq!(bridge.core().stats().pending_blocks, 0, "nothing reached the core");
+        assert_eq!(
+            bridge.core().stats().pending_blocks,
+            0,
+            "nothing reached the core"
+        );
     }
 }
 

@@ -126,14 +126,16 @@ impl SqliteSink {
     /// skip that history on restart; the sink cannot validate this external precondition.
     pub fn open(path: impl AsRef<Path>, anchor: u64) -> Result<Self, SinkError> {
         let conn = Connection::open(path)?;
-        conn.query_row("PRAGMA journal_mode = WAL", [], |row| {
-            row.get::<_, String>(0)
-        })?;
+        // Read the version before changing anything: refusing a file must leave it as found,
+        // and switching the journal mode rewrites the file header.
         // 0 is a new file or one created before versioning, which used this same schema.
         let version: i64 = conn.query_row("PRAGMA user_version", [], |row| row.get(0))?;
         if version != 0 && version != SCHEMA_VERSION {
             return Err(SinkError::SchemaVersion(version));
         }
+        conn.query_row("PRAGMA journal_mode = WAL", [], |row| {
+            row.get::<_, String>(0)
+        })?;
         conn.execute_batch(
             "PRAGMA synchronous = FULL;
              CREATE TABLE IF NOT EXISTS blocks (

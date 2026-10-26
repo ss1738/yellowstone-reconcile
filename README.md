@@ -45,8 +45,10 @@ cargo run --locked --bin yellowstone-replay -- fixtures/agreement.jsonl
 ```
 
 MEASURED ([agreement fixture](fixtures/agreement.jsonl), [CLI regression](tests/replay.rs)):
-this emits one block and classifies the reconnect replay as a duplicate. No provider account,
-API token, database or running Solana validator is required for this offline command.
+this emits one block and classifies the reconnect replay as a duplicate. The command prints one
+JSON line per event (`pending`, then `emitted`, then `duplicate`) and ends with a `stats` line
+showing `"emitted":1` and `"duplicates":1`. No provider account, API token, database or running
+Solana validator is required for this offline command.
 
 Try disagreement separately; exit status **1** is the expected result:
 
@@ -73,6 +75,18 @@ MEASURED (source files linked below):
 cargo run --locked --features upstream --example upstream_bridge
 cargo run --locked --features sqlite --example sqlite_sink
 ```
+
+To use it from your own crate, depend on a pinned commit. It is not published to crates.io:
+
+```toml
+[dependencies]
+yellowstone-reconcile = { git = "https://github.com/ss1738/yellowstone-reconcile", rev = "<commit>", features = ["upstream"] }
+```
+
+Drop `features` for the core alone, or add `sqlite` or `grpc` for the sink or guarded transport.
+INFERRED (one check on 26 October 2026, no log kept): a throwaway crate with this dependency at
+commit `cfbf952`, using the `upstream` feature, compiled and ran `Reconciler::new` and `connect`.
+That check is not part of the verification suite.
 
 Read the [integration guide](docs/INTEGRATION.md) before adapting either example. The offline
 bridge uses a small illustrative event store; the SQLite example uses synthetic byte payloads.

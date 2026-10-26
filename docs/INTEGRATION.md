@@ -10,7 +10,8 @@ reported metadata and a qualified commitment. If input is raw Yellowstone update
 independent upstream reconstructor per connection and feed its outputs through `UpstreamBridge`.
 Never combine raw events across providers before reconstruction.
 
-Runnable reference, no credentials:
+The shortest complete caller of the core is `src/bin/replay.rs`, about 100 lines. A runnable
+bridge reference needs no credentials:
 
 ```sh
 cargo run --locked --features upstream --example upstream_bridge
@@ -19,8 +20,9 @@ cargo run --locked --features upstream --example upstream_bridge
 INFERRED (`src/upstream.rs` `ingest`; upstream `state_machine.rs` `deliver_or_queue` at the
 pinned revision): `UpstreamBridge` needs each connection's outputs in the order its `BlockStream`
 yields them. That stream emits a block before any commitment update for it. A commitment update for
-a bank the bridge has not seen is dropped, not replayed, so feeding events out of order, or from
-anything other than one `BlockStream` per connection, can leave a block waiting forever.
+a bank the bridge has not seen is dropped, not replayed. If events arrive out of order, or from
+anything other than one `BlockStream` per connection, a block can stay in the bridge's pending
+buffer until a reconnect, a bank discard or `advance` removes it; it is never emitted in the meantime.
 
 MEASURED (`examples/upstream_bridge.rs`): both mock connections use bank ID 7, yet count as two
 providers because connection identity is separate. The example uses an illustrative `Events`

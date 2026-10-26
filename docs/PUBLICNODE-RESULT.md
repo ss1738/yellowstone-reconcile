@@ -1,8 +1,9 @@
 # PublicNode access check, 25 October 2026
 
-MEASURED: `evidence/publicnode-access.log` records a real read-only test, run from the maintainer's build machine, using a
-private credentials and `https://solana-yellowstone-grpc.publicnode.com:443`. The diagnostic
-source is `examples/access_probe.rs`. Endpoint/token values are not printed by the probe.
+MEASURED: `evidence/publicnode-access.log` records a real read-only test, run from the maintainer's
+build machine, with a credential kept outside the repository against
+`https://solana-yellowstone-grpc.publicnode.com:443`. The diagnostic source is
+`examples/access_probe.rs`. The probe does not print endpoint or token values.
 
 - Connection succeeded and the server accepted the subscription.
 - Observed 20 transaction updates, 44 entries and 2 slot updates before termination.
@@ -23,12 +24,12 @@ successful connection alone do not establish compatibility. Do not bypass the gu
 bank IDs to force this feed through.
 
 MEASURED: no second provider was connected and no two-provider reconciliation was performed.
-The token was used only via a private one-use wrapper outside the repository. Local cleanup
-removed that wrapper; the remote wrapper removes itself on exit. The token was shared outside the repository, so it must be treated as exposed and replaced at the
-provider. No account, subscription purchase, transaction submission or deployment
-was performed by this test.
+The credential was used through a one-use wrapper outside the repository that removed itself on
+exit. It was also shared outside the repository, so it must be treated as exposed and replaced
+at the provider; it is not recorded here and is not reused. The test created no account and made
+no purchase, transaction submission or deployment.
 
-## Audit of the failure (25 October 2026, no new network access)
+## Analysis of the failure from the recorded evidence (25 October 2026)
 
 Question: is the provider alone at fault? Answer from the archived evidence and the pinned
 sources: this evidence cannot say, and the diagnostics were too thin to say.
@@ -55,14 +56,14 @@ Absence versus zero: the slot `bank_id` is `Option`, so `None` and `Some(0)` dif
 accepts `Some(0)` (`tests/wire.rs`). Entries, transactions, block metadata and footers carry a
 plain `uint64` that an old server would leave at 0. The first run could not tell those cases apart.
 
-Changes made: `WireError::MissingBankId` now carries the status, and `examples/access_probe.rs`
+Diagnostics added afterwards: `WireError::MissingBankId` now carries the status, and `examples/access_probe.rs`
 reports slot statuses split by bank-id present or absent plus the count of entries and
 transactions with `bank_id == 0`. These are counts only, with no content or credentials.
 
 GUESS: the free feed may run a Yellowstone version that predates bank ids. Nothing measured
 confirms it. A fixed protocol version string is not exposed by the probe.
 
-Next live check, not run because the earlier credential must be replaced by its holder first:
+Next live check, not yet run because it needs a new credential:
 
 ```sh
 # On the build machine, with a NEW token in a private mode-600 file sourced into the shell

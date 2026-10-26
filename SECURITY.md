@@ -10,9 +10,9 @@ identity. `docs/CORRECTNESS.md` sets out the trust boundary.
 ## Reporting a vulnerability
 
 Use GitHub's private vulnerability reporting for this repository (the Security tab, "Report a
-vulnerability") if it is shown. If it is not, open an issue titled "security contact request" with
-no technical detail and I will arrange a private channel. Do not post exploit details or
-credentials in a public issue.
+vulnerability"). If that option is unavailable, open an issue titled "security contact request"
+with no technical detail and the maintainer will arrange a private channel. Do not post exploit
+details or credentials in a public issue.
 
 ## Known dependency risk
 

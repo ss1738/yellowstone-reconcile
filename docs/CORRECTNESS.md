@@ -71,8 +71,26 @@ consumer. No pre-seal prefix matching or rollback of speculative execution is at
 
 ## Regression map
 
-`tests/reconcile.rs`: quorum, reconnect vote identity, stale sessions, metadata conflicts,
-commitment gating, retention, capacity, randomized event order and long-running retention.
-`tests/upstream.rs`: connection-local bank buffers, differing bank ids for the same block,
-reconnect cleanup, bank discard scope, capacity and malformed bank reuse.
-`tests/replay.rs`: CLI agreement, conflict exit and malformed-input rejection.
+Every file in `tests/` and what it exercises. The counts and run record are in
+[verification](VERIFICATION.md).
+
+- `tests/reconcile.rs`: quorum, reconnect vote identity, stale sessions, metadata conflicts,
+  commitment gating, retention, capacity, randomized event order and long-running retention.
+- `tests/audit_sequences.rs`: a reconnecting provider that changes its report, a late vote after
+  retention passed the slot, slot-boundary values and a quorum of one followed by a conflict.
+- `tests/restart.rs`: restart from a checkpoint does not re-emit committed slots; a stale
+  checkpoint cannot move retention backwards; a checkpoint ahead of the stream refuses the gap.
+- `tests/upstream.rs`: connection-local bank buffers, differing bank ids for the same block,
+  reconnect cleanup, bank discard scope, capacity and malformed bank reuse.
+- `tests/reconstruction.rs`: simulated wire events are reconstructed per connection before
+  agreement, and an incomplete provider bank cannot supply a vote.
+- `tests/wire.rs`: the guard rejects malformed hashes and bank-id reuse across slots, names the
+  status that lacked a bank id, keeps its bank map unchanged on failure and ends a stream on bad input.
+- `tests/sink.rs`: SQLite idempotence, refusal of a different block for a stored slot, watermark
+  behaviour with unordered and skipped slots, anchors, reopening, process-abort recovery,
+  finalized-only storage, schema-version refusal and concurrent writers.
+- `tests/real_payload.rs`: reconstructed events survive the sink and a reopen; a damaged payload is
+  an error, never a shorter block.
+- `tests/pass2_regressions.rs`: a commitment update refused for capacity keeps its payload; a
+  commitment update that precedes its block is dropped; refusing a newer schema leaves the file as found.
+- `tests/replay.rs`: CLI agreement, conflict exit and malformed-input rejection.

@@ -1,6 +1,9 @@
-# Dependency review, 25 October 2026
+# Dependency review
 
-## Baseline and public reports
+Sections are dated where they were written. The baseline measurements below describe upstream
+`main`, which is also the published 0.12.0 release (see the last section, 26 October 2026).
+
+## Baseline and public reports (25 October 2026)
 
 MEASURED: GitHub API responses in `evidence/dependency-review/` record upstream main at
 `b828807d45522505cfdd6b4710d2287b29e5d99a`. Issues #19 and #21 and their proposed fixes
@@ -33,8 +36,9 @@ upstream correction is required for the repaired-lineage scenario.
 Source contract (`src/wire.rs`): GuardedSource is scoped to one connection and must be
 replaced together with BlockStream on reconnect. It checks malformed block/entry/footer
 hashes, missing bank ids on bank-specific slot statuses, unknown slot statuses and bank-id
-reuse across slots. A rejection is a terminal typed error, not a silent filter. The demo
-stops on invalid wire input and does not expose endpoint details in that error message.
+reuse across slots. A rejection is a terminal typed error, not a silent filter. The
+`two_providers` example stops on invalid wire input and does not expose endpoint details in that
+error message.
 
 Bank identities are not evicted while the upstream machine might retain them. Reaching
 the configured bank-map capacity terminates the connection. This bounds count and avoids
@@ -49,8 +53,8 @@ payload, fork-choice or cryptographic verification.
 Source inspection: PR #20 rejects malformed hashes and slot-mismatched summaries before
 mutating bank state. PR #22 clears stale fork markers along a confirmed repair's ancestry,
 preserving dead-bank tombstones and sibling fork markers. The proposed regression cases
-include late parent metadata and garbage collection. Neither author reports nor this
-inspection alone establishes that the patches work in our consumer.
+include late parent metadata and garbage collection. Neither the patch authors' own reports
+nor this inspection establishes that the patches work in our consumer.
 
 The baseline main pin cannot pass our complete repaired-lineage probe. An experimental
 PR-head pin may be used locally only after independent upstream checks and our full
@@ -81,7 +85,8 @@ two-provider pilot, upstream feedback and independent review remain separate req
 
 MEASURED: upstream `main` is still `b828807d45522505cfdd6b4710d2287b29e5d99a` (committed
 13 October). Issues #19, #20 (PR), #21, #22 (PR) and #23 are all open with PR #22 unmerged at head
-`0c732a049d6d18008a541f47b09ddb7b949cbb65`; #23 has no comments. No GitHub release exists.
+`0c732a049d6d18008a541f47b09ddb7b949cbb65`; #23 has no comments. No GitHub release exists,
+but `main` is also on crates.io as 0.12.0 (last section).
 
 MEASURED: `compare` shows the pinned revision is `main` plus exactly two commits, touching
 `forks.rs`, `state_machine.rs` and `AGENTS.md`. It does **not** contain PR #20's head
@@ -97,3 +102,22 @@ Related existing solutions (see [alternatives](ALTERNATIVES.md)): the upstream
 Yellowstone client's `DedupStream` and `subscribe_with_reconnect` deduplicate replays for one
 logical subscription and forget banks at or below the finalized slot; a keyword search of its
 dedup code found no quorum or conflict handling. This does not establish that no equivalent exists.
+
+## Published release 0.12.0 (26 October 2026)
+
+MEASURED (crates.io API, 26 October 2026): `yellowstone-block-machine` 0.12.0 was published on
+13 October 2026 and is upstream `main` (`b828807`). Two public crates depend on it directly.
+The baseline measurements above therefore describe the published release.
+
+MEASURED ([scratch check](../evidence/dependency-review/published-0.12.0-check-20261026.log), run
+on a copy of this repository with the dependency set to `=0.12.0`; it does not verify this repository
+as committed): all 64 tests pass. The `dependency_probe` example asserts that slots 41 to 110 are all
+delivered; against 0.12.0 it records 68 fork reports and 2 emitted slots, so the assertion fails
+(issue #21). Both malformed-input panics (issue #19) reproduce and the guard rejects those inputs.
+`cargo publish --dry-run` succeeds with a crates.io dependency, and the crate name
+`yellowstone-reconcile` is unused there.
+
+INFERRED: depending on 0.12.0 would make a crates.io release possible but would carry the issue
+#21 behaviour into it. The pin avoids that at the cost of depending on an unmerged branch. Neither is
+a supported answer. An upstream release that contains both fixes, or an openly maintained fork, is
+still the open dependency decision.

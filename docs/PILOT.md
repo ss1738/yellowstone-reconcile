@@ -13,7 +13,17 @@ bank IDs, entries, slot updates, transactions, block metadata and block footer. 
 advertised generic Yellowstone support alone does not establish this compatibility.
 
 Use identical subscription semantics. Different endpoint strings or provider labels are not
-proof of operational independence. No paid subscriptions are purchased by this preparation.
+proof of operational independence.
+
+MEASURED (provider pages read on 26 October 2026): [QuickNode](https://www.quicknode.com/docs/solana/yellowstone-grpc/overview)
+documents that account, slot, transaction, block, block meta, entry and block footer updates carry a
+`bank_id`, and that it runs `yellowstone-grpc-geyser` v16.1.4 against proto v14.0.1.
+[Triton](https://blog.triton.one/alpenglow-and-your-triton-stack-what-to-update-before-mainnet/) says
+most updates on Dragon's Mouth and Fumarole now carry a `bank_id`, that block footers come only over
+gRPC, and that Rust clients need `yellowstone-grpc-client` v15.0.0 and proto v14.0.1. The Helius,
+Alchemy and Chainstack pages read that day do not mention `bank_id`; silence on a page is not evidence
+that a service lacks it. Documentation is not a compatibility test: none of these services has been
+exercised with this library.
 
 ## Running the pilot
 
@@ -48,8 +58,8 @@ endpoint or token values. Review all evidence before copying any of it into the 
 `PROBE_OBSERVE_ONLY=1 cargo run --locked --release --features grpc --example access_probe` connects,
 subscribes and, for 30 seconds, only counts what arrives: slot statuses with and without a bank id,
 and entries and transactions at `bank_id == 0`. It applies no guard and reconstructs nothing, so its
-`observed` result is not a pass. It needs a valid token in the environment, which the earlier
-credential no longer is. Not run.
+`observed` result is not a pass. It needs a new credential in the environment: the one used in the
+first test must be treated as exposed and is not reused. Not run.
 
 ## Acceptance and evidence
 
@@ -61,12 +71,12 @@ credential no longer is. Not run.
    Recover by replay/backfill from a durable anchor, not by dropping pending slots silently.
 4. Recovery: integrate real payload serialization into the durable sink, kill the process at
    transaction boundaries, replay, and compare complete stored identities and payload counts.
-5. Soak: after replay/rotation is implemented, run 24 hours with both providers; publish sanitized
-   memory/lag distributions, reconnects, data gaps, failures and unresolved limitations. Capture
-   raw protobuf fixtures only with provider permission and a separate retention/redaction policy.
+5. Soak: after replay/rotation is implemented, run at least 24 hours with both providers; publish
+   sanitized memory/lag distributions, reconnects, data gaps, failures and unresolved limitations.
+   Capture raw protobuf fixtures only with provider permission and a separate retention/redaction policy.
 
-GUESS: 100 blocks/300 seconds and 24 hours are proposed test targets, not observed results or
-guarantees. A successful smoke does not establish later acceptance criteria.
+GUESS: 100 blocks/300 seconds and a 24-hour minimum are proposed test targets, not observed results
+or guarantees. A successful smoke does not establish later acceptance criteria.
 
 ## Known implementation limits
 
@@ -82,14 +92,6 @@ or soak implementation.
 Automatic safe rotation, replay/history negotiation and real-payload durable integration remain
 future work. Repeated short smoke runs do not prove gap-free continuity.
 
-## Integrator review packet
-
-Send only with the maintainer's authorization: README, correctness contract, dependency review, fresh
-verification log and pilot protocol. Ask for current multi-provider reconciliation behavior,
-the missing requirement, willingness to reproduce the example, acceptable failure behavior,
-and whether upstream placement would be preferable. Record named written feedback verbatim
-with permission; unanswered outreach is not an adopter or endorsement.
-
 ## Dependency and review gate
 
 MEASURED: `evidence/dependency-review/upstream-pr-22.json` snapshots upstream PR #22 as open and
@@ -97,4 +99,4 @@ unmerged. The experimental pin is not a supported release. Recheck merge/release
 the pilot and before release; run the locked full suite for any pin change. Require an independent
 review of commitment assumptions, replay gaps, watermark anchoring, transactional boundaries,
 capacity/rotation behavior and credential handling. A scoped code review is not a formal audit.
-No external review has been completed by this preparation.
+No external review has been completed.

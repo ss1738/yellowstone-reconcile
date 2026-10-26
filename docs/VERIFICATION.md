@@ -158,6 +158,7 @@ separately: no home directory, account name, `mini-work` path or hostname appear
 copy of the site with this file swapped in, all five playground scenarios gave the same verdicts as the
 deployed file and no console errors.
 
-**The deployed site does not match this build.** Replacing the public file is a deployment and was not done;
-until it is, the served binary still contains the paths above. Scope: this evidence covers `demo/` only and
-the main suite covers none of it.
+**Deployed, 26 October 2026.** The path-remapped build replaced the public file. The served file then had
+sha256 `a41f378f69efda10e92ee443e958e459bb9b9e1a2cebaa3c58046bf51984ea2b` (135,855 bytes), identical to the
+verified build, and a scan of it found no host path. The site is a separate manual deployment, so re-check the
+served hash before relying on this. Scope: this evidence covers `demo/` only and the main suite covers none of it.

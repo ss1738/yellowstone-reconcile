@@ -13,10 +13,14 @@ sha256 `a41f378f69efda10e92ee443e958e459bb9b9e1a2cebaa3c58046bf51984ea2b`. Two c
 identical, and an independent `strings` scan of the file found no home directory, account name,
 checkout path or hostname.
 
-The file served at `https://reconcile.satyawansingh.com/reconcile.wasm` on 26 October 2026 had
-sha256 `adefc9a0fb351dbc20912d76d02280fa6254d677d471be31f8d546f817c71fd8` (136,015 bytes). It is
-**not** this build: it predates path remapping and embeds the build machine's account name and
-checkout path. A rebuilt artifact has not been deployed, so the site does not match this evidence.
+Deployment, 26 October 2026: before it, the file served at
+`https://reconcile.satyawansingh.com/reconcile.wasm` had sha256
+`adefc9a0fb351dbc20912d76d02280fa6254d677d471be31f8d546f817c71fd8` (136,015 bytes). It predated path
+remapping and embedded the build machine's account name and checkout path. It was replaced with the
+build recorded above. After the deploy I downloaded the served file: sha256 `a41f378f…ea2b`, 135,855
+bytes, and a scan for the home directory, account name, `mini-work`, `.cargo` and hostname found
+nothing. That is a match for this evidence **as of that check**; the site is a separate deployment,
+so re-check the served hash rather than assuming it still holds.
 
 Recheck the manifest with:
 

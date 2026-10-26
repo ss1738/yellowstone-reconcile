@@ -164,5 +164,5 @@ WAL` before reading `user_version`, so refusing a newer-schema file still switch
 full suite exits 0 (`evidence/verification-pass2.log`). Other candidates examined (event order between a
 block and its commitment, commit-time capacity failure, quarantine and prune state, payload count bounds)
 produced no defect; two are now pinned by tests. Separately, the deployed demo binary embeds the build
-machine's account name and path; a path-remapped build is verified (`evidence/demo/`) but not deployed.
+machine's account name and path; a path-remapped build is verified (`evidence/demo/`) and was deployed on 26 October.
 Not done: any live-provider check, and nothing was run on a second machine.

@@ -155,3 +155,15 @@ decoder was abandoned when the Mini ran out of disk copying its `target/` direct
 my own copy only, and no result from that check is claimed.
 
 Later the same day the request was rewritten to US$7,470 (83 hours, no provider allowance) because a live pilot is no longer planned; see `grant/BUDGET.md`.
+
+## Pass 3, 26 October
+
+One confirmed defect, found by a failing test before any change. `SqliteSink::open` set `PRAGMA journal_mode =
+WAL` before reading `user_version`, so refusing a newer-schema file still switched it to WAL
+(`evidence/pass2-regressions-before-fix.log`). Fixed by reading the version first; the test passes and the
+full suite exits 0 (`evidence/verification-pass2.log`). Other candidates examined (event order between a
+block and its commitment, commit-time capacity failure, quarantine and prune state, payload count bounds)
+produced no defect; two are now pinned by tests. Separately, the deployed demo binary embeds the build
+machine's account name and path; a path-remapped build is verified (`evidence/demo/`) but not deployed.
+Not done: any live-provider check, and nothing was run on a second machine.
+

@@ -1,6 +1,31 @@
-# Verification status: 25 October 2026
+# Verification status: 26 October 2026
 
-## Current source (re-verified)
+## Current source (pass 2, 26 October)
+
+MEASURED: `evidence/verification-pass2.log` is the raw output of `bash scripts/verify.sh` on Ironman
+(Rust/Cargo 1.95.0), 26 October 2026, against the tree whose 37 executable inputs are listed in
+`evidence/source-manifest.sha256`. I diffed that manifest against the hashes the build machine printed
+and they match. The script exited 0. Passing tests, summed per `cargo test` run from that log:
+24 with default features, 64 with all features in debug and 64 in release (152 in all; the previous
+total of 146 plus 3 new tests in each all-features run). The 4 Python harness tests, formatting, Clippy
+with warnings denied, documentation with warnings denied, the fixture exit codes and the offline examples
+all passed as before.
+
+One defect was found and fixed in this pass. `SqliteSink::open` switched a file to WAL mode before checking
+its schema version, so refusing a newer-schema file still rewrote it. The new test
+`sink::refusing_a_newer_schema_leaves_the_file_as_found` (`tests/pass2_regressions.rs`) failed before the
+fix (`evidence/pass2-regressions-before-fix.log`: journal mode "wal", expected "delete") and passes after
+it, with the 17 existing sink tests. The fix reads `user_version` first (`src/sink.rs`). The other two
+new tests passed on their first run and pin existing behaviour: a commitment update refused for capacity
+keeps its payload and a retry succeeds, and a commitment update that precedes its block is dropped, not
+replayed.
+
+A first full run of this pass exited 1 at `cargo fmt --check` because the new test file was not
+rustfmt-formatted. That was my error. Formatting was applied on Ironman and the file copied back; that failed
+run was not kept as evidence. Nothing was run on Apsarth. The main manifest excludes the browser demo; see
+below and `evidence/demo/`.
+
+## Previous verified source, 25 October (older logs)
 
 MEASURED: `evidence/verification-final.log` (and, for the current tree, `evidence/verification-reverify.log`) is the raw output of `bash scripts/verify.sh`
 on the maintainer's Mac mini (Ironman), Rust/Cargo 1.95.0, 25 October 2026, against the tree whose 36
@@ -116,23 +141,23 @@ site) passes its 4 tests with `cargo test` and builds for `wasm32-unknown-unknow
 separate crate and is **not** part of `scripts/verify.sh` or `evidence/source-manifest.sha256`; no raw log
 of that run was saved. The page was exercised by hand in a browser against all three fixtures.
 
-### Pass 2, 26 October 2026: demo findings and what has not been run
+### Pass 2, 26 October 2026: demo verification
 
 MEASURED (`strings` on the file served at `/reconcile.wasm`, sha256
-`adefc9a0fb351dbc20912d76d02280fa6254d677d471be31f8d546f817c71fd8`, which matched the copy built on
-25 October): the deployed binary embeds the build machine's account name and checkout path
+`adefc9a0fb351dbc20912d76d02280fa6254d677d471be31f8d546f817c71fd8`, the same bytes as the site folder's
+copy built on 25 October): the deployed binary embeds the build machine's account name and checkout path
 (`/Users/<account>/mini-work/yellowstone-reconcile/src/lib.rs` and the cargo registry under the same
-home). Cause (INFERRED): cargo records source paths in panic messages and the build did not remap them.
-The deployed file has not been changed; replacing it is a separate deployment step.
+home). Cause (INFERRED): cargo records source paths in panic messages and that build did not remap them.
 
-Added, not yet run: `demo/verify.sh` and `demo/manifest.py` (separate scope from `scripts/verify.sh`;
-the main manifest is unaffected). The script builds with `--remap-path-prefix`, builds twice from clean
-and fails on a hash difference or a build-machine path. Until it has run on an owned Mini, there is no
-saved log, no demo manifest under `evidence/demo/`, and no claim that a rebuilt artifact matches the
-deployed one. On 26 October both owned Minis were offline (`tailscale status`: `ironman` last seen about
-45 minutes earlier, `apsarth` a day earlier; SSH to port 22 timed out), so no Rust command was run.
+MEASURED (`evidence/demo/verification-demo-20261026.log`, Ironman, exit 0): `demo/verify.sh` ran the demo's
+4 native tests, `cargo fmt --check` and Clippy with warnings denied, then built the WebAssembly twice from
+clean with `--remap-path-prefix`. The two builds were identical: 135,855 bytes, sha256
+`a41f378f69efda10e92ee443e958e459bb9b9e1a2cebaa3c58046bf51984ea2b`. I fetched that file and scanned it
+separately: no home directory, account name, `mini-work` path or hostname appears. The 11 inputs are in
+`evidence/demo/source-manifest-demo.sha256` and match `python3 demo/manifest.py`. In a browser, from a scratch
+copy of the site with this file swapped in, all five playground scenarios gave the same verdicts as the
+deployed file and no console errors.
 
-`tests/pass2_regressions.rs` (three tests: bridge commit-time capacity retry, bridge event-order
-characterisation, a refused newer-schema file left unchanged) is written and has **not** been run.
-Adding it changes the main source manifest; `evidence/source-manifest.sha256` still describes the
-tree of the last verified run and no longer matches the working tree until the main suite is re-run.
+**The deployed site does not match this build.** Replacing the public file is a deployment and was not done;
+until it is, the served binary still contains the paths above. Scope: this evidence covers `demo/` only and
+the main suite covers none of it.

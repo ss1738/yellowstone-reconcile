@@ -1,0 +1,65 @@
+# Raw output of: bash -o pipefail -c 'bash demo/verify.sh 2>&1' via mini-test -m 3
+# Host Ironman (Mini 3), 26 October 2026, commit 951ef4e plus the sink fix in the next commit (the demo does not compile src/sink.rs).
+# Scope: the browser demo crate only. It is NOT covered by scripts/verify.sh. Inputs: evidence/demo/source-manifest-demo.sha256 (11).
+# Result: exit 0; 4 tests passed; two clean WebAssembly builds identical; no build-machine path embedded.
+# Host address, account name and paths replaced with placeholders.
+# ---
+syncing (rsync, incremental)...
+----------------------------------------------------------------
+Ironman
+rustc 1.95.0 (59807616e 2026-04-14)
+cargo 1.95.0 (f2d3ce0bd 2026-03-21)
+bc89638f9b0ae0adae4e883bb73561e554de55782d78ac2216faea4f07af7437  Cargo.toml
+cc6f6d3a4a9acd07109b87d5d352892bdd9ed37ee92693ae7dccc5300ce66634  demo/Cargo.lock
+f946d49f5e266dfa134af401be3b227c04ae82e374125f3b1a084406b7dc2e98  demo/Cargo.toml
+5c9f2ebe9afa21755a23278c07e7dbeb6ee3aacf28769bdc417a7c118335a9ce  demo/manifest.py
+d7567c3abdc5f2546db5273342aa5878c33066f6aa25504a39a3bf0b6f91e1e5  demo/src/lib.rs
+28c38cfef399e3f9ec6abe0160c4c4985789d325900c5e4fdca8c41404bdb948  demo/verify.sh
+aace9c0c0c9d8891eb4167fc2e264bbad468e4847db7d61607af7c0da594b47f  fixtures/agreement.jsonl
+67b3bf15956eebc606cb18337306421afcb2ae37751be2b3160a260834b7d223  fixtures/conflict.jsonl
+2244b4cae56589a03a2f8b9aad41fd44cf74daac8220a335ce9c87280f5b8f34  fixtures/malformed.jsonl
+97aab3493c1fb14fe9a21c760433577f434714f5725bbb176e67048dde581afe  rust-toolchain.toml
+0cc2e601d66002da1703beb9937572a562f9b4e6c188d6e2431407397f6a5755  src/lib.rs
+   Compiling reconcile-demo v0.1.0 (<build-dir>/yellowstone-reconcile/demo)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
+     Running unittests src/lib.rs (target/debug/deps/reconcile_demo-54a5638051053de9)
+
+running 4 tests
+test tests::oversize_input_is_refused ... ok
+test tests::malformed_names_the_line_and_emits_nothing ... ok
+test tests::conflict_halts_on_the_conflicting_line ... ok
+test tests::agreement_replays_to_completion ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Checking memchr v2.8.3
+    Checking itoa v1.0.18
+    Checking serde_core v1.0.229
+    Checking zmij v1.0.23
+    Checking serde v1.0.229
+    Checking serde_json v1.0.154
+    Checking yellowstone-reconcile v0.1.0 (<build-dir>/yellowstone-reconcile)
+    Checking reconcile-demo v0.1.0 (<build-dir>/yellowstone-reconcile/demo)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.37s
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling yellowstone-reconcile v0.1.0 (<build-dir>/yellowstone-reconcile)
+   Compiling reconcile-demo v0.1.0 (<build-dir>/yellowstone-reconcile/demo)
+    Finished `release` profile [optimized] target(s) in 4.81s
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
+   Compiling yellowstone-reconcile v0.1.0 (<build-dir>/yellowstone-reconcile)
+   Compiling reconcile-demo v0.1.0 (<build-dir>/yellowstone-reconcile/demo)
+    Finished `release` profile [optimized] target(s) in 2.29s
+WASM sha256=a41f378f69efda10e92ee443e958e459bb9b9e1a2cebaa3c58046bf51984ea2b bytes=135855 (two clean builds identical; no build-machine path embedded)
+DEMO_EXIT=0
+/dev/disk3s1s1   228Gi    13Gi   6.4Gi    67%    484k   67M    1%   /
+----------------------------------------------------------------

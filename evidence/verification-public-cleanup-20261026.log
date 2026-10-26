@@ -1,17 +1,20 @@
+# scripts/verify.sh via mini-test -m 3, 26 October 2026; exit 0.
+# Captured by the maintainer on an Apple-silicon macOS build machine.
+# Raw output below, with private account/address/path details replaced by placeholders.
+# 36 executable inputs match source-manifest.sha256; 152 Rust test executions, plus 4 Python tests.
 # mini-test
-# when: 20261025-124904
-# mini: 3 (ironman)
+# when: 20261026-121755
+# mini: 3 (<build-account>@<private-address>)
 # proj: yellowstone-reconcile
-# cmd: export PATH="$HOME/.cargo/bin:$PATH"; cargo fmt --all && bash scripts/verify.sh
+# cmd: bash scripts/verify.sh
 # ---
-Ironman
+<build-machine>
 rustc 1.95.0 (59807616e 2026-04-14)
 cargo 1.95.0 (f2d3ce0bd 2026-03-21)
-e2e79f3252dd11ecb739f1779e202fdfedc7956f2c156f43aada840fe12f5be5  .github/workflows/ci.yml
-b68ac8cf128be0336ddfde796aa770db65bbe568f03fb8f52014123e2492b3f9  .github/workflows/verify.yml
+8a05def1f37ddd55ee31b0241bd12df1832139baf83464c98c93e35dcae66c07  .github/workflows/ci.yml
 6afd5defb712723b3d5cf06e1c6d94c55c11fbab498ed8cd6288c001731ded7e  Cargo.lock
-063cd25a9edaf2ac6c8543031da8632d5292e074f7c9041c64b12722dc2be52e  Cargo.toml
-5efadbf86a37929d7ca1c962110a331359ed94949f11b148944df3b9eacb41f1  examples/access_probe.rs
+bc89638f9b0ae0adae4e883bb73561e554de55782d78ac2216faea4f07af7437  Cargo.toml
+acbe7d02fb845ecf9a0a55ef17b9c5f1dbb8fa0b8c5d29b5bc17c81ef35ceec0  examples/access_probe.rs
 51b29a95a5adfc68c7b8cadec82912b732d8455c2f567b625a86e11e9afc76fa  examples/benchmark.rs
 35b62032dfa5ffed7f0941f7fe5abb311770ce740dfc2aa723a41e5b4e614ef1  examples/dependency_probe.rs
 3d863ee55556e403fa97789a73c593dc4011849feba4c997376733250782ad84  examples/durable_sink.rs
@@ -19,34 +22,61 @@ b68ac8cf128be0336ddfde796aa770db65bbe568f03fb8f52014123e2492b3f9  .github/workfl
 560b260844f3d15599825d239ab93f62343bd7cd92c1cf44ce6e1b70f286584a  examples/payload_variance.rs
 a68ab7eda9c5cae2ff0923e75817d14184109a11e94b4916c89dea07dfde52ce  examples/sqlite_sink.rs
 41fa72b8c5305a64085ac8887679a2e29d1b145ffb5d2a419a962eeab22f4819  examples/stall_budget.rs
-21f1e7e5a94d159bce96ec069fb3eb7294bccd0e07875e75df80afedff790167  examples/two_providers.rs
+b91186e78c77fe8012d6576d406395e243aaa700c049b51493ac43daf796190f  examples/two_providers.rs
 acf71ddc365e9f82379f2e2ded5c8fd7184de08bd38dd95e509519a622af1584  examples/upstream_bridge.rs
 aace9c0c0c9d8891eb4167fc2e264bbad468e4847db7d61607af7c0da594b47f  fixtures/agreement.jsonl
 67b3bf15956eebc606cb18337306421afcb2ae37751be2b3160a260834b7d223  fixtures/conflict.jsonl
 2244b4cae56589a03a2f8b9aad41fd44cf74daac8220a335ce9c87280f5b8f34  fixtures/malformed.jsonl
 97aab3493c1fb14fe9a21c760433577f434714f5725bbb176e67048dde581afe  rust-toolchain.toml
-e625d39b689a82caca679e430eba3dcf5e6bf41454888eb56d7cff39e995c7a1  scripts/pilot.py
+b89008c61d062cc9e018bb384b927ad9f90f9e20aca4c42748738d862682743d  scripts/pilot.py
 4ccc53c29e67dbfd48778a1c185cbda7b93f3b5c01177b49b1e6bf3a08aa53c6  scripts/source_manifest.py
-4ef4faa3f4e8622afcd46381f85a0c61bd9969b868163052915d12abbeae41a5  scripts/verify.sh
+722fb1dc9727f2da2ff83add41310ab1020e1677a25456c31324ef26139f2195  scripts/test_pilot.py
+097a7c4f89a372c6dd050eddaed44f9ee410b3e5f271fa8c4ab12aac9f48faf6  scripts/verify.sh
 6a36b54a7483ed917b5883eeea3e83f3ce8b00d4c1f581ce94368a7d930021f8  src/bin/replay.rs
 0cc2e601d66002da1703beb9937572a562f9b4e6c188d6e2431407397f6a5755  src/lib.rs
-ad90f23a7e83173185fec6d88185f5135bd866bfae434e28c540e4b6367de18c  src/sink.rs
+7054b0d5418e4b3dd1e9f04d15478063508c0f7b26535959c419bb0cf5120672  src/sink.rs
 30a275980bdab4185ee0ebbe4c25c2c84170dba6f2556610fb8515f3a5c14443  src/upstream.rs
-7c2d7719f62a5f96ddfc26e1628a2d549cf2467f30536fa552ac6be1ec13d9c9  src/wire.rs
+1d79c7cf8362b4086d838f696e37c2ec6ac6a229e91ba733784a0198233a6496  src/wire.rs
+0004b01bbc281cb7d58c8fa0db40842c7b1d36bbbcb1170b4e1b00415cf0cbf7  tests/audit_sequences.rs
+d54e717283da12ba03322c95b2e544acdf9760651a9ada5a882e83b80ccfc65d  tests/pass2_regressions.rs
+8053ecbed42d6ff0177c269a004adfdbaefb670230f61535185adae7ee6d30a7  tests/real_payload.rs
 a334b3b335c690cea5af1fdf34ea66ad72240bb438a4782406eb50ac7809f071  tests/reconcile.rs
 f46aefc2d0bb3638fbd969fd0915051022914d4982a6fed21db374a6bdb7e8d1  tests/reconstruction.rs
 e79ecd694b4467975ba47db1cf8c2c28f63f0ebcd31676bf0396ed8b83355dd2  tests/replay.rs
 edf8b5187fcf73821fdd8ddb47ce6058022a60e41feb35648a58465ef335aebe  tests/restart.rs
-d3afd14fc012977ea8d8f449db237e9f5332dc2a96918801c17c39cb002e5136  tests/sink.rs
+a8db513ecd70bd32447bb95670cd8f31b27abae050201b4d9aa18614ea0a07bb  tests/sink.rs
 a29c3010383de2d7e7ddcdc1caa19b3788ac9bf28478a883ef53a6da1baf63e0  tests/upstream.rs
-f90f33ec18f8db7709fc182f9e52705c530c0de018e00c6505341579e75b2fb9  tests/wire.rs
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+a55bf72a3a9a002aeaa3be41582d64e0b9f1424e2598d55a1195eab95f7e03f1  tests/wire.rs
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-e9cbd07cc690db5b)
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+     Running unittests src/bin/replay.rs (target/debug/deps/yellowstone_replay-6e43753d3dda3bf9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test a_late_vote_after_retention_passed_the_slot_cannot_emit ... ok
+test a_reconnecting_provider_that_changes_its_report_is_a_conflict ... ok
+test quorum_of_one_still_reports_a_later_conflict_as_after_emission ... ok
+     Running tests/audit_sequences.rs (target/debug/deps/audit_sequences-e7420c30ffbd22bf)
+test slot_boundaries_neither_wrap_nor_emit_invalid_blocks ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pass2_regressions.rs (target/debug/deps/pass2_regressions-d246a5c73c5ea4a7)
+     Running tests/real_payload.rs (target/debug/deps/real_payload-c6738730ad8cf347)
 
 running 0 tests
 
@@ -55,29 +85,28 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 14 tests
 test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
-     Running unittests src/bin/replay.rs (target/debug/deps/yellowstone_replay-6e43753d3dda3bf9)
-     Running tests/reconcile.rs (target/debug/deps/reconcile-850b88556b16c653)
-test conflict_after_emission_is_explicit_and_never_reemits ... ok
 test below_commitment_cannot_vote_or_poison_slot ... ok
-test invalid_configuration_is_rejected ... ok
-test independent_providers_emit_one_unchanged_payload ... ok
+test conflict_after_emission_is_explicit_and_never_reemits ... ok
+     Running tests/reconcile.rs (target/debug/deps/reconcile-850b88556b16c653)
 test conflict_before_quorum_quarantines_and_releases_payload ... ok
-test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
 test equal_hash_different_metadata_is_a_conflict ... ok
 test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test independent_providers_emit_one_unchanged_payload ... ok
+test invalid_configuration_is_rejected ... ok
+test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
 test pending_capacity_does_not_lose_existing_quorum_progress ... ok
 test reconnect_is_not_an_independent_vote_and_invalidates_old_session ... ok
 test slot_and_provider_capacities_are_recoverable ... ok
 test randomized_interleavings_emit_each_slot_once ... ok
 test retention_stays_bounded_under_long_running_replay ... ok
 
-test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
 
-     Running tests/reconstruction.rs (target/debug/deps/reconstruction-5574f3155b9a5666)
 
 running 0 tests
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out     Running tests/reconstruction.rs (target/debug/deps/reconstruction-5574f3155b9a5666)
+; finished in 0.00s
 
 
 running 3 tests
@@ -86,9 +115,8 @@ test conflicting_fixture_halts_without_emitting_a_block ... ok
 test agreement_fixture_emits_once_despite_connection_restart ... ok
 test malformed_replay_and_bad_argument_are_errors ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
 
-     Running tests/restart.rs (target/debug/deps/restart-5aee7dedc8769837)
 
 running 3 tests
 test a_checkpoint_ahead_of_the_stream_refuses_the_gap ... ok
@@ -100,22 +128,11 @@ test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 0 tests
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out     Running tests/sink.rs (target/debug/deps/sink-6d2d69647b35c7e4)
-; finished in 0.00s
-
-
-running 0 tests
-
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+     Running tests/restart.rs (target/debug/deps/restart-5aee7dedc8769837)
+     Running tests/sink.rs (target/debug/deps/sink-6d2d69647b35c7e4)
      Running tests/upstream.rs (target/debug/deps/upstream-4c970a39d9adead2)
-     Running tests/wire.rs (target/debug/deps/wire-139da66afe930b45)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-     Running unittests examples/benchmark.rs (target/debug/examples/benchmark-1432462513eeb28b)
 
 running 0 tests
 
@@ -124,19 +141,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 0 tests
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out     Running unittests examples/durable_sink.rs (target/debug/examples/durable_sink-a0d380a80a24cd53)
-     Running unittests examples/lag_memory.rs (target/debug/examples/lag_memory-af65628365c02e46)
-     Running unittests examples/payload_variance.rs (target/debug/examples/payload_variance-1405511f9f3a897d)
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out     Running tests/wire.rs (target/debug/deps/wire-139da66afe930b45)
 ; finished in 0.00s
 
 
@@ -144,9 +149,32 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out     Running unittests examples/benchmark.rs (target/debug/examples/benchmark-1432462513eeb28b)
+     Running unittests examples/durable_sink.rs (target/debug/examples/durable_sink-a0d380a80a24cd53)
+     Running unittests examples/lag_memory.rs (target/debug/examples/lag_memory-af65628365c02e46)
+; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/payload_variance.rs (target/debug/examples/payload_variance-1405511f9f3a897d)
      Running unittests examples/stall_budget.rs (target/debug/examples/stall_budget-3544ae4cd386eefc)
-   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
      Running unittests src/lib.rs (target/debug/deps/yellowstone_reconcile-3d1304f48b643ee3)
 
 running 0 tests
@@ -160,24 +188,51 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
+running 4 tests
+     Running tests/audit_sequences.rs (target/debug/deps/audit_sequences-b26804993fc25735)
+test a_reconnecting_provider_that_changes_its_report_is_a_conflict ... ok
+test quorum_of_one_still_reports_a_later_conflict_as_after_emission ... ok
+test a_late_vote_after_retention_passed_the_slot_cannot_emit ... ok
+test slot_boundaries_neither_wrap_nor_emit_invalid_blocks ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test bridge::a_commitment_update_that_precedes_its_block_is_dropped_not_replayed ... ok
+test bridge::a_commitment_update_refused_for_capacity_keeps_its_payload_and_a_retry_succeeds ... ok
+test sink::refusing_a_newer_schema_leaves_the_file_as_found ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pass2_regressions.rs (target/debug/deps/pass2_regressions-dc77d14ba63ef5e2)
+     Running tests/real_payload.rs (target/debug/deps/real_payload-bd2bdc8dd8f922ad)
+
+running 2 tests
+test a_damaged_payload_is_an_error_and_never_a_shorter_block ... ok
+test reconstructed_block_events_survive_the_sink_and_a_reopen ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
 running 14 tests
 test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
-test below_commitment_cannot_vote_or_poison_slot ... ok
 test conflict_after_emission_is_explicit_and_never_reemits ... ok
+test below_commitment_cannot_vote_or_poison_slot ... ok
 test invalid_configuration_is_rejected ... ok
-test independent_providers_emit_one_unchanged_payload ... ok
-test equal_hash_different_metadata_is_a_conflict ... ok
-test pending_capacity_does_not_lose_existing_quorum_progress ... ok
-test conflict_before_quorum_quarantines_and_releases_payload ... ok
 test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test independent_providers_emit_one_unchanged_payload ... ok
+test conflict_before_quorum_quarantines_and_releases_payload ... ok
 test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
+test pending_capacity_does_not_lose_existing_quorum_progress ... ok
+test equal_hash_different_metadata_is_a_conflict ... ok
 test reconnect_is_not_an_independent_vote_and_invalidates_old_session ... ok
-     Running tests/reconcile.rs (target/debug/deps/reconcile-c640046afd6ea7a9)
 test slot_and_provider_capacities_are_recoverable ... ok
+     Running tests/reconcile.rs (target/debug/deps/reconcile-c640046afd6ea7a9)
 test randomized_interleavings_emit_each_slot_once ... ok
 test retention_stays_bounded_under_long_running_replay ... ok
 
-test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
 
 
 running 2 tests
@@ -194,7 +249,7 @@ test conflicting_fixture_halts_without_emitting_a_block ... ok
 test agreement_fixture_emits_once_despite_connection_restart ... ok
 test malformed_replay_and_bad_argument_are_errors ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
 
 
 running 3 tests
@@ -207,49 +262,58 @@ test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
      Running tests/restart.rs (target/debug/deps/restart-5427dded190e95f3)
      Running tests/sink.rs (target/debug/deps/sink-47576c6fecec93b1)
 
-running 12 tests
+running 17 tests
 test crash_child ... ok
-test a_hash_mismatched_parent_link_stalls_the_watermark ... ok
-test an_anchor_ahead_of_required_history_excludes_that_history ... ok
-test replay_with_the_same_hash_but_different_metadata_is_refused ... ok
-test commit_is_idempotent_on_slot ... ok
-test a_different_block_for_a_stored_slot_is_refused_and_not_overwritten ... ok
-test skipped_slots_chain_through_parent_slot ... ok
+test mid_transaction_child ... ok
 
 running 1 test
+test blocks_below_finalized_are_refused ... ok
+test a_different_block_for_a_stored_slot_is_refused_and_not_overwritten ... ok
+test a_hash_mismatched_parent_link_stalls_the_watermark ... ok
+test an_anchor_ahead_of_required_history_excludes_that_history ... ok
+test commit_is_idempotent_on_slot ... ok
+test a_database_from_a_newer_schema_version_is_refused ... ok
 test out_of_order_commits_hold_the_watermark_at_the_first_gap ... ok
-test reopening_keeps_rows_and_watermark_and_ignores_the_anchor ... ok
-test slots_beyond_sqlite_integers_are_rejected ... ok
-test committed_blocks_and_watermark_survive_a_process_abort ... ok
-test reconciler_with_unordered_emission_loses_nothing_across_a_restart ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 1 test
+test committed_blocks_and_watermark_survive_a_process_abort ... ok
+test slots_beyond_sqlite_integers_are_rejected ... ok
+test replay_with_the_same_hash_but_different_metadata_is_refused ... ok
+test skipped_slots_chain_through_parent_slot ... ok
+test reopening_keeps_rows_and_watermark_and_ignores_the_anchor ... ok
+test a_process_dying_inside_a_write_transaction_leaves_nothing_and_no_lock ... ok
+test reconciler_with_unordered_emission_loses_nothing_across_a_restart ... ok
+test concurrent_writers_store_every_block_once ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
 
 
 running 7 tests
 test conflicting_bank_reuse_and_oversized_event_store_are_rejected ... ok
 test bridge_capacity_is_explicit_and_advance_reports_eviction ... ok
 test different_local_bank_ids_reconcile_by_hash ... ok
-     Running tests/upstream.rs (target/debug/deps/upstream-800c1b240541fd91)
-test discard_is_scoped_to_connection_and_bank ... ok
-test same_local_bank_id_across_connections_never_combines_payloads ... ok
 test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
+test same_local_bank_id_across_connections_never_combines_payloads ... ok
+test discard_is_scoped_to_connection_and_bank ... ok
 test slot_level_fork_report_does_not_discard_a_sealed_candidate ... ok
 
 test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+     Running tests/upstream.rs (target/debug/deps/upstream-800c1b240541fd91)
      Running tests/wire.rs (target/debug/deps/wire-8725b141f525a6a3)
 
-running 7 tests
-test missing_bank_id_and_unknown_status_are_not_silently_accepted ... ok
+running 9 tests
 test capacity_failure_preserves_old_bank_identity ... ok
-test only_exact_length_entry_hashes_pass ... ok
-test one_connection_cannot_reassign_bank_id_to_another_slot ... ok
+test missing_bank_id_and_unknown_status_are_not_silently_accepted ... ok
 test malformed_blockhashes_are_rejected_without_bank_state_mutation ... ok
-test guarded_stream_reports_source_error_without_leaking_its_display ... ok
+test slot_scoped_statuses_need_no_bank_and_zero_is_a_present_bank ... ok
+test one_connection_cannot_reassign_bank_id_to_another_slot ... ok
+test missing_bank_id_names_the_status_that_lacked_it ... ok
+test only_exact_length_entry_hashes_pass ... ok
 test guarded_stream_reports_invalid_input_then_terminates ... ok
+test guarded_stream_reports_source_error_without_leaking_its_display ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running unittests examples/access_probe.rs (target/debug/examples/access_probe-5efb89cdb564ee49)
 
@@ -263,29 +327,29 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
      Running unittests examples/dependency_probe.rs (target/debug/examples/dependency_probe-608e5da18ed905c9)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
      Running unittests examples/durable_sink.rs (target/debug/examples/durable_sink-dbe08c9cd6482bff)
      Running unittests examples/lag_memory.rs (target/debug/examples/lag_memory-d506b5c93708acfd)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
      Running unittests examples/payload_variance.rs (target/debug/examples/payload_variance-1b2cbd8104ac2a71)
      Running unittests examples/sqlite_sink.rs (target/debug/examples/sqlite_sink-7dff6e08a962c96e)
 
@@ -298,42 +362,68 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
      Running unittests examples/stall_budget.rs (target/debug/examples/stall_budget-9354d839f08722a9)
      Running unittests examples/two_providers.rs (target/debug/examples/two_providers-a6db09ba9ee6c60d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
      Running unittests examples/upstream_bridge.rs (target/debug/examples/upstream_bridge-3f647f2ed6c0fffa)
-   Compiling yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
-    Finished `release` profile [optimized] target(s) in 0.19s
+    Finished `release` profile [optimized] target(s) in 0.07s
      Running unittests src/lib.rs (target/release/deps/yellowstone_reconcile-f8121f62c27c8ced)
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+     Running unittests src/bin/replay.rs (target/release/deps/yellowstone_replay-744cc4611b9c120c)
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+     Running tests/audit_sequences.rs (target/release/deps/audit_sequences-8bf48ef36c774712)
+
+running 4 tests
+test a_late_vote_after_retention_passed_the_slot_cannot_emit ... ok
+test a_reconnecting_provider_that_changes_its_report_is_a_conflict ... ok
+test quorum_of_one_still_reports_a_later_conflict_as_after_emission ... ok
+test slot_boundaries_neither_wrap_nor_emit_invalid_blocks ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pass2_regressions.rs (target/release/deps/pass2_regressions-4165ca002fa33721)
+
+running 3 tests
+test bridge::a_commitment_update_refused_for_capacity_keeps_its_payload_and_a_retry_succeeds ... ok
+test bridge::a_commitment_update_that_precedes_its_block_is_dropped_not_replayed ... ok
+test sink::refusing_a_newer_schema_leaves_the_file_as_found ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 2 tests
+test a_damaged_payload_is_an_error_and_never_a_shorter_block ... ok
+test reconstructed_block_events_survive_the_sink_and_a_reopen ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/real_payload.rs (target/release/deps/real_payload-28237cd7838530b1)
+     Running tests/reconcile.rs (target/release/deps/reconcile-4ce47f03ff092602)
 
 running 14 tests
-     Running unittests src/bin/replay.rs (target/release/deps/yellowstone_replay-744cc4611b9c120c)
-     Running tests/reconcile.rs (target/release/deps/reconcile-4ce47f03ff092602)
-test below_commitment_cannot_vote_or_poison_slot ... ok
 test confirmed_mode_is_explicit_and_never_accepts_processed ... ok
+test below_commitment_cannot_vote_or_poison_slot ... ok
 test conflict_after_emission_is_explicit_and_never_reemits ... ok
-test equal_hash_different_metadata_is_a_conflict ... ok
-test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
 test conflict_before_quorum_quarantines_and_releases_payload ... ok
+test explicit_retention_reports_gaps_and_rejects_old_replay ... ok
+test equal_hash_different_metadata_is_a_conflict ... ok
 test invalid_configuration_is_rejected ... ok
 test independent_providers_emit_one_unchanged_payload ... ok
 test malformed_hash_and_parent_are_rejected_without_allocating_slot ... ok
@@ -345,10 +435,10 @@ test retention_stays_bounded_under_long_running_replay ... ok
 
 test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
+     Running tests/reconstruction.rs (target/release/deps/reconstruction-dde822d78c82209c)
 
 running 2 tests
 test incomplete_provider_bank_cannot_supply_a_quorum_vote ... ok
-     Running tests/reconstruction.rs (target/release/deps/reconstruction-dde822d78c82209c)
 test wire_events_reconstruct_independently_before_cross_provider_agreement ... ok
 
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
@@ -356,79 +446,83 @@ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 3 tests
      Running tests/replay.rs (target/release/deps/replay-374433891740979a)
-test conflicting_fixture_halts_without_emitting_a_block ... ok
 test agreement_fixture_emits_once_despite_connection_restart ... ok
+test conflicting_fixture_halts_without_emitting_a_block ... ok
 test malformed_replay_and_bad_argument_are_errors ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
 
+     Running tests/restart.rs (target/release/deps/restart-463e2f36edc62630)
 
 running 3 tests
 test a_checkpoint_ahead_of_the_stream_refuses_the_gap ... ok
-test a_stale_checkpoint_cannot_move_retention_backwards ... ok
 test restart_from_checkpoint_does_not_reemit_committed_slots ... ok
+test a_stale_checkpoint_cannot_move_retention_backwards ... ok
 
 test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-     Running tests/restart.rs (target/release/deps/restart-463e2f36edc62630)
+
+running 17 tests
+test crash_child ... ok
+test mid_transaction_child ... ok
      Running tests/sink.rs (target/release/deps/sink-2f2c2bc0eabdd7ab)
 
-running 12 tests
-test crash_child ... ok
-
 running 1 test
+test blocks_below_finalized_are_refused ... ok
 test commit_is_idempotent_on_slot ... ok
-test replay_with_the_same_hash_but_different_metadata_is_refused ... ok
+test a_different_block_for_a_stored_slot_is_refused_and_not_overwritten ... ok
 test an_anchor_ahead_of_required_history_excludes_that_history ... ok
 test a_hash_mismatched_parent_link_stalls_the_watermark ... ok
-test a_different_block_for_a_stored_slot_is_refused_and_not_overwritten ... ok
-test skipped_slots_chain_through_parent_slot ... ok
 test out_of_order_commits_hold_the_watermark_at_the_first_gap ... ok
-test reopening_keeps_rows_and_watermark_and_ignores_the_anchor ... ok
-test slots_beyond_sqlite_integers_are_rejected ... ok
+test a_database_from_a_newer_schema_version_is_refused ... ok
+
+running 1 test
+test replay_with_the_same_hash_but_different_metadata_is_refused ... ok
 test committed_blocks_and_watermark_survive_a_process_abort ... ok
+test slots_beyond_sqlite_integers_are_rejected ... ok
+test skipped_slots_chain_through_parent_slot ... ok
+test a_process_dying_inside_a_write_transaction_leaves_nothing_and_no_lock ... ok
+test reopening_keeps_rows_and_watermark_and_ignores_the_anchor ... ok
 test reconciler_with_unordered_emission_loses_nothing_across_a_restart ... ok
+test concurrent_writers_store_every_block_once ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
-     Running tests/upstream.rs (target/release/deps/upstream-05f9fb417df40b90)
 
 running 7 tests
 test bridge_capacity_is_explicit_and_advance_reports_eviction ... ok
+     Running tests/upstream.rs (target/release/deps/upstream-05f9fb417df40b90)
 test conflicting_bank_reuse_and_oversized_event_store_are_rejected ... ok
 test different_local_bank_ids_reconcile_by_hash ... ok
-test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
 test discard_is_scoped_to_connection_and_bank ... ok
 test same_local_bank_id_across_connections_never_combines_payloads ... ok
 test slot_level_fork_report_does_not_discard_a_sealed_candidate ... ok
+test reconnect_discards_old_unqualified_blocks_and_rejects_old_events ... ok
 
 test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-     Running tests/wire.rs (target/release/deps/wire-9e17b2f5b9cf95e3)
 
-running 7 tests
+running 9 tests
 test capacity_failure_preserves_old_bank_identity ... ok
-test malformed_blockhashes_are_rejected_without_bank_state_mutation ... ok
-test one_connection_cannot_reassign_bank_id_to_another_slot ... ok
 test missing_bank_id_and_unknown_status_are_not_silently_accepted ... ok
-test guarded_stream_reports_source_error_without_leaking_its_display ... ok
+test one_connection_cannot_reassign_bank_id_to_another_slot ... ok
+test missing_bank_id_names_the_status_that_lacked_it ... ok
 test guarded_stream_reports_invalid_input_then_terminates ... ok
 test only_exact_length_entry_hashes_pass ... ok
+test slot_scoped_statuses_need_no_bank_and_zero_is_a_present_bank ... ok
+test guarded_stream_reports_source_error_without_leaking_its_display ... ok
+test malformed_blockhashes_are_rejected_without_bank_state_mutation ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wire.rs (target/release/deps/wire-9e17b2f5b9cf95e3)
      Running unittests examples/access_probe.rs (target/release/examples/access_probe-33c39764417a1cf8)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
      Running unittests examples/benchmark.rs (target/release/examples/benchmark-99938a12b239ebba)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
 
 running 0 tests
 
@@ -441,25 +535,35 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
      Running unittests examples/dependency_probe.rs (target/release/examples/dependency_probe-2bd56eb08556d71e)
      Running unittests examples/durable_sink.rs (target/release/examples/durable_sink-0e5ff29785749ad2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
      Running unittests examples/lag_memory.rs (target/release/examples/lag_memory-76e5d3c6e9ce32ad)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
      Running unittests examples/payload_variance.rs (target/release/examples/payload_variance-4bbc3d399a23c1cc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
      Running unittests examples/sqlite_sink.rs (target/release/examples/sqlite_sink-3d81d3902096bef2)
 
 running 0 tests
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out     Running unittests examples/stall_budget.rs (target/release/examples/stall_budget-83a20a0feb0cf12b)
+; finished in 0.00s
 
-     Running unittests examples/stall_budget.rs (target/release/examples/stall_budget-83a20a0feb0cf12b)
 
 running 0 tests
 
@@ -471,18 +575,12 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running unittests examples/two_providers.rs (target/release/examples/two_providers-b699ffb96b6a5c79)
-
-running 0 tests
-
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
      Running unittests examples/upstream_bridge.rs (target/release/examples/upstream_bridge-f8bbd2a60141c895)
-    Checking yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
- Documenting yellowstone-reconcile v0.1.0 (~/mini-work/yellowstone-reconcile)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.79s
-   Generated ~/mini-work/yellowstone-reconcile/target/doc/yellowstone_reconcile/index.html and 1 other file
-    Finished `release` profile [optimized] target(s) in 0.03s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+ Documenting yellowstone-reconcile v0.1.0 (<build-path>
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.77s
+   Generated <build-path> and 1 other file
+    Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/yellowstone-replay fixtures/agreement.jsonl`
 {"session":{"generation":1,"provider":1}}
 {"session":{"generation":1,"provider":2}}
@@ -491,7 +589,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 {"session":{"generation":2,"provider":1}}
 {"local_bank_id":7,"outcome":{"blockhash":"0303030303030303030303030303030303030303030303030303030303030303","kind":"duplicate","slot":10}}
 {"stats":{"conflicts":0,"duplicates":1,"emitted":1,"pending_blocks":0,"retained_slots":1}}
-    Finished `release` profile [optimized] target(s) in 0.03s
+    Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/yellowstone-replay fixtures/conflict.jsonl`
 {"session":{"generation":1,"provider":1}}
 {"session":{"generation":1,"provider":2}}
@@ -503,12 +601,12 @@ line 4: provider conflict; replay halted
 line 1: unknown field `unexpected`, expected one of `provider`, `generation`, `bank_id`, `commitment`, `meta`, `payload`
     Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/examples/benchmark`
-MEASURED synthetic_metadata_blocks=200000 elapsed_seconds=0.069465 blocks_per_second=2879143 stats=Stats { emitted: 200000, duplicates: 0, conflicts: 0, pending_blocks: 0, retained_slots: 101 }
+MEASURED synthetic_metadata_blocks=200000 elapsed_seconds=0.033210 blocks_per_second=6022298 stats=Stats { emitted: 200000, duplicates: 0, conflicts: 0, pending_blocks: 0, retained_slots: 101 }
 LIMIT: in-memory metadata with unit payload; excludes gRPC, reconstruction, full payloads, persistence and end-to-end latency
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
      Running `target/debug/examples/upstream_bridge`
 slot=10 providers=[ProviderId(1), ProviderId(2)] selected_payload=[1]
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
      Running `target/debug/examples/dependency_probe`
 MEASURED issue19 invalid_blockhash_panicked=true invalid_entry_hash_panicked=true guarded_blockhash_rejected=true guarded_entry_rejected=true
 MEASURED issue21 upstream_fork_reports=0 emitted_slots=70 bridge_fork_diagnostics=0
@@ -519,22 +617,27 @@ MEASURED lifetime=1 stored_in_emission_order=[4, 3, 2, 1, 8, 7] watermark=4 naiv
 MEASURED lifetime=2 resume_slot=5 naive_resume_slot=9 naive_would_lose_slots=[5, 6]
 MEASURED lifetime=2 inserted=14 redelivered_and_absorbed=2 replays_refused=8 sink_rows=20 watermark=20 every_slot_stored_once=true
 LIMIT: SQLite on one local disk, synthetic blocks, no gRPC or real provider. Process death is covered by tests/sink.rs (SIGABRT); power loss and a networked database are not exercised. The watermark follows parent links, so it assumes the stored chain is finalized: with Confirmed blocks a fork sharing a parent_slot would not be told apart by slot alone, only by the parent_blockhash match.
-    Finished `release` profile [optimized] target(s) in 0.03s
+    Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/examples/durable_sink`
 MEASURED lifetime=1 committed_slots=12 checkpoint_on_disk=12
 MEASURED lifetime=2 resumed_from=12 replayed_slots_refused=24 checkpoint_on_disk=20
 MEASURED sink_rows=20 distinct_slots=20 double_written_slots=[] every_slot_written_once=true
 LIMIT: the sink is in-process and the checkpoint is a plain file, so this shows the ordering contract (commit, then checkpoint) rather than real durability. A crash between the sink commit and the checkpoint write still re-delivers that one slot, which is why the sink write must be idempotent on slot. No gRPC, reconstruction or real provider.
-    Finished `release` profile [optimized] target(s) in 0.03s
+    Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/examples/stall_budget 212`
 MEASURED slot_ms=212 max_pending_blocks=128 blocks_buffered_before_rejection=128 stall_budget_seconds=27.1
 MEASURED recovery_after_rejection emitted_on_first_agreement=Ok(true) pending_now=127
 MEASURED max_retained_slots=4096 retention_window_seconds=868 emitted=4096 pruned_before_slot=4086 pending_dropped=0 quarantined_dropped=0
 LIMIT: slot_ms is an input, not a guarantee; it was measured once and varies. The budgets assume one block per slot per provider and no payload-size pressure, which binds first on large blocks (see the lag_memory example). Nothing here exercises gRPC, reconstruction or persistence.
-    Finished `release` profile [optimized] target(s) in 0.03s
+    Finished `release` profile [optimized] target(s) in 0.02s
      Running `target/release/examples/payload_variance`
 MEASURED sample_blocks=10 min_bytes=2389 median_like_mean_bytes=4700121 max_bytes=8281597 spread=3467x
 MEASURED replayed_distribution accepted_blocks=128 max_pending_blocks=128 retained_bytes=598486305 retained_mib=570.8
 DERIVED ceilings_at_128_blocks uniform_2mib_mib=256 sampled_mean_mib=574 all_largest_block_mib=1011
 LIMIT: ten blocks is a small sample from one minute of one day and is not a size distribution. Payload bytes here are the JSON-encoded RPC response, which is not the wire size a Geyser consumer holds. Treat these as the order of magnitude to size against, and measure your own provider's payloads before fixing max_pending_blocks.
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
 {"kind": "preflight", "checks": {"endpoints_configured": false, "distinct_endpoints": false, "https_endpoints": false, "provider_names_configured": false, "distinct_provider_names": false, "owner_mini": true}, "ready": false, "limit": "Configuration checks do not establish provider independence or protocol compatibility."}

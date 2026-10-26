@@ -1,35 +1,30 @@
-# Readiness and remaining work
+# Roadmap
 
-MEASURED (`src/`, `tests/`, `scripts/`): the local prototype includes reconciliation, typed
-upstream integration, guarded transport, replay, SQLite with a linked transactional watermark,
-synthetic restart/abort tests and an offline pilot harness. Current run evidence is indexed in
-`docs/VERIFICATION.md`.
+## Available for prototype evaluation
 
-## Verification today
+MEASURED ([source](../src/), [tests](../tests/), [examples](../examples/)):
+the project includes the agreement core, per-connection upstream bridge, input guard, replay CLI,
+finalized SQLite sink, payload encoding and browser fixture demo.
+The [verification record](VERIFICATION.md) separates exercised behavior from unvalidated operation.
 
-Full verification (`scripts/verify.sh`) covers default and all features, debug and release,
-lint and docs, fixture exit codes, upstream defect probes and SQLite recovery. There is no
-automatic CI and no registered runner (`docs/RUNNER-SETUP.md`); running the script by hand is the
-working verification route.
+## Planned engineering
 
-## External validation and release
+INFERRED: these address the current implementation's operating limits:
 
-1. Obtain two independent compatible provider feeds and plan quotations. Run the smoke protocol
-   in `docs/PILOT.md`; record source identity and failures. Access is not currently available.
-2. Obtain a named integrator's recovery requirements and scope feedback. No message has been sent;
-   none of this is evidence of an adopter.
-3. Store payloads from a real feed (the encoding is done and tested on simulated events);
-   implement replay/history negotiation, safe rotation and backfill; validate controlled outages
-   and a sustained soak.
-4. Obtain independent review and remediate findings. Resolve the experimental upstream pin via
-   a supported release or an explicit independently reviewed maintenance decision.
-5. The $15,000 proposal funds items 1 and 3 to 4 above in part (rotation, byte bounds and durable
-   conflicts, a dependency-safe build, live two-provider validation with a 72-hour soak, an
-   independent code review and a 1.0 release), six months of maintenance and a target of four external
-   integrations, following the live Developer Tooling template checked 26 October. The applicant
-   confirmed these future obligations. None of it is done: no live validation, adopter or release exists
-   today. A formal audit and a named integrator's requirements (item 2) are not funded. See
-   `grant/BUDGET.md` and `grant/SUBMISSION.md`.
+- Safe connection/bank lifecycle and rotation with explicit replay-gap reporting.
+- Byte accounting and refusal for retained opaque payloads.
+- Restart-visible conflict handling and an operator recovery example.
+- A supported upstream dependency or explicitly maintained patch path.
+- Actual independent-provider compatibility, recovery and sustained-run validation.
+- Independent review, remediation and a supported package release.
 
-INFERRED: a working prototype is a basis for validation, not proof of demand or funding likelihood.
-No production deployment, paid service purchase or release publication has happened.
+These are planned tasks, not delivered features or promised release dates.
+
+## Integration and maintenance
+
+INFERRED: validate requirements with external indexing maintainers, publish reproducible integration
+examples and maintain a supported-version policy. No adopter or upstream endorsement is claimed.
+Development and release status will be recorded in [CHANGELOG](../CHANGELOG.md).
+
+Report a reproducible failure through the [issue tracker](https://github.com/ss1738/yellowstone-reconcile/issues).
+Use the [security policy](../SECURITY.md) for sensitive findings.

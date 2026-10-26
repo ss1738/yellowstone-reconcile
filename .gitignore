@@ -6,9 +6,10 @@
 *.pem
 /target/
 /pilot-results/
-grant/*.pdf
 /demo/target/
 
-# Local exports of grant/proposal.md for pasting into the Google Doc; regenerate, do not edit
-grant/*.docx
-grant/*.html
+# Application drafts and owner-only records are maintained outside this repository.
+/grant/
+/private/
+/submission/
+/docs/*proposal*.pdf

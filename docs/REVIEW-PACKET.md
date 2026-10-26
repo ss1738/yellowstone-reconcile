@@ -1,43 +1,30 @@
-# Independent review packet
+# Review checklist
 
-Status: no independent reviewer engaged and no review completed.
+MEASURED ([self-review](../AUDIT.md), [verification](VERIFICATION.md)):
+the repository records maintainer reviews and finite regression tests. No independent review is
+recorded. This checklist helps a reviewer assess the implementation without implying an audit.
 
-## Reproduce
+## Reproduce first
 
-Run `bash scripts/verify.sh` on a machine with Rust 1.95.
-Compare executable inputs with `evidence/source-manifest.sha256`; inspect
-`evidence/verification-audit.log` and the deliberately failing pre-fix logs (`evidence/audit-regressions-before-fix.log`, `evidence/sink-metadata-regression-before-fix.log`).
+    bash scripts/verify.sh
+    python3 scripts/source_manifest.py | diff -u evidence/source-manifest.sha256 -
 
-Read `docs/CORRECTNESS.md`, `docs/DEPENDENCY-REVIEW.md`, `docs/PILOT.md` and `src/` before
-assessing the grant's claims. `grant/BUDGET.md` excludes this delivered preparation from billing.
+Read the [contract](CORRECTNESS.md), [integration guide](INTEGRATION.md),
+[dependency review](DEPENDENCY-REVIEW.md) and [pilot protocol](PILOT.md).
 
-## Questions requiring an independent decision
+## Questions
 
-- Does the sealed/commitment contract match each actual provider's subscription semantics?
-  Can missing or reordered updates lead to a false qualification or silent payload loss?
-- Is reconnect generation isolation complete? What replay/history guarantees and reset protocol
-  are needed when the wire guard or core reaches capacity?
-- Does conflict quarantine remain visible after emission, restart, retention pruning and sink commit?
-  Which downstream effects require compensation or an explicit operator halt?
-- Is the caller's trusted anchor sufficiently explicit? The sink does not validate external history
-  or verify ledger validity. It rejects blocks below `Finalized` at runtime (not in the type), and
-  a unique canonical child is a precondition: with finalized input only one child can exist.
-- Does replay compare all stored identity metadata, without accidentally claiming byte equality for
-  opaque payloads? Review `replay_with_the_same_hash_but_different_metadata_is_refused`.
-- Are SQLite transaction boundaries, disk errors, corruption handling, concurrent access and
-  schema/version migration adequate for the intended integrator? Power loss is not tested.
-- Can payload sizes, transport buffers or reconstruction state exceed operational memory budgets?
-  Existing count bounds and synthetic payload examples are not byte/RSS guarantees.
-- Is experimental upstream PR #22 acceptable for a pilot? What supported release or maintenance
-  decision is required, and what malformed-wire coverage remains incomplete?
-- Does the bounded smoke harness distinguish success, interruption, timeout and partial output?
-  Are endpoint credentials absent from evidence and failure output?
+- Do commitment and sealing refer to the exact bank being compared?
+- Are provider identity and reconnect generations isolated in all failure paths?
+- Can capacity, quarantine or retention hide a pending block or a late conflict?
+- Are payload equality and ledger validity kept outside the metadata-agreement claim?
+- Does the trusted anchor and linked watermark handle unordered delivery and skipped slots?
+- Are replay/history gaps reported rather than silently skipped?
+- Are SQLite transaction, schema-refusal and replay-identity semantics adequate for the consumer?
+- Do transport/upstream allocations exceed the count-based limits?
+- Is the dependency revision supported for the target deployment?
+- Does actual provider input satisfy the subscription and bank-identity assumptions?
 
-## Required review record
-
-Record reviewer identity and relationship to the project, date, exact source manifest, scenarios
-reproduced, findings with severity and source locations, accepted limitations, remediation commits
-and reviewer disposition. A tool's own review or passing tests is not an independent review.
-
-INFERRED: release should wait for disposition of correctness and recovery findings and for real
-provider validation. Grant acceptance and review acceptance are separate decisions.
+Record the reviewer relationship, exact source/manifest, scenarios reproduced, findings,
+remediation commits and unresolved limits. A passing suite or a tool reviewing its own output is
+not an independent review.

@@ -1,7 +1,0 @@
-clusterrun -> Mini-3 (ironman) : export_updated_evidence.sh
-saving      -> ~/.clusterrun/20261025-124928-export_updated_evidence.out
-----------------------------------------------------------------
-MEASURED private remote token wrapper absent
-{"kind": "preflight", "checks": {"endpoints_configured": false, "distinct_endpoints": false, "https_endpoints": false, "provider_names_configured": false, "distinct_provider_names": false, "owner_mini": true}, "ready": false, "limit": "Configuration checks do not establish provider independence or protocol compatibility."}
-Pilot not started: complete preflight checks on an owner Mini.
-MEASURED credential-free pilot refused with exit=2 before build or connection

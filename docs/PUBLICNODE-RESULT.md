@@ -1,15 +1,15 @@
 # PublicNode access check, 25 October 2026
 
 MEASURED: `evidence/publicnode-access.log` records a real read-only test, run from the maintainer's build machine, using a
-token I supplied and `https://solana-yellowstone-grpc.publicnode.com:443`. The diagnostic
+private credentials and `https://solana-yellowstone-grpc.publicnode.com:443`. The diagnostic
 source is `examples/access_probe.rs`. Endpoint/token values are not printed by the probe.
 
 - Connection succeeded and the server accepted the subscription.
 - Observed 20 transaction updates, 44 entries and 2 slot updates before termination.
 - The wire guard reported `MissingBankId { slot: 461169824 }`.
 - No block metadata/footer was observed before that early termination; zero blocks reconstructed.
-- The probe exited nonzero. `evidence/publicnode-access-initial.log` preserves the first run,
-  which similarly connected/subscribed but stopped before the guard reason was logged.
+- The probe exited nonzero. The retained log records the guard rejection; the status-specific
+  diagnostic was added afterwards and has not yet been exercised against a new live feed.
 
 MEASURED (`src/wire.rs`): the guard requires a bank ID on CreatedBank, Processed, Confirmed
 and Finalized slot updates. The observed failure means a bank-specific update lacked the
@@ -34,8 +34,7 @@ Question: is the provider alone at fault? Answer from the archived evidence and 
 sources: this evidence cannot say, and the diagnostics were too thin to say.
 
 MEASURED (`evidence/publicnode-access.log`): the probe counted 2 slot updates, the second of
-which tripped the guard. The log records the slot, 461169824, but not the status. The earlier run
-(`publicnode-access-initial.log`) recorded 3 slot updates and no reason at all. Which of
+which tripped the guard. The log records the slot, 461169824, but not the status. Which of
 CreatedBank, Processed, Confirmed or Finalized lacked the bank id is therefore **unknown**.
 
 MEASURED (pinned protocol, `yellowstone-grpc-proto-14.0.1/proto/geyser.proto`): `bank_id` on a
@@ -68,7 +67,7 @@ Next live check, not run because the earlier credential must be replaced by its 
 ```sh
 # On the build machine, with a NEW token in a private mode-600 file sourced into the shell
 # (YELLOWSTONE_A_URL, YELLOWSTONE_A_TOKEN); never paste values into chat or arguments.
-cd "$HOME/mini-work/yellowstone-reconcile" && export PATH="$HOME/.cargo/bin:$PATH"
+# From the repository root on a build machine:
 cargo run --locked --release --features grpc --example access_probe
 ```
 

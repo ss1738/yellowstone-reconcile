@@ -1,75 +1,31 @@
-# Evidence index
+# Verification and regression evidence
 
-Raw logs and manifests behind the claims in the documentation. Nothing here is edited except that
-a private host address and account name were replaced by placeholders on 25 and 26 October 2026.
-Each file keeps the meaning it had when written, so older ones describe older source. A log is
-**current** only if its manifest matches the files in the repository now; check that with the
-commands under "Check currency" below.
+This directory retains the current verification run, focused failure reproductions, dependency
+checks, demo evidence and the unsuccessful real-provider access result.
+Logs describe the source and scope recorded with them; do not treat older reproductions as tests
+of newer code. Some published logs replace private build-account/address details with placeholders.
 
-## How to read test counts
+## Current verification
 
-`scripts/verify.sh` runs the same Rust tests three times: default features, all features in debug,
-and all features in release. A total such as "152" counts executions, not distinct tests.
+MEASURED ([run](verification-public-cleanup-20261026.log), [manifest](source-manifest.sha256)):
+the recorded suite passed with 24 default, 64 all-feature debug and 64 release test executions.
+Those 152 executions repeat 64 distinct Rust tests, including two subprocess helpers.
+Four Python harness tests are separate. See [verification](../docs/VERIFICATION.md) for currency.
 
-| Run on 26 October 2026 | Executions |
+    python3 scripts/source_manifest.py | diff -u evidence/source-manifest.sha256 -
+    python3 demo/manifest.py | diff -u evidence/demo/source-manifest-demo.sha256 -
+
+## Focused evidence
+
+| Files | Scope |
 |---|---|
-| Default features | 24 (a subset of the next row) |
-| All features, debug | 64 |
-| All features, release | 64 (the same tests again) |
-| Sum | 152 |
+| [audit before](audit-regressions-before-fix.log), [after](audit-regressions-after-fix.log) | Original failing regressions and their corrections |
+| [metadata replay regression](sink-metadata-regression-before-fix.log) | Same hash with different identity metadata refused after correction |
+| [schema refusal regression](pass2-regressions-before-fix.log) | Refusing a newer schema must not intentionally change journal mode |
+| [dependency-review/](dependency-review/) | Pinned and published-upstream probes; dated issue/PR snapshots |
+| [demo/](demo/) | Separate demo tests, source manifest and reproducible WASM artifact |
+| [PublicNode access](publicnode-access.log) | Authenticated stream followed by guard rejection; zero reconstructed blocks |
 
-Distinct Rust tests: **64**. Two of them (`crash_child`, `mid_transaction_child` in `tests/sink.rs`) are
-helper subprocesses that the abort tests start, so there are 62 independent scenarios. The 4 Python
-harness tests (`scripts/test_pilot.py`) are counted separately and are not part of the 152. Counts are
-what the test runner reported, not proof obligations.
-
-## Current verification (matches today's source)
-
-| File | What it is |
-|---|---|
-| `verification-20261026-ci-wording.log` | Full locked `scripts/verify.sh` run on the current tree, 26 October 2026, exit 0 (24 / 64 / 64 executions) |
-| `source-manifest.sha256` | SHA-256 of the 37 executable inputs of the tree that run tested |
-| `verification-pass2.log`, `source-manifest-pass2.sha256` | Earlier same-day run that tested the SQLite fix (exit 0; same counts). It differs from the current tree only by a comment in `.github/workflows/ci.yml` |
-| `pass2-regressions-before-fix.log` | The new schema-refusal test failing on the old `SqliteSink::open` (2 passed, 1 failed). The fix is in the next commit |
-| `demo/` | Separate scope: the browser demo crate. Log, manifest and the hash of the built artifact; see its README |
-
-## Historical runs (recorded for an older tree; kept as history)
-
-| File | What it describes |
-|---|---|
-| `verification-reverify.log`, `source-manifest-reverify.sha256` | 25 October, commit `b5d883b` (exit 0; 24 / 61 / 61 executions, 61 distinct tests) |
-| `verification-final.log`, `source-manifest-final.sha256` | Earlier 25 October tree (differs in `Cargo.toml` and two workflow files) |
-| `verification-audit.log`, `source-manifest-audit.sha256` | First audit pass |
-| `verification-current.log`, `verification.log`, `verification-initial.log`, `verification-grpc-repair.log`, `locked-verification.log` | Earlier runs |
-| `source-manifest-pre-audit.sha256`, `source-manifest-initial.sha256` | Earlier manifests |
-
-## Regression evidence (a test failing on old behaviour, then passing)
-
-`audit-regressions-before-fix.log` and `audit-regressions-after-fix.log`;
-`sink-metadata-regression-before-fix.log`; `pass2-regressions-before-fix.log` (above).
-
-## Grant research (dated facts, not code evidence)
-
-`grant-research-20261026.md`: what the application form, template, Foundation page, Alpenglow page and
-upstream projects said on 26 October 2026, what could not be verified, and the provider price basis.
-`dependency-review/published-0.12.0-check-20261026.log`: the library tested against the published
-`yellowstone-block-machine` 0.12.0 in a scratch copy (64 tests pass; the dead-slot scenario emits 2 slots
-where the pinned revision delivers 70). It is a measurement, not a verification run of the repository tree.
-
-## Real-provider and upstream evidence
-
-`publicnode-access.log` and `publicnode-access-initial.log`: the one real single-provider test. It
-authenticated and streamed updates and reconstructed no block; the cause is unresolved. It is not a
-pilot. `dependency-review/` reproduces the two upstream defects against the pinned crate.
-`readiness-status-2026-10-25.json` is GitHub state read on 25 October. `pilot-preflight.log` shows the
-pilot harness refusing to start without credentials.
-
-## Check currency
-
-```sh
-python3 scripts/source_manifest.py | diff -u evidence/source-manifest.sha256 -
-python3 demo/manifest.py | diff -u evidence/demo/source-manifest-demo.sha256 -
-```
-
-An empty diff means the archived run still describes those source files. A difference does not mean
-a regression; it means the run no longer identifies the current source and a new one is needed.
+MEASURED ([published-base check](dependency-review/published-0.12.0-check-20261026.log)):
+the scratch published-upstream comparison is not a verification run of the pinned repository.
+Read the [dependency review](../docs/DEPENDENCY-REVIEW.md) before interpreting it.

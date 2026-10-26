@@ -92,9 +92,9 @@ with permission; unanswered outreach is not an adopter or endorsement.
 
 ## Dependency and review gate
 
-MEASURED: `evidence/readiness-status-2026-10-25.json` snapshots upstream PR #22 as open and
+MEASURED: `evidence/dependency-review/upstream-pr-22.json` snapshots upstream PR #22 as open and
 unmerged. The experimental pin is not a supported release. Recheck merge/release status before
 the pilot and before release; run the locked full suite for any pin change. Require an independent
 review of commitment assumptions, replay gaps, watermark anchoring, transactional boundaries,
-capacity/rotation behavior and credential handling. Funding for remediation does not purchase
-a formal audit. No external review has been completed by this preparation.
+capacity/rotation behavior and credential handling. A scoped code review is not a formal audit.
+No external review has been completed by this preparation.

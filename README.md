@@ -4,7 +4,8 @@ Reconcile sealed Solana blocks reported by independent Yellowstone providers.
 **Prototype, unaudited; a successful live two-provider pilot is still outstanding.**
 
 [Start with a fixture](#try-a-fixture) · [Integration guide](docs/INTEGRATION.md) ·
-[Correctness contract](docs/CORRECTNESS.md) · [Verification evidence](docs/VERIFICATION.md)
+[Documentation](docs/README.md) · [Correctness contract](docs/CORRECTNESS.md) ·
+[Verification evidence](docs/VERIFICATION.md)
 
 ## What it does
 
@@ -17,6 +18,21 @@ conflict; a later majority does not repair it automatically.
 INFERRED: this may help indexer and infrastructure teams that already consume multiple feeds.
 Demand for this particular library remains unvalidated. Provider agreement is not ledger
 validation, payload equality or proof that operators are independent.
+
+## Where it fits
+
+MEASURED ([architecture](docs/INTEGRATION.md), [existing tools](docs/ALTERNATIVES.md)):
+Yellowstone reconstructs each connection independently; this library adds a configurable
+agreement decision over sealed metadata. Reconnect and deduplication tools already exist.
+INFERRED: use this policy when your consumer needs agreement between independent feeds;
+it can wait indefinitely when agreement is unavailable.
+
+```text
+provider A -> reconstructor A --+
+                              +-> sealed metadata agreement -> one payload -> your consumer
+provider B -> reconstructor B --+             |
+                                            +-> conflict / capacity / stale-session result
+```
 
 ## Try a fixture
 
@@ -115,7 +131,7 @@ MEASURED ([verification record](docs/VERIFICATION.md)): the main manifest exclud
 browser demo. Its commands and evidence must be evaluated separately; a main-suite pass is not
 proof that the WebAssembly build or deployed site matches that source.
 
-MEASURED ([runner setup](docs/RUNNER-SETUP.md)): verification is manual. Neither a configured YAML
+MEASURED ([verification record](docs/VERIFICATION.md)): verification is manual. Neither a configured YAML
 workflow nor old CI runs establish coverage of a newer tree. The recorded runner/CI status is dated;
 no current automatic CI pass is implied here.
 
@@ -123,9 +139,8 @@ no current automatic CI pass is implied here.
 
 - [Contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md).
 - [Operations](docs/OPERATIONS.md), [pilot protocol](docs/PILOT.md) and [self-audit](AUDIT.md).
-- [Research and overlap](docs/RESEARCH-2026-10-25.md).
-- [Funding proposal source](grant/proposal.md) and [budget assumptions](grant/BUDGET.md).
-  Funding documents are separate from the library's tested correctness contract.
+- [Existing tools and boundaries](docs/ALTERNATIVES.md), [roadmap](docs/ROADMAP.md)
+  and [changelog](CHANGELOG.md).
 
 MEASURED ([LICENSE](LICENSE)): Apache-2.0. Publishing to a package registry is disabled in
 [Cargo.toml](Cargo.toml). INFERRED: treat the current repository as an inspectable prototype,

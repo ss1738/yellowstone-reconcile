@@ -169,3 +169,20 @@ block and its commitment, commit-time capacity failure, quarantine and prune sta
 produced no defect; two are now pinned by tests. Separately, the deployed demo binary embeds the build
 machine's account name and path; a path-remapped build is verified (`evidence/demo/`) and was deployed on 26 October.
 Not done: any live-provider check, and nothing was run on a second machine.
+
+## Submission preparation, 26 October
+
+Actionable findings from preparing the $15,000 application, each with its evidence:
+
+- **The published dependency is not a safe base.** Against `yellowstone-block-machine` 0.12.0 the tests pass but the
+  dead-slot scenario emits 2 slots where the pin delivers 70, and the #19 panic reproduces
+  (`evidence/dependency-review/published-0.12.0-check-20261026.log`). The earlier two-hour "dependency decision"
+  estimate was therefore wrong; the budget now carries real work for it.
+- **Provider cost was understated.** Chainstack's Yellowstone add-on is $49 a month on top of a paid plan
+  ($49), so $98, not $49 (`evidence/grant-research-20261026.md`).
+- **Authorship was nearly misstated.** Upstream issues #19 and #21 and pull requests #20 and #22 were opened by
+  other accounts; only #23 is the applicant's. The proposal says so.
+- **The project site quotes the Alpenglow page by joining two passages**, and counts test executions as tests.
+  Not changed here; listed in `grant/SUBMISSION-READINESS.md`.
+- **Amounts were inconsistent** across drafts ($7,470, $13,200, $12,210, $15,000). Current submission files now
+  carry only $15,000; earlier figures remain in the historical passages above.

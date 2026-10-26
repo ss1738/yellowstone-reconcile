@@ -23,10 +23,13 @@ working verification route.
    and a sustained soak.
 4. Obtain independent review and remediate findings. Resolve the experimental upstream pin via
    a supported release or an explicit independently reviewed maintenance decision.
-5. The revised $7,470 proposal includes component development, six months of maintenance and four
-   external integration targets, following the live Developer Tooling template checked 26 October.
-   The applicant confirmed these future obligations. No live pilot is funded; acceptance of offline
-   integrations for adoption must be agreed with the Foundation. See `grant/SUBMISSION.md`.
+5. The $15,000 proposal funds items 1 and 3 to 4 above in part (rotation, byte bounds and durable
+   conflicts, a dependency-safe build, live two-provider validation with a 72-hour soak, an
+   independent code review and a 1.0 release), six months of maintenance and a target of four external
+   integrations, following the live Developer Tooling template checked 26 October. The applicant
+   confirmed these future obligations. None of it is done: no live validation, adopter or release exists
+   today. A formal audit and a named integrator's requirements (item 2) are not funded. See
+   `grant/BUDGET.md` and `grant/SUBMISSION.md`.
 
 INFERRED: a working prototype is a basis for validation, not proof of demand or funding likelihood.
 No production deployment, paid service purchase or release publication has happened.

@@ -8,3 +8,7 @@
 /pilot-results/
 grant/*.pdf
 /demo/target/
+
+# Local exports of grant/proposal.md for pasting into the Google Doc; regenerate, do not edit
+grant/*.docx
+grant/*.html

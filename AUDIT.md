@@ -166,4 +166,3 @@ block and its commitment, commit-time capacity failure, quarantine and prune sta
 produced no defect; two are now pinned by tests. Separately, the deployed demo binary embeds the build
 machine's account name and path; a path-remapped build is verified (`evidence/demo/`) but not deployed.
 Not done: any live-provider check, and nothing was run on a second machine.
-

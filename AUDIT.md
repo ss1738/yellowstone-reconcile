@@ -43,7 +43,10 @@ did succeed covered default and upstream features only, so they never exercised 
 the wire guard, yet the earlier page and PDF said "CI passing".
 Fix: `ci.yml` is hosted again (push and PR, read-only token, no secrets, safe for untrusted PRs),
 covering default, `sqlite` and `upstream` features, Clippy and fixture exit codes; `verify.yml`
-stays manual. The same commands passed on Ironman. **The hosted workflow has not run on GitHub.**
+stays manual. The same commands passed on Ironman. At that time the revised workflow had not run
+on GitHub. Later the same day `ci.yml` was made manual-only again (`docs/RUNNER-SETUP.md`). Correction,
+26 October: GitHub does hold 12 runs of an earlier push-triggered version, all on 24 October (11 succeeded,
+1 failed), recorded as `historical_ci` in `evidence/readiness-status-2026-10-25.json`. None tests the current tree.
 
 ### 4. A failed pilot run said nothing about why (fixed)
 `two_providers` printed no failure reason, discarded errors from `bridge.connect(..)?` by exiting

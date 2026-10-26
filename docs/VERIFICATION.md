@@ -2,12 +2,16 @@
 
 ## Current source (pass 2, 26 October)
 
-MEASURED: `evidence/verification-pass2.log` is the raw output of `bash scripts/verify.sh` on Ironman
-(Rust/Cargo 1.95.0), 26 October 2026, against the tree whose 37 executable inputs are listed in
+MEASURED: `evidence/verification-20261026-ci-wording.log` is the raw output of `bash scripts/verify.sh` on
+Ironman (Rust/Cargo 1.95.0), 26 October 2026, against the tree whose 37 executable inputs are listed in
 `evidence/source-manifest.sha256`. I diffed that manifest against the hashes the build machine printed
-and they match. The script exited 0. Passing tests, summed per `cargo test` run from that log:
+and they match. The script exited 0. The earlier same-day run `evidence/verification-pass2.log` (manifest
+`evidence/source-manifest-pass2.sha256`) tested the SQLite fix; the two trees differ only by a comment in
+`.github/workflows/ci.yml`. Passing test executions, summed per `cargo test` run from that log:
 24 with default features, 64 with all features in debug and 64 in release (152 in all; the previous
-total of 146 plus 3 new tests in each all-features run). The 4 Python harness tests, formatting, Clippy
+total of 146 plus 3 new tests in each all-features run). These are repeated executions of the same
+tests: there are **64 distinct Rust tests**, two of which are helper subprocesses for the abort tests,
+so 62 independent scenarios (`evidence/README.md`, "How to read test counts"). The 4 Python harness tests, formatting, Clippy
 with warnings denied, documentation with warnings denied, the fixture exit codes and the offline examples
 all passed as before.
 
@@ -27,9 +31,10 @@ below and `evidence/demo/`.
 
 ## Previous verified source, 25 October (older logs)
 
-MEASURED: `evidence/verification-final.log` (and, for the current tree, `evidence/verification-reverify.log`) is the raw output of `bash scripts/verify.sh`
-on the maintainer's Mac mini (Ironman), Rust/Cargo 1.95.0, 25 October 2026, against the tree whose 36
-executable inputs are listed in `evidence/source-manifest.sha256`. I diffed that manifest against
+MEASURED, historical: `evidence/verification-final.log` and `evidence/verification-reverify.log` are raw
+outputs of `bash scripts/verify.sh` on the maintainer's Mac mini (Ironman), Rust/Cargo 1.95.0, 25 October
+2026, against trees whose 36 executable inputs are listed in `evidence/source-manifest-final.sha256` and
+`evidence/source-manifest-reverify.sha256`. They describe older source than today's. I diffed that manifest against
 the hashes the build machine printed and they match; its formatter had rewritten two files, which
 were copied back first. `scripts/verify.sh` exited 0. Passing tests the runner reported, summed
 from that log:
@@ -108,8 +113,9 @@ issue #23 with zero comments. Historical CI tested default/upstream features onl
 coverage of this revised local workflow or the SQLite/wire features.
 
 MEASURED (`docs/RUNNER-SETUP.md`): there is no automatic CI. `ci.yml` is a GitHub-hosted workflow that
-starts only by hand, because the maintainer's practice is to build and test Rust on their own machines; it has
-never run. `verify.yml` targets a self-hosted `ironman` runner that is not registered (0 runners,
+starts only by hand, because the maintainer's practice is to build and test Rust on their own machines. An
+earlier push-triggered version ran 12 times on 24 October (11 succeeded, 1 failed; none on the current tree),
+and this manual version has not been dispatched. `verify.yml` targets a self-hosted `ironman` runner that is not registered (0 runners,
 `gh api`, 25 October), so it cannot run either. Neither is triggered by a push or a pull request.
 The grpc and simulation features are covered only by `scripts/verify.sh`. Operational verification
 is the manual run above, nothing more.
